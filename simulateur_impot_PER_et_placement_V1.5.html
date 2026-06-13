@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simulateur impôt foyer – PER + paramètres</title>
+
+  <style>
+  body { font-family: Arial, sans-serif; max-width: 1100px; margin: 20px auto; }
+h1 { margin-bottom: 10px; }
+h2 { margin-top: 20px; margin-bottom: 5px; }
+h3 { margin-top: 15px; margin-bottom: 5px; }
+label { display: block; margin-top: 6px; }
+input { padding: 3px; width: 180px; }
+.section { border: 1px solid #ccc; padding: 10px; margin-top: 10px; border-radius: 6px; }
+.row { display: flex; gap: 20px; flex-wrap: wrap; }
+.col { flex: 1 1 320px; }
+.result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; border-radius: 6px; }
+.tranche { margin-left: 20px; }
+.small { font-size: 0.85em; color: #555; }
+.alert { color: #b30000; font-weight: bold; margin-top: 8px; }
+.version { font-size: 0.8em; color: #888; margin-top: 4px; }
+
+/* Onglets */
+.tabs { margin-bottom: 15px; }
+.tab-btn {
+  padding: 8px 15px;
+  margin-right: 5px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 4px 4px 0 0;
+}
+.tab-btn.active {
+  background: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  font-weight: bold;
+}
+.tab { display: none; border: 1px solid #ccc; border-radius: 0 6px 6px 6px; padding: 10px; }
+.tab.active { display: block; }
+
+/* Animation déclarant 2 */
+#blocD2 {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+}
+#blocD2.visible {
+  max-height: 800px;
+  opacity: 1;
+}
+
+  </style>
+</head>
+
+<body>
+
+<h1>Simulateur d'impôt – PER + paramètres annuels</h1>
+<div class="version">Valeurs par défaut : barème 2026 (revenus 2025) – Loi de finances 2026 (+0,9%)</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('simu')">Simulation</button>
+  <button class="tab-btn" onclick="showTab('strategie')">Stratégie PER</button>
+  <button class="tab-btn" onclick="showTab('params')">Paramètres annuels</button>
+  <button class="tab-btn" onclick="showTab('sources')">Sources &amp; historique</button>
+</div>
+
+<!-- ONGLET SIMULATION -->
+<div id="tab-simu" class="tab active">
+
+  <!-- PARAMÈTRES FOYER -->
+  <div class="section">
+    <label>
+      <input type="checkbox" id="isCouple">
+      Couple (activer déclarant 2)
+    </label>
+
+    <label>Nombre de parts
+      <input type="number" id="parts" value="1" step="0.5">
+    </label>
+
+    <label>
+      <input type="checkbox" id="mutualiserPER">
+      Mutualiser les plafonds PER (mode M3)
+    </label>
+    <div class="small">
+      Mutualisation M3 : priorité au plafond restant, puis au versement restant.
+      Déduction totale limitée par min(versements totaux, plafonds totaux).
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- DÉCLARANT 1 -->
+    <div class="section col">
+      <h2>Déclarant 1</h2>
+
+      <label>Pensions (€)
+        <input type="number" id="pensions1" value="0">
+      </label>
+
+      <label>Retraits PER imposables (€)
+        <input type="number" id="perImp1" value="0">
+      </label>
+
+      <label>Plafond PER (€)
+        <input type="number" id="plafondPER1" value="0">
+      </label>
+
+      <label>Versement PER (€)
+        <input type="number" id="versementPER1" value="0">
+      </label>
+    </div>
+
+    <!-- DÉCLARANT 2 -->
+    <div class="section col" id="blocD2">
+      <h2>Déclarant 2</h2>
+
+      <label>Pensions (€)
+        <input type="number" id="pensions2" value="0">
+      </label>
+
+      <label>Retraits PER imposables (€)
+        <input type="number" id="perImp2" value="0">
+      </label>
+
+      <label>Plafond PER (€)
+        <input type="number" id="plafondPER2" value="0">
+      </label>
+
+      <label>Versement PER (€)
+        <input type="number" id="versementPER2" value="0">
+      </label>
+    </div>
+
+  </div>
+
+  <!-- FOYER -->
+  <div class="section">
+    <h2>Dons et crédits</h2>
+
+    <label>Dons à 66 % (€)
+      <input type="number" id="don66" value="0">
+    </label>
+
+    <label>Dons à 75 % (€)
+      <input type="number" id="don75" value="0">
+    </label>
+
+    <label>Crédits d'impôt (€)
+      <input type="number" id="credits" value="0">
+    </label>
+  </div>
+
+  <button onclick="calculer()">Calculer</button>
+
+  <div class="result" id="resultat"></div>
+
+</div>
+
+<!-- ONGLET STRATÉGIE PER -->
+<div id="tab-strategie" class="tab">
+
+  <h2>Stratégie de rapatriement PER</h2>
+  <div class="small">Les revenus imposables sont repris automatiquement depuis l'onglet Simulation. Renseignez ici vos placements et paramètres de stratégie.</div>
+
+  <!-- PARAMÈTRES PER -->
+  <div class="section">
+    <h3>Capitaux PER à rapatrier</h3>
+    <div class="row">
+      <div class="col">
+        <label>Capital PER 1 brut (€)
+          <input type="number" id="s_per1" value="50000">
+        </label>
+        <label>Année de sortie PER 1
+          <input type="number" id="s_annee1" value="2028">
+        </label>
+      </div>
+      <div class="col">
+        <label>Capital PER 2 brut (€)
+          <input type="number" id="s_per2" value="30000">
+        </label>
+        <label>Année de sortie PER 2
+          <input type="number" id="s_annee2" value="2028">
+        </label>
+      </div>
+    </div>
+    <label>Objectif mensuel à compenser (€)
+      <input type="number" id="s_objectif" value="861">
+    </label>
+  </div>
+
+  <!-- ENVELOPPES ACTIVABLES -->
+  <div class="section">
+    <h3>Enveloppes de placement <span class="small">(cocher pour activer)</span></h3>
+    <div class="row">
+
+      <div class="col">
+        <label><input type="checkbox" id="s_pea1_on" checked> PEA principal</label>
+        <label>Capital actuel PEA (€) <input type="number" id="s_pea1_cap" value="5400"></label>
+        <label>Date ouverture PEA (année) <input type="number" id="s_pea1_annee" value="2026"></label>
+        <label>Rendement PEA (%) <input type="number" id="s_pea1_rdt" value="7" step="0.5"></label>
+        <label>Part du PER vers PEA (%) <input type="number" id="s_pea1_part" value="40" step="5"></label>
+      </div>
+
+      <div class="col">
+        <label><input type="checkbox" id="s_pea2_on" checked> PEA épouse</label>
+        <label>Capital actuel PEA épouse (€) <input type="number" id="s_pea2_cap" value="1000"></label>
+        <label>Date ouverture PEA épouse (année) <input type="number" id="s_pea2_annee" value="2026"></label>
+        <label>Rendement PEA épouse (%) <input type="number" id="s_pea2_rdt" value="7" step="0.5"></label>
+        <label>Part du PER vers PEA épouse (%) <input type="number" id="s_pea2_part" value="10" step="5"></label>
+      </div>
+
+      <div class="col">
+        <label><input type="checkbox" id="s_cto_on" checked> CTO</label>
+        <label>Capital actuel CTO (€) <input type="number" id="s_cto_cap" value="6800"></label>
+        <label>Rendement CTO (%) <input type="number" id="s_cto_rdt" value="5" step="0.5"></label>
+        <label>Part du PER vers CTO (%) <input type="number" id="s_cto_part" value="50" step="5"></label>
+        <label>Fiscalité CTO <select id="s_cto_fisc" style="padding:3px;width:184px;">
+          <option value="0.30">PFU 30%</option>
+          <option value="0.11">Barème 11%</option>
+        </select></label>
+      </div>
+
+      <div class="col">
+        <label><input type="checkbox" id="s_livret_on" checked> Livrets</label>
+        <label>Capital livrets (€) <input type="number" id="s_livret_cap" value="60900"></label>
+        <label>Taux livrets (%) <input type="number" id="s_livret_rdt" value="1.7" step="0.1"></label>
+        <label>Transfert annuel livrets → PEA (€) <input type="number" id="s_livret_transfert" value="3000"></label>
+      </div>
+
+      <div class="col">
+        <label><input type="checkbox" id="s_av_on"> Assurance vie</label>
+        <label>Capital AV (€) <input type="number" id="s_av_cap" value="0"></label>
+        <label>Rendement AV (%) <input type="number" id="s_av_rdt" value="3.5" step="0.5"></label>
+        <label>Part du PER vers AV (%) <input type="number" id="s_av_part" value="0" step="5"></label>
+      </div>
+
+    </div>
+    <div class="small" style="margin-top:8px; color:#b30000;" id="s_warn_parts"></div>
+  </div>
+
+  <button onclick="calculerStrategie()">Calculer la stratégie</button>
+
+  <div class="result" id="resultat_strategie"></div>
+
+</div>
+
+<!-- ONGLET PARAMÈTRES -->
+<div id="tab-params" class="tab">
+
+  <h2>Barème de l'impôt sur le revenu</h2>
+  <div class="small">
+    Valeurs actuelles : barème 2026 (revenus 2025), loi de finances 2026, revalorisation +0,9%.<br>
+    Sources officielles : <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/comment-calculer-votre-impot-dapres-le-bareme-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr</a>
+    – <a href="https://www.service-public.fr/particuliers/actualites/A18045" target="_blank">service-public.fr</a>
+    – <a href="https://bofip.impots.gouv.fr/bofip/2412-PGP.html" target="_blank">BOFiP</a>
+  </div>
+
+  <div class="section">
+    <label>Tranche 1 – taux 0 % jusqu'à
+      <input type="number" id="t1" value="11600">
+    </label>
+
+    <label>Tranche 2 – taux 11 % jusqu'à
+      <input type="number" id="t2" value="29579">
+    </label>
+
+    <label>Tranche 3 – taux 30 % jusqu'à
+      <input type="number" id="t3" value="84577">
+    </label>
+
+    <label>Tranche 4 – taux 41 % jusqu'à
+      <input type="number" id="t4" value="181917">
+    </label>
+
+    <label>Taux marginal supérieur (%)
+      <input type="number" id="t5" value="45">
+    </label>
+  </div>
+
+  <h2>Décote</h2>
+  <div class="small">
+    Valeurs 2026 (revenus 2025).<br>
+    Source : <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/pouvez-vous-beneficier-de-la-decote-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr – décote</a>
+  </div>
+  <div class="section">
+    <label>Seuil décote célibataire (impôt brut &lt;)
+      <input type="number" id="dec_seuil_celib" value="1982">
+    </label>
+    <label>Constante décote célibataire
+      <input type="number" id="dec_const_celib" value="897">
+    </label>
+
+    <label>Seuil décote couple (impôt brut &lt;)
+      <input type="number" id="dec_seuil_couple" value="3277">
+    </label>
+    <label>Constante décote couple
+      <input type="number" id="dec_const_couple" value="1483">
+    </label>
+
+    <label>Coefficient décote
+      <input type="number" id="dec_coef" value="0.4525" step="0.0001">
+    </label>
+  </div>
+
+  <div class="small" style="margin-top:10px;">
+    Mettre à jour ces valeurs chaque année après publication de la loi de finances (novembre–février).<br>
+    Voir l'onglet <strong>Sources &amp; historique</strong> pour les URLs officielles et l'historique des valeurs.
+  </div>
+
+  <h2>Plafond PER (PASS)</h2>
+  <div class="small">
+    Le PASS (Plafond Annuel de la Sécurité Sociale) est fixé chaque année par décret.<br>
+    Source : <a href="https://www.service-public.fr/particuliers/vosdroits/F34982" target="_blank">service-public.fr – plafonds PER</a>
+  </div>
+  <div class="section">
+    <label>PASS de l'année N-1 (€) — sert au calcul du plafond PER de l'année en cours
+      <input type="number" id="pass" value="47100" oninput="calculerPlafondPER()">
+    </label>
+    <div class="small" style="margin-top:4px;">PASS 2025 = 47 100 € — PASS 2024 = 46 368 €</div>
+
+    <label style="margin-top:12px;">Report plafond PER non utilisé — années N-1, N-2, N-3 cumulées (€)
+      <input type="number" id="report_per1" value="0" oninput="calculerPlafondPER()" placeholder="Déclarant 1">
+    </label>
+    <label>Report plafond PER non utilisé — Déclarant 2 (€)
+      <input type="number" id="report_per2" value="0" oninput="calculerPlafondPER()" placeholder="Déclarant 2">
+    </label>
+    <div class="small" style="margin-top:4px;">
+      Ces montants figurent sur votre avis d'imposition (page 2, case "Plafond épargne retraite disponible").<br>
+      Le report porte sur les 3 années précédentes cumulées — c'est le total qui apparaît sur l'avis, pas année par année.
+    </div>
+
+    <div id="resultat_plafond_per" style="margin-top:12px;"></div>
+  </div>
+
+</div>
+
+<!-- ONGLET SOURCES & HISTORIQUE -->
+<div id="tab-sources" class="tab">
+
+  <h2>Sources officielles</h2>
+  <div class="small">Consulter ces pages chaque automne/hiver après publication de la loi de finances.</div>
+
+  <div class="section">
+    <h3>Barème de l'impôt sur le revenu (tranches et taux)</h3>
+    <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/comment-calculer-votre-impot-dapres-le-bareme-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr – calcul de l'impôt et barème</a><br>
+    <a href="https://www.service-public.fr/particuliers/actualites/A18045" target="_blank">service-public.fr – tranches mises à jour chaque année</a><br>
+    <a href="https://bofip.impots.gouv.fr/bofip/2412-PGP.html" target="_blank">BOFiP – texte légal officiel DGFiP</a>
+  </div>
+
+  <div class="section">
+    <h3>Décote</h3>
+    <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/pouvez-vous-beneficier-de-la-decote-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr – décote : seuils et calcul</a>
+  </div>
+
+  <div class="section">
+    <h3>Plafonds de déduction PER</h3>
+    <a href="https://www.service-public.fr/particuliers/vosdroits/F34982" target="_blank">service-public.fr – plafonds PER</a>
+  </div>
+
+  <div class="section">
+    <h3>Simulateur officiel DGFiP (vérification)</h3>
+    <a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank">impots.gouv.fr – simulateurs et calculettes</a>
+  </div>
+
+  <h2>Historique des valeurs</h2>
+
+  <div class="section">
+    <h3>Barème 2026 – revenus 2025 <span class="small">(loi de finances 2026, revalorisation +0,9%)</span></h3>
+    <table style="border-collapse:collapse; font-size:0.9em; width:100%;">
+      <tr style="background:#f0f0f0;"><th style="text-align:left;padding:4px 8px;">Tranche</th><th style="text-align:left;padding:4px 8px;">Taux</th><th style="text-align:left;padding:4px 8px;">Jusqu'à</th></tr>
+      <tr><td style="padding:3px 8px;">1</td><td>0 %</td><td>11 600 €</td></tr>
+      <tr><td style="padding:3px 8px;">2</td><td>11 %</td><td>29 579 €</td></tr>
+      <tr><td style="padding:3px 8px;">3</td><td>30 %</td><td>84 577 €</td></tr>
+      <tr><td style="padding:3px 8px;">4</td><td>41 %</td><td>181 917 €</td></tr>
+      <tr><td style="padding:3px 8px;">5</td><td>45 %</td><td>au-delà</td></tr>
+    </table>
+    <div class="small" style="margin-top:6px;">
+      Décote : seuil célibataire 1 982 € / constante 897 € – seuil couple 3 277 € / constante 1 483 € – coef. 0,4525
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Barème 2025 – revenus 2024 <span class="small">(loi de finances 2025, revalorisation +1,8%)</span></h3>
+    <table style="border-collapse:collapse; font-size:0.9em; width:100%;">
+      <tr style="background:#f0f0f0;"><th style="text-align:left;padding:4px 8px;">Tranche</th><th style="text-align:left;padding:4px 8px;">Taux</th><th style="text-align:left;padding:4px 8px;">Jusqu'à</th></tr>
+      <tr><td style="padding:3px 8px;">1</td><td>0 %</td><td>11 497 €</td></tr>
+      <tr><td style="padding:3px 8px;">2</td><td>11 %</td><td>29 373 €</td></tr>
+      <tr><td style="padding:3px 8px;">3</td><td>30 %</td><td>83 988 €</td></tr>
+      <tr><td style="padding:3px 8px;">4</td><td>41 %</td><td>180 648 €</td></tr>
+      <tr><td style="padding:3px 8px;">5</td><td>45 %</td><td>au-delà</td></tr>
+    </table>
+    <div class="small" style="margin-top:6px;">
+      Décote : seuil célibataire 1 963 € / constante 873 € – seuil couple 3 247 € / constante 1 444 € – coef. 0,45
+    </div>
+  </div>
+
+  <div class="small" style="margin-top:12px;">
+    Le barème de l'année N+1 est publié entre novembre et février en loi de finances.<br>
+    Mettre à jour l'onglet <strong>Paramètres annuels</strong> dès sa publication, puis ajouter les nouvelles valeurs ici en historique.
+  </div>
+
+</div>
+
+<script>
+/* --------- Arrondi fiscal à l'euro le plus proche --------- */
+function arr(x) {
+  return Math.round(x);
+}
+
+/* ---------------------- ONGLET ---------------------- */
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const labels = { simu: 'simulation', strategie: 'strat', params: 'param', sources: 'sources' };
+  const btn = Array.from(document.querySelectorAll('.tab-btn'))
+    .find(b => b.textContent.toLowerCase().includes(labels[name]));
+  if (btn) btn.classList.add('active');
+}
+
+/* ---------------------- STRATÉGIE PER ---------------------- */
+function calculerStrategie() {
+
+  // Récupération revenus depuis onglet simulation
+  const pensions1  = +document.getElementById('pensions1').value || 0;
+  const pensions2  = +document.getElementById('pensions2').value || 0;
+  const parts      = +document.getElementById('parts').value || 2;
+  const bareme     = getBareme();
+
+  // Abattements
+  function ab(p) { if(p<=0)return 0; let a=p*0.1; a=Math.max(a,442); a=Math.min(a,4321); return Math.min(a,p); }
+  const revImp = pensions1 - ab(pensions1) + pensions2 - ab(pensions2);
+  const quotient = revImp / parts;
+  const seuil11 = bareme[1].plafond;
+  const margeParPart = Math.max(0, seuil11 - quotient);
+  const margeFoyer = Math.round(margeParPart * parts);
+
+  // Paramètres PER
+  const per1     = +document.getElementById('s_per1').value || 0;
+  const per2     = +document.getElementById('s_per2').value || 0;
+  const annee1   = +document.getElementById('s_annee1').value || 2028;
+  const annee2   = +document.getElementById('s_annee2').value || 2028;
+  const objectif = +document.getElementById('s_objectif').value || 861;
+  const totalPER = per1 + per2;
+
+  // Impôt sur sortie PER (marge à 11%, reste à 30%)
+  const impMarge = Math.min(totalPER, margeFoyer) * 0.11;
+  const excedent = Math.max(0, totalPER - margeFoyer);
+  const impExcedent = excedent * 0.30;
+  const impTotal = Math.round(impMarge + impExcedent);
+  const capitalNet = totalPER - impTotal;
+
+  // Durée sortie à 11% (marge annuelle)
+  const nbAns11 = margeFoyer > 0 ? Math.ceil(totalPER / margeFoyer) : 99;
+  const impTotal11 = Math.round(totalPER * 0.11);
+  const capitalNet11 = totalPER - impTotal11;
+
+  // Enveloppes
+  const pea1On  = document.getElementById('s_pea1_on').checked;
+  const pea2On  = document.getElementById('s_pea2_on').checked;
+  const ctoOn   = document.getElementById('s_cto_on').checked;
+  const livOn   = document.getElementById('s_livret_on').checked;
+  const avOn    = document.getElementById('s_av_on').checked;
+
+  const pea1Cap   = +document.getElementById('s_pea1_cap').value || 0;
+  const pea1Annee = +document.getElementById('s_pea1_annee').value || 2026;
+  const pea1Rdt   = (+document.getElementById('s_pea1_rdt').value || 7) / 100;
+  const pea1Part  = (+document.getElementById('s_pea1_part').value || 0) / 100;
+
+  const pea2Cap   = +document.getElementById('s_pea2_cap').value || 0;
+  const pea2Annee = +document.getElementById('s_pea2_annee').value || 2026;
+  const pea2Rdt   = (+document.getElementById('s_pea2_rdt').value || 7) / 100;
+  const pea2Part  = (+document.getElementById('s_pea2_part').value || 0) / 100;
+
+  const ctoCap    = +document.getElementById('s_cto_cap').value || 0;
+  const ctoRdt    = (+document.getElementById('s_cto_rdt').value || 5) / 100;
+  const ctoPart   = (+document.getElementById('s_cto_part').value || 0) / 100;
+  const ctoFisc   = +document.getElementById('s_cto_fisc').value || 0.30;
+
+  const livCap    = +document.getElementById('s_livret_cap').value || 0;
+  const livRdt    = (+document.getElementById('s_livret_rdt').value || 1.7) / 100;
+  const livTrans  = +document.getElementById('s_livret_transfert').value || 0;
+
+  const avCap     = +document.getElementById('s_av_cap').value || 0;
+  const avRdt     = (+document.getElementById('s_av_rdt').value || 3.5) / 100;
+  const avPart    = (+document.getElementById('s_av_part').value || 0) / 100;
+
+  // Vérification parts
+  const totalParts = (pea1On?pea1Part:0)+(pea2On?pea2Part:0)+(ctoOn?ctoPart:0)+(avOn?avPart:0);
+  const warnEl = document.getElementById('s_warn_parts');
+  if (Math.abs(totalParts - 1.0) > 0.01 && totalParts > 0) {
+    warnEl.textContent = `⚠️ La somme des parts PER = ${Math.round(totalParts*100)}% (doit être 100%)`;
+  } else { warnEl.textContent = ''; }
+
+  // Versement PER vers chaque enveloppe
+  const perPea1 = capitalNet * (pea1On ? pea1Part : 0);
+  const perPea2 = capitalNet * (pea2On ? pea2Part : 0);
+  const perCto  = capitalNet * (ctoOn  ? ctoPart  : 0);
+  const perAv   = capitalNet * (avOn   ? avPart   : 0);
+
+  // Simulation sur horizons
+  const horizons = [5, 10, 15];
+  const anneeBase = Math.max(annee1, annee2);
+
+  // Calcul par année pour chaque enveloppe
+  function simuler(horizon) {
+    let rows = [];
+    let capPea1 = pea1On ? pea1Cap : 0;
+    let capPea2 = pea2On ? pea2Cap : 0;
+    let capCto  = ctoOn  ? ctoCap  : 0;
+    let capLiv  = livOn  ? livCap  : 0;
+    let capAv   = avOn   ? avCap   : 0;
+
+    // Ajout du capital PER dès l'année de sortie
+    if (pea1On) capPea1 += perPea1;
+    if (pea2On) capPea2 += perPea2;
+    if (ctoOn)  capCto  += perCto;
+    if (avOn)   capAv   += perAv;
+
+    for (let i = 0; i < horizon; i++) {
+      const annee = anneeBase + i;
+      const pea1Debloque = annee >= (pea1Annee + 5);
+      const pea2Debloque = annee >= (pea2Annee + 5);
+
+      // Gains bruts
+      const gainPea1 = capPea1 * pea1Rdt;
+      const gainPea2 = capPea2 * pea2Rdt;
+      const gainCto  = capCto  * ctoRdt;
+      const gainLiv  = capLiv  * livRdt;
+      const gainAv   = capAv   * avRdt;
+
+      // Gains nets mensuels
+      const netPea1 = pea1On && pea1Debloque ? Math.round(gainPea1 * (1 - 0.172) / 12) : 0;
+      const netPea2 = pea2On && pea2Debloque ? Math.round(gainPea2 * (1 - 0.172) / 12) : 0;
+      const netCto  = ctoOn  ? Math.round(gainCto  * (1 - ctoFisc) / 12) : 0;
+      const netLiv  = livOn  ? Math.round(gainLiv  / 12) : 0;
+      const netAv   = avOn   ? Math.round(gainAv   * (1 - 0.172) / 12) : 0;
+      const total   = netPea1 + netPea2 + netCto + netLiv + netAv;
+      const ecart   = total - objectif;
+
+      rows.push({ annee, netPea1, netPea2, netCto, netLiv, netAv, total, ecart,
+                  pea1Debloque, pea2Debloque,
+                  capPea1: Math.round(capPea1),
+                  capPea2: Math.round(capPea2),
+                  capCto:  Math.round(capCto),
+                  capLiv:  Math.round(capLiv),
+                  capAv:   Math.round(capAv),
+                  capTotal: Math.round(capPea1 + capPea2 + capCto + capLiv + capAv) });
+
+      // Évolution capitals — PEA et AV capitalisent, CTO capitalise aussi (gains non retirés)
+      if (pea1On) {
+        capPea1 += gainPea1;
+        if (livOn && livTrans > 0 && capLiv > livTrans) { capPea1 += livTrans; capLiv -= livTrans; }
+      }
+      if (pea2On) capPea2 += gainPea2;
+      if (ctoOn)  capCto  += gainCto;  // CTO capitalise — gains disponibles mais non forcément retirés
+      if (avOn)   capAv   += gainAv;
+    }
+    return rows;
+  }
+
+  // Construction HTML résultat
+  const cols = [];
+  if (pea1On) cols.push('PEA principal');
+  if (pea2On) cols.push('PEA épouse');
+  if (ctoOn)  cols.push('CTO');
+  if (livOn)  cols.push('Livrets');
+  if (avOn)   cols.push('Assurance vie');
+
+  let html = `
+    <h3>Synthèse fiscale — sortie PER totale en ${anneeBase}</h3>
+    <table>
+      <tr><th>Élément</th><th>Sortie totale en 1 an (TMI 30%)</th><th>Sortie étalée à 11% (~${nbAns11} ans)</th></tr>
+      <tr><td>Capital brut PER</td><td>${totalPER.toLocaleString('fr-FR')} €</td><td>${totalPER.toLocaleString('fr-FR')} €</td></tr>
+      <tr><td>Impôt total</td><td style="color:#A32D2D;">${impTotal.toLocaleString('fr-FR')} €</td><td style="color:#3B6D11;">${impTotal11.toLocaleString('fr-FR')} €</td></tr>
+      <tr><td>Capital net placé</td><td style="color:#185FA5;">${capitalNet.toLocaleString('fr-FR')} €</td><td style="color:#3B6D11;">${capitalNet11.toLocaleString('fr-FR')} €</td></tr>
+      <tr><td>Marge annuelle à 11%</td><td colspan="2" style="color:#3B6D11;">${margeFoyer.toLocaleString('fr-FR')} €/an</td></tr>
+    </table>
+
+    <h3>Répartition du capital net entre enveloppes</h3>
+    <table>
+      <tr><th>Enveloppe</th><th>Capital PER versé</th><th>Capital total initial</th><th>Rendement</th><th>Fiscalité gains</th></tr>
+      ${pea1On ? `<tr><td>PEA principal</td><td>${Math.round(perPea1).toLocaleString('fr-FR')} €</td><td>${Math.round(pea1Cap+perPea1).toLocaleString('fr-FR')} €</td><td>${(pea1Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea1Annee+5}</td></tr>` : ''}
+      ${pea2On ? `<tr><td>PEA épouse</td><td>${Math.round(perPea2).toLocaleString('fr-FR')} €</td><td>${Math.round(pea2Cap+perPea2).toLocaleString('fr-FR')} €</td><td>${(pea2Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea2Annee+5}</td></tr>` : ''}
+      ${ctoOn  ? `<tr><td>CTO</td><td>${Math.round(perCto).toLocaleString('fr-FR')} €</td><td>${Math.round(ctoCap+perCto).toLocaleString('fr-FR')} €</td><td>${(ctoRdt*100).toFixed(1)}%</td><td>${ctoFisc===0.11?'Barème 11%':'PFU 30%'} — gains retirés/an</td></tr>` : ''}
+      ${livOn  ? `<tr><td>Livrets</td><td>0 €</td><td>${livCap.toLocaleString('fr-FR')} €</td><td>${(livRdt*100).toFixed(1)}%</td><td>Exonéré — transfert ${livTrans.toLocaleString('fr-FR')}€/an → PEA</td></tr>` : ''}
+      ${avOn   ? `<tr><td>Assurance vie</td><td>${Math.round(perAv).toLocaleString('fr-FR')} €</td><td>${Math.round(avCap+perAv).toLocaleString('fr-FR')} €</td><td>${(avRdt*100).toFixed(1)}%</td><td>PS 17,2% après 8 ans</td></tr>` : ''}
+    </table>
+  `;
+
+  // Tableaux par horizon
+  for (const h of horizons) {
+    const rows = simuler(h);
+    html += `<h3>Simulation sur ${h} ans (${anneeBase}–${anneeBase+h-1})</h3><table>
+      <tr>
+        <th>Année</th>
+        ${pea1On ? '<th>PEA principal</th>' : ''}
+        ${pea2On ? '<th>PEA épouse</th>' : ''}
+        ${ctoOn  ? '<th>CTO gains/mois</th>' : ''}
+        ${ctoOn  ? '<th>Capital CTO</th>' : ''}
+        ${livOn  ? '<th>Livrets</th>' : ''}
+        ${avOn   ? '<th>Assurance vie</th>' : ''}
+        <th>Total/mois</th>
+        <th>Objectif ${objectif} €</th>
+        <th>Capital total</th>
+      </tr>`;
+    for (const r of rows) {
+      const couleur = r.total >= objectif ? '#3B6D11' : r.total >= objectif*0.7 ? '#854F0B' : '#A32D2D';
+      const bg = r.total >= objectif ? 'background:#EAF3DE;' : '';
+      html += `<tr style="${bg}">
+        <td>${r.annee}</td>
+        ${pea1On ? `<td style="color:#185FA5;">${r.pea1Debloque ? r.netPea1+'€' : '<span style="color:#888;">🔒 cap.</span>'}</td>` : ''}
+        ${pea2On ? `<td style="color:#185FA5;">${r.pea2Debloque ? r.netPea2+'€' : '<span style="color:#888;">🔒 cap.</span>'}</td>` : ''}
+        ${ctoOn  ? `<td style="color:#854F0B;">${r.netCto} €</td>` : ''}
+        ${ctoOn  ? `<td style="color:#854F0B; font-size:11px;">${r.capCto.toLocaleString('fr-FR')} €</td>` : ''}
+        ${livOn  ? `<td style="color:#3B6D11;">${r.netLiv} €</td>` : ''}
+        ${avOn   ? `<td style="color:#185FA5;">${r.netAv} €</td>` : ''}
+        <td style="font-weight:500;color:${couleur};">${r.total} €</td>
+        <td style="color:${r.ecart>=0?'#3B6D11':'#A32D2D'};">${r.ecart>=0?'+':''}${r.ecart} €</td>
+        <td style="font-weight:500; font-size:11px;">${r.capTotal.toLocaleString('fr-FR')} €</td>
+      </tr>`;
+    }
+    html += `</table>`;
+  }
+
+  document.getElementById('resultat_strategie').innerHTML = html;
+}
+
+
+/* ---------------------- ABATTEMENT PENSIONS ---------------------- */
+function abattementPensions(p) {
+  if (p <= 0) return 0;
+  let a = p * 0.10;
+  const min = 442, max = 4321;
+  a = Math.max(a, min);
+  a = Math.min(a, max);
+  a = Math.min(a, p);
+  return a;
+}
+
+/* ---------------------- BARÈME DYNAMIQUE ---------------------- */
+function getBareme() {
+  const t1 = +document.getElementById('t1').value || 0;
+  const t2 = +document.getElementById('t2').value || 0;
+  const t3 = +document.getElementById('t3').value || 0;
+  const t4 = +document.getElementById('t4').value || 0;
+  const t5 = (+document.getElementById('t5').value || 45) / 100;
+
+  return [
+    { plafond: t1, taux: 0.00 },
+    { plafond: t2, taux: 0.11 },
+    { plafond: t3, taux: 0.30 },
+    { plafond: t4, taux: 0.41 },
+    { plafond: Infinity, taux: t5 }
+  ];
+}
+
+/* ---------------------- DÉCOTE DYNAMIQUE ---------------------- */
+function getDecoteParams() {
+  return {
+    seuilCelib: +document.getElementById('dec_seuil_celib').value || 0,
+    constCelib: +document.getElementById('dec_const_celib').value || 0,
+    seuilCouple: +document.getElementById('dec_seuil_couple').value || 0,
+    constCouple: +document.getElementById('dec_const_couple').value || 0,
+    coef: +document.getElementById('dec_coef').value || 0.4525
+  };
+}
+
+/* ---------------------- MUTUALISATION PER M3 CORRIGÉE ---------------------- */
+function mutualisationM3(v1, p1, v2, p2) {
+  const dedTotalePossible = Math.min(v1 + v2, p1 + p2);
+
+  if (dedTotalePossible <= 0) {
+    return { d1: 0, d2: 0, dedTotale: 0, trop1: Math.max(0, v1), trop2: Math.max(0, v2) };
+  }
+
+  const d1_non = Math.min(v1, p1);
+  const d2_non = Math.min(v2, p2);
+  const restePlaf1 = Math.max(0, p1 - d1_non);
+  const restePlaf2 = Math.max(0, p2 - d2_non);
+
+  let first = "d1";
+  if (restePlaf2 > restePlaf1) first = "d2";
+  else if (restePlaf2 === restePlaf1 && v2 > v1) first = "d2";
+
+  let d1 = 0, d2 = 0;
+  let reste = dedTotalePossible;
+
+  if (first === "d1") {
+    d1 = Math.min(v1, reste);
+    reste -= d1;
+    d2 = Math.min(v2, reste);
+  } else {
+    d2 = Math.min(v2, reste);
+    reste -= d2;
+    d1 = Math.min(v1, reste);
+  }
+
+  return {
+    d1, d2,
+    dedTotale: d1 + d2,
+    trop1: Math.max(0, v1 - d1),
+    trop2: Math.max(0, v2 - d2)
+  };
+}
+
+/* ---------------------- ANIMATION DÉCLARANT 2 ---------------------- */
+function toggleDeclarant2() {
+  const isCouple = document.getElementById('isCouple').checked;
+  const bloc = document.getElementById('blocD2');
+  if (isCouple) bloc.classList.add('visible');
+  else bloc.classList.remove('visible');
+}
+
+/* ---------------------- CALCUL PRINCIPAL ---------------------- */
+function calculer() {
+  toggleDeclarant2();
+
+  const isCouple = document.getElementById('isCouple').checked;
+  const mutualiser = document.getElementById('mutualiserPER').checked;
+
+  const pensions1    = +document.getElementById('pensions1').value    || 0;
+  const perImp1      = +document.getElementById('perImp1').value      || 0;
+  const plafondPER1  = +document.getElementById('plafondPER1').value  || 0;
+  const versementPER1= +document.getElementById('versementPER1').value|| 0;
+
+  const pensions2    = isCouple ? (+document.getElementById('pensions2').value    || 0) : 0;
+  const perImp2      = isCouple ? (+document.getElementById('perImp2').value      || 0) : 0;
+  const plafondPER2  = isCouple ? (+document.getElementById('plafondPER2').value  || 0) : 0;
+  const versementPER2= isCouple ? (+document.getElementById('versementPER2').value|| 0) : 0;
+
+  const parts   = +document.getElementById('parts').value   || (isCouple ? 2 : 1);
+  const don66   = +document.getElementById('don66').value   || 0;
+  const don75   = +document.getElementById('don75').value   || 0;
+  const credits = +document.getElementById('credits').value || 0;
+
+  const ab1 = abattementPensions(pensions1);
+  const ab2 = abattementPensions(pensions2);
+
+  const impPensions1 = pensions1 - ab1;
+  const impPensions2 = pensions2 - ab2;
+
+  const d1_non     = Math.min(versementPER1, plafondPER1);
+  const d2_non     = Math.min(versementPER2, plafondPER2);
+  const total_non  = d1_non + d2_non;
+  const trop1_non  = Math.max(0, versementPER1 - d1_non);
+  const trop2_non  = Math.max(0, versementPER2 - d2_non);
+
+  let d1 = d1_non, d2 = d2_non, totalDed = total_non;
+  let trop1 = trop1_non, trop2 = trop2_non;
+  let gainMut = 0;
+
+  if (mutualiser && isCouple) {
+    const res = mutualisationM3(versementPER1, plafondPER1, versementPER2, plafondPER2);
+    d1 = res.d1; d2 = res.d2;
+    totalDed = res.dedTotale;
+    trop1 = res.trop1; trop2 = res.trop2;
+    gainMut = totalDed - total_non;
+  }
+
+  let revenu = arr(impPensions1 + impPensions2 + perImp1 + perImp2 - d1 - d2);
+  let quotient = arr(revenu / parts);
+
+  const bareme = getBareme();
+  let impPart = 0, bas = 0, details = [];
+
+  for (let i = 0; i < bareme.length; i++) {
+    const { plafond, taux } = bareme[i];
+    if (quotient > bas) {
+      const tranche = Math.min(quotient, plafond) - bas;
+      const impT = tranche * taux;
+      details.push({ taux: taux * 100, montant: impT });
+      impPart += impT;
+      bas = plafond;
+    }
+  }
+
+  let impBrut = arr(impPart * parts);
+
+  const decParams = getDecoteParams();
+  let decote = 0;
+  if (!isCouple) {
+    if (impBrut < decParams.seuilCelib) decote = decParams.constCelib - decParams.coef * impBrut;
+  } else {
+    if (impBrut < decParams.seuilCouple) decote = decParams.constCouple - decParams.coef * impBrut;
+  }
+  if (decote < 0) decote = 0;
+  decote = arr(decote);
+
+  const reduc66 = don66 * 0.66;
+  const reduc75 = don75 * 0.75;
+  let totalRed = arr(reduc66 + reduc75);
+
+  let impNet = impBrut - decote - totalRed - credits;
+  if (impNet < 0) impNet = 0;
+  impNet = arr(impNet);
+
+  // TMI : taux de la dernière tranche atteinte par le quotient
+  let tmi = 0;
+  for (let i = 0; i < bareme.length; i++) {
+    if (quotient > (i === 0 ? 0 : bareme[i-1].plafond)) tmi = bareme[i].taux * 100;
+  }
+
+  // Taux moyen effectif : impôt net / revenu imposable
+  const tauxMoyen = revenu > 0 ? (impNet / revenu * 100) : 0;
+
+  // Marge disponible avant tranche 30%
+  const seuil30 = bareme[1].plafond;
+  const margeQuotient = Math.max(0, seuil30 - quotient);
+  const margePER = Math.round(margeQuotient * parts);
+
+  // Versement PER pour ramener l'impôt à zéro
+  // On cherche par dichotomie le versement qui annule l'impôt net
+  const decParams2 = getDecoteParams();
+  function calcImpotNet(versementSupp) {
+    const revenuTest = arr(impPensions1 + impPensions2 + perImp1 + perImp2 - d1 - d2 - versementSupp);
+    if (revenuTest <= 0) return 0;
+    const quotientTest = arr(revenuTest / parts);
+    let impPartTest = 0, basTest = 0;
+    for (let i = 0; i < bareme.length; i++) {
+      const { plafond, taux } = bareme[i];
+      if (quotientTest > basTest) {
+        impPartTest += (Math.min(quotientTest, plafond) - basTest) * taux;
+        basTest = plafond;
+      }
+    }
+    let impBrutTest = arr(impPartTest * parts);
+    let decoteTest = 0;
+    if (!isCouple) {
+      if (impBrutTest < decParams2.seuilCelib) decoteTest = decParams2.constCelib - decParams2.coef * impBrutTest;
+    } else {
+      if (impBrutTest < decParams2.seuilCouple) decoteTest = decParams2.constCouple - decParams2.coef * impBrutTest;
+    }
+    if (decoteTest < 0) decoteTest = 0;
+    let impNetTest = impBrutTest - arr(decoteTest) - totalRed - credits;
+    return Math.max(0, impNetTest);
+  }
+
+  // Dichotomie pour trouver le versement optimal
+  let versNonImp = 0;
+  if (impNet > 0) {
+    let lo = 0, hi = revenu;
+    for (let iter = 0; iter < 50; iter++) {
+      const mid = Math.round((lo + hi) / 2);
+      if (calcImpotNet(mid) <= 0) hi = mid;
+      else lo = mid + 1;
+    }
+    versNonImp = hi;
+  }
+
+  let html = `
+    <h2>Résumé du foyer</h2>
+    <strong>Couple :</strong> ${isCouple ? 'Oui (2 déclarants)' : 'Non (1 seul déclarant)'}<br>
+    <strong>Parts :</strong> ${parts}<br>
+    <strong>Revenu imposable :</strong> ${revenu.toFixed(0)} €<br>
+    <strong>Quotient familial :</strong> ${quotient.toFixed(0)} €<br><br>
+
+    <h3>Déclarant 1</h3>
+    Pensions : ${pensions1.toFixed(2)} €<br>
+    Abattement 10 % : ${ab1.toFixed(2)} €<br>
+    Pensions imposables : ${impPensions1.toFixed(2)} €<br>
+    Retraits PER imposables : ${perImp1.toFixed(2)} €<br>
+    Versement PER : ${versementPER1.toFixed(2)} €<br>
+    Plafond PER : ${plafondPER1.toFixed(2)} €<br>
+    Déduction PER retenue : ${d1.toFixed(2)} €<br>
+    Montant PER non optimisé : ${trop1.toFixed(2)} €<br><br>
+  `;
+
+  if (isCouple) {
+    html += `
+      <h3>Déclarant 2</h3>
+      Pensions : ${pensions2.toFixed(2)} €<br>
+      Abattement 10 % : ${ab2.toFixed(2)} €<br>
+      Pensions imposables : ${impPensions2.toFixed(2)} €<br>
+      Retraits PER imposables : ${perImp2.toFixed(2)} €<br>
+      Versement PER : ${versementPER2.toFixed(2)} €<br>
+      Plafond PER : ${plafondPER2.toFixed(2)} €<br>
+      Déduction PER retenue : ${d2.toFixed(2)} €<br>
+      Montant PER non optimisé : ${trop2.toFixed(2)} €<br><br>
+    `;
+  }
+
+  html += `
+    <h3>PER – Synthèse foyer</h3>
+    Déduction PER totale retenue : ${totalDed.toFixed(2)} €<br>
+    Montant PER total non optimisé : ${(trop1 + trop2).toFixed(2)} €<br>
+  `;
+
+  if (mutualiser && isCouple) {
+    html += `
+      <br><strong>Référence sans mutualisation :</strong><br>
+      Déduction PER totale sans mutualisation : ${total_non.toFixed(2)} €<br>
+      Montant PER non optimisé sans mutualisation : ${(trop1_non + trop2_non).toFixed(2)} €<br>
+      Gain de mutualisation (déduction en plus) : ${gainMut.toFixed(2)} €<br>
+    `;
+  }
+
+  if (trop1 + trop2 > 0) {
+    html += `
+      <div class="alert">
+        ⚠️ Une partie de vos versements PER n'est pas déductible fiscalement.<br>
+        Montant non optimisé : ${(trop1 + trop2).toFixed(2)} €.
+      </div>
+    `;
+  }
+
+  html += `<h3>Détail par tranche (par part)</h3>`;
+  details.forEach(d => {
+    html += `<div class="tranche">Taux ${d.taux}% → ${d.montant.toFixed(2)} €</div>`;
+  });
+
+  html += `
+    <br><strong>Impôt brut :</strong> ${impBrut.toFixed(0)} €<br>
+    <strong>Décote :</strong> ${decote.toFixed(0)} €<br>
+    <strong>Réduction dons 66 % :</strong> ${reduc66.toFixed(2)} €<br>
+    <strong>Réduction dons 75 % :</strong> ${reduc75.toFixed(2)} €<br>
+    <strong>Total réductions :</strong> ${totalRed.toFixed(0)} €<br>
+    <strong>Crédits d'impôt :</strong> ${credits.toFixed(2)} €<br>
+    <hr>
+    <strong>Impôt net à payer :</strong> ${impNet.toFixed(0)} €<br>
+    <hr>
+    <strong>Taux marginal d'imposition (TMI) :</strong> ${tmi.toFixed(0)} %<br>
+    <span class="small">Taux appliqué au dernier euro de revenu — détermine l'intérêt d'une déduction PER ou d'une sortie PER.</span><br><br>
+    <strong>Taux moyen effectif :</strong> ${tauxMoyen.toFixed(1)} %<br>
+    <span class="small">Impôt net ÷ revenu imposable — ce que vous payez réellement en proportion de vos revenus.</span><br><br>
+    <strong style="color:#006600;">Marge de sortie PER avant tranche 30% :</strong> <span style="color:#006600; font-size:1.1em;">${margePER.toLocaleString('fr-FR')} €</span><br>
+    <span class="small">Montant maximum que vous pouvez sortir de votre PER cette année sans dépasser la tranche à 11%.</span><br><br>
+    ${impNet > 0 ? `
+    <strong style="color:#6600AA;">Versement PER pour devenir non imposable :</strong> <span style="color:#6600AA; font-size:1.1em;">${versNonImp.toLocaleString('fr-FR')} €</span><br>
+    <span class="small">En versant ce montant sur votre PER cette année, votre impôt net serait ramené à 0 €.<br>
+    ⚠️ Si vous avez cumulé des plafonds PER non utilisés les années précédentes, votre plafond réel peut être supérieur à celui calculé automatiquement — vérifiez le montant exact sur votre avis d'imposition (page 2, case "Plafond épargne retraite").</span>
+    ` : `
+    <strong style="color:#6600AA;">Vous êtes déjà non imposable</strong> avec vos versements actuels.<br>
+    `}
+  `;
+
+  document.getElementById('resultat').innerHTML = html;
+  calculerPlafondPER();
+}
+
+/* ---------------------- CALCUL PLAFOND PER ---------------------- */
+function calculerPlafondPER() {
+  const pass      = +document.getElementById('pass').value || 47100;
+  const pensions1 = +document.getElementById('pensions1').value || 0;
+  const pensions2 = +document.getElementById('pensions2').value || 0;
+  const isCouple  = document.getElementById('isCouple').checked;
+
+  const plancher  = Math.round(pass * 0.10);
+  const plafondMax = Math.round(pass * 8 * 0.10);
+
+  function plafondDeclarant(revenu) {
+    const calc = Math.round(revenu * 0.10);
+    return Math.min(Math.max(calc, plancher), plafondMax);
+  }
+
+  const report1 = +document.getElementById('report_per1').value || 0;
+  const report2 = +document.getElementById('report_per2').value || 0;
+
+  const p1 = plafondDeclarant(pensions1) + report1;
+  const p2 = isCouple ? plafondDeclarant(pensions2) + report2 : 0;
+  const total = p1 + p2;
+
+  // Pré-remplir automatiquement les champs Plafond PER dans l'onglet Simulation
+  const champ1 = document.getElementById('plafondPER1');
+  const champ2 = document.getElementById('plafondPER2');
+  if (champ1) champ1.value = p1;
+  if (champ2 && isCouple) champ2.value = p2;
+
+  // Affichage dans l'onglet Paramètres
+  const el = document.getElementById('resultat_plafond_per');
+  if (el) {
+    el.innerHTML = `
+      <table style="font-size:13px; border-collapse:collapse; width:100%;">
+        <tr style="border-bottom:0.5px solid #ccc;">
+          <th style="text-align:left;padding:4px 8px;">Déclarant</th>
+          <th style="text-align:left;padding:4px 8px;">Plafond année en cours</th>
+          <th style="text-align:left;padding:4px 8px;">Report cumulé N-1/N-2/N-3</th>
+          <th style="text-align:left;padding:4px 8px;color:#00008B;">Plafond total disponible</th>
+        </tr>
+        <tr style="border-bottom:0.5px solid #eee;">
+          <td style="padding:4px 8px;">Déclarant 1</td>
+          <td style="padding:4px 8px;">${plafondDeclarant(pensions1).toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#854F0B;">${report1.toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#00008B;font-weight:500;">${p1.toLocaleString('fr-FR')} €</td>
+        </tr>
+        ${isCouple ? `
+        <tr style="border-bottom:0.5px solid #eee;">
+          <td style="padding:4px 8px;">Déclarant 2</td>
+          <td style="padding:4px 8px;">${plafondDeclarant(pensions2).toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#854F0B;">${report2.toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#00008B;font-weight:500;">${p2.toLocaleString('fr-FR')} €</td>
+        </tr>` : ''}
+        <tr style="background:#f0f4ff;">
+          <td style="padding:4px 8px;font-weight:500;">Total foyer</td>
+          <td style="padding:4px 8px;">${(plafondDeclarant(pensions1)+(isCouple?plafondDeclarant(pensions2):0)).toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#854F0B;">${(report1+(isCouple?report2:0)).toLocaleString('fr-FR')} €</td>
+          <td style="padding:4px 8px;color:#00008B;font-weight:bold;">${total.toLocaleString('fr-FR')} €</td>
+        </tr>
+      </table>
+      <div style="font-size:11px;color:#555;margin-top:6px;">
+        Plafond total pré-rempli automatiquement dans l'onglet Simulation.<br>
+        Le montant exact des reports figure sur votre avis d'imposition (page 2, case "Plafond épargne retraite disponible").
+      </div>
+    `;
+  }
+}
+
+document.getElementById('isCouple').addEventListener('change', calculer);
+document.getElementById('mutualiserPER').addEventListener('change', calculer);
+document.getElementById('pensions1').addEventListener('change', calculerPlafondPER);
+document.getElementById('pensions2').addEventListener('change', calculerPlafondPER);
+document.getElementById('pass').addEventListener('input', calculerPlafondPER);
+
+toggleDeclarant2();
+calculer();
+calculerPlafondPER();
+
+</script>
+
+</body>
+</html>
