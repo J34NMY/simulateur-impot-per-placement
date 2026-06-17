@@ -17,7 +17,7 @@ L'auteur décline toute responsabilité en cas d'erreur de calcul ou d'utilisati
 
 ### Onglet 1 — Simulation fiscale
 - Calcul de l'impôt sur le revenu du foyer (1 ou 2 déclarants)
-- Prise en compte des pensions, retraits PER imposables, versements PER, dons, crédits d'impôt
+- Prise en compte des pensions, retraits PER imposables, versements PER déductible, dons, crédits d'impôt
 - Abattement 10% sur pensions (plancher et plafond automatiques)
 - Mutualisation des plafonds PER entre conjoints (mode M3)
 - Décote automatique (célibataire ou couple)
@@ -35,7 +35,7 @@ L'auteur décline toute responsabilité en cas d'erreur de calcul ou d'utilisati
 - Transfert annuel automatique livrets → PEA configurable
 - Simulation sur **5 ans, 10 ans et 15 ans**
 - Affichage des gains nets mensuels par enveloppe et du total
-- **Capital CTO en évolution** année par année
+- **Capital CTO (Compte titre ordinaire) en évolution** année par année
 - **Capital total patrimoine** en évolution
 - PEA affiché 🔒 jusqu'à la date de déblocage (5 ans après ouverture)
 - Synthèse fiscale : sortie totale vs sortie étalée à 11%
