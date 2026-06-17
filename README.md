@@ -17,7 +17,7 @@ L'auteur décline toute responsabilité en cas d'erreur de calcul ou d'utilisati
 
 ### Onglet 1 — Simulation fiscale
 - Calcul de l'impôt sur le revenu du foyer (1 ou 2 déclarants)
-- Prise en compte des pensions, retraits PER imposables, versements PER, dons, crédits d'impôt
+- Prise en compte des pensions, retraits PER imposables, versements PER déductible, dons, crédits d'impôt
 - Abattement 10% sur pensions (plancher et plafond automatiques)
 - Mutualisation des plafonds PER entre conjoints (mode M3)
 - Décote automatique (célibataire ou couple)
@@ -35,7 +35,7 @@ L'auteur décline toute responsabilité en cas d'erreur de calcul ou d'utilisati
 - Transfert annuel automatique livrets → PEA configurable
 - Simulation sur **5 ans, 10 ans et 15 ans**
 - Affichage des gains nets mensuels par enveloppe et du total
-- **Capital CTO en évolution** année par année
+- **Capital CTO (Compte titre ordinaire) en évolution** année par année
 - **Capital total patrimoine** en évolution
 - PEA affiché 🔒 jusqu'à la date de déblocage (5 ans après ouverture)
 - Synthèse fiscale : sortie totale vs sortie étalée à 11%
@@ -61,7 +61,7 @@ L'auteur décline toute responsabilité en cas d'erreur de calcul ou d'utilisati
 Aucun. Le fichier fonctionne directement dans tout navigateur moderne (Chrome, Firefox, Edge, Safari).
 
 ### Démarrage rapide
-1. Télécharger le fichier `simulateur_impot_PER_et_placement_V1.5.html`
+1. Télécharger le fichier `simulateur_impot_PER_et_placement_V1.5.1.html`
 2. Ouvrir dans votre navigateur (double-clic ou glisser-déposer)
 3. Aller dans l'onglet **Paramètres annuels** → vérifier que le barème correspond à l'année en cours
 4. Saisir le PASS de l'année N-1
@@ -99,6 +99,12 @@ Aucun. Le fichier fonctionne directement dans tout navigateur moderne (Chrome, F
 ---
 
 ## Historique des versions
+
+### V1.5.1 — Juin 2026
+- Ajout footer disclaimer permanent visible sur tous les onglets
+- Précision sur le bon usage (réflexion personnelle, pas un conseil MIF2)
+- Mention explicite de la co-création avec Claude (Anthropic) et de la validation utilisateur
+- Lien vers le dépôt GitHub et rappel de la licence MIT en pied de page
 
 ### V1.5 — Juin 2026
 - Ajout onglet **Stratégie PER** avec simulation 5/10/15 ans
@@ -140,10 +146,12 @@ Aucun. Le fichier fonctionne directement dans tout navigateur moderne (Chrome, F
 ## Structure du projet
 
 ```
-simulateur-per/
-├── simulateur_impot_PER_et_placement_V1.5.html   # Fichier principal
-├── LICENSE                                         # Licence MIT
-└── README.md                                       # Ce fichier
+simulateur-impot-per-placement/
+├── simulateur_impot_PER_et_placement_V1.5.1.html   # Fichier principal
+├── README.md                                         # Ce fichier
+├── CHANGELOG.md                                      # Historique détaillé des versions
+├── LICENSE                                           # Licence MIT
+└── GUIDE_GITHUB.md                                   # Guide de publication et mise à jour
 ```
 
 ---

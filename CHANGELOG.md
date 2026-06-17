@@ -6,6 +6,20 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ---
 
+## [1.5.1] — 2026-06-10
+
+### Ajouté
+- Footer disclaimer permanent visible en bas de page sur tous les onglets
+- Bloc "Avertissement" avec lien vers le simulateur officiel DGFiP
+- Bloc "Bon usage" précisant les cas d'utilisation légitimes (réflexion, préparation entretien, compréhension des mécanismes) et la non-application au conseil en investissement (MIF2)
+- Bloc "Co-création" mentionnant explicitement la collaboration avec Claude (Anthropic) et la validation systématique par l'utilisateur
+- Lien vers le dépôt GitHub et rappel de la licence MIT en pied de page
+
+### Renommé
+- `simulateur_impot_PER_et_placement_V1.5.html` → `simulateur_impot_PER_et_placement_V1.5.1.html`
+
+---
+
 ## [1.5] — 2026-06-10
 
 ### Ajouté

@@ -118,7 +118,7 @@ Pour que le simulateur soit accessible directement dans un navigateur via une UR
 5. Cliquer **Save**
 
 Le simulateur sera accessible à l'adresse :
-`https://j34nmy.github.io/simulateur-impot-per-placement/simulateur_impot_PER_et_placement_V1.5.html`
+`https://j34nmy.github.io/simulateur-impot-per-placement/simulateur_impot_PER_et_placement_V1.5.1.html`
 
 ---
 
@@ -142,7 +142,7 @@ git push
 
 ```
 simulateur-impot-per-placement/
-├── simulateur_impot_PER_et_placement_V1.5.html
+├── simulateur_impot_PER_et_placement_V1.5.1.html
 ├── README.md
 ├── CHANGELOG.md
 ├── LICENSE
