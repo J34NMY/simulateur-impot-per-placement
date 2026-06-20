@@ -61,6 +61,7 @@ input { padding: 3px; width: 180px; }
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('simu')">Simulation</button>
   <button class="tab-btn" onclick="showTab('strategie')">Stratégie PER</button>
+  <button class="tab-btn" onclick="showTab('comparateurs')">Comparateurs</button>
   <button class="tab-btn" onclick="showTab('params')">Paramètres annuels</button>
   <button class="tab-btn" onclick="showTab('sources')">Sources &amp; historique</button>
 </div>
@@ -95,6 +96,20 @@ input { padding: 3px; width: 180px; }
     <div class="section col">
       <h2>Déclarant 1</h2>
 
+      <label>Salaires (€)
+        <input type="number" id="salaires1" value="0" oninput="calculer()">
+      </label>
+      <label style="margin-top:4px;">
+        <input type="checkbox" id="fraisReels1_on" onchange="toggleFraisReels(1)">
+        Frais réels à la place de l'abattement 10%
+      </label>
+      <div id="blocFraisReels1" style="display:none;">
+        <label>Frais réels déclarant 1 (€)
+          <input type="number" id="fraisReels1" value="0" oninput="calculer()">
+        </label>
+      </div>
+      <div class="small" id="abattSalaires1"></div>
+
       <label>Pensions (€)
         <input type="number" id="pensions1" value="0">
       </label>
@@ -115,6 +130,20 @@ input { padding: 3px; width: 180px; }
     <!-- DÉCLARANT 2 -->
     <div class="section col" id="blocD2">
       <h2>Déclarant 2</h2>
+
+      <label>Salaires (€)
+        <input type="number" id="salaires2" value="0" oninput="calculer()">
+      </label>
+      <label style="margin-top:4px;">
+        <input type="checkbox" id="fraisReels2_on" onchange="toggleFraisReels(2)">
+        Frais réels à la place de l'abattement 10%
+      </label>
+      <div id="blocFraisReels2" style="display:none;">
+        <label>Frais réels déclarant 2 (€)
+          <input type="number" id="fraisReels2" value="0" oninput="calculer()">
+        </label>
+      </div>
+      <div class="small" id="abattSalaires2"></div>
 
       <label>Pensions (€)
         <input type="number" id="pensions2" value="0">
@@ -186,8 +215,18 @@ input { padding: 3px; width: 180px; }
       </div>
     </div>
     <label>Objectif mensuel à compenser (€)
-      <input type="number" id="s_objectif" value="861">
+      <input type="number" id="s_objectif" value="0">
     </label>
+    <label>Année de début de simulation
+      <input type="number" id="s_annee_debut" value="2026">
+    </label>
+    <label>Mode de sortie du PER pour la simulation des enveloppes
+      <select id="s_mode_sortie" style="padding:3px;width:260px;">
+        <option value="etale">Sortie étalée à 11% (réaliste)</option>
+        <option value="oneshot">Sortie totale en 1 an (TMI 30%, comparaison)</option>
+      </select>
+    </label>
+    <div class="small">Le mode étalé verse le capital net progressivement chaque année selon la marge à 11%. Le mode one-shot verse tout dès la première année, à titre de comparaison de l'impact fiscal.</div>
   </div>
 
   <!-- ENVELOPPES ACTIVABLES -->
@@ -196,19 +235,21 @@ input { padding: 3px; width: 180px; }
     <div class="row">
 
       <div class="col">
-        <label><input type="checkbox" id="s_pea1_on" checked> PEA principal</label>
-        <label>Capital actuel PEA (€) <input type="number" id="s_pea1_cap" value="5400"></label>
-        <label>Date ouverture PEA (année) <input type="number" id="s_pea1_annee" value="2026"></label>
-        <label>Rendement PEA (%) <input type="number" id="s_pea1_rdt" value="7" step="0.5"></label>
-        <label>Part du PER vers PEA (%) <input type="number" id="s_pea1_part" value="40" step="5"></label>
+        <label><input type="checkbox" id="s_pea1_on" checked> PEA 1</label>
+        <label>Capital actuel PEA 1 (€) <input type="number" id="s_pea1_cap" value="5400"></label>
+        <label>Date ouverture PEA 1 — année <input type="number" id="s_pea1_annee" value="2026"></label>
+        <label>Date ouverture PEA 1 — mois (1-12) <input type="number" id="s_pea1_mois" value="1" min="1" max="12"></label>
+        <label>Rendement PEA 1 (%) <input type="number" id="s_pea1_rdt" value="7" step="0.5"></label>
+        <label>Part du PER vers PEA 1 (%) <input type="number" id="s_pea1_part" value="40" step="5"></label>
       </div>
 
       <div class="col">
-        <label><input type="checkbox" id="s_pea2_on" checked> PEA épouse</label>
-        <label>Capital actuel PEA épouse (€) <input type="number" id="s_pea2_cap" value="1000"></label>
-        <label>Date ouverture PEA épouse (année) <input type="number" id="s_pea2_annee" value="2026"></label>
-        <label>Rendement PEA épouse (%) <input type="number" id="s_pea2_rdt" value="7" step="0.5"></label>
-        <label>Part du PER vers PEA épouse (%) <input type="number" id="s_pea2_part" value="10" step="5"></label>
+        <label><input type="checkbox" id="s_pea2_on" checked> PEA 2</label>
+        <label>Capital actuel PEA 2 (€) <input type="number" id="s_pea2_cap" value="1000"></label>
+        <label>Date ouverture PEA 2 — année <input type="number" id="s_pea2_annee" value="2026"></label>
+        <label>Date ouverture PEA 2 — mois (1-12) <input type="number" id="s_pea2_mois" value="7" min="1" max="12"></label>
+        <label>Rendement PEA 2 (%) <input type="number" id="s_pea2_rdt" value="7" step="0.5"></label>
+        <label>Part du PER vers PEA 2 (%) <input type="number" id="s_pea2_part" value="10" step="5"></label>
       </div>
 
       <div class="col">
@@ -222,20 +263,6 @@ input { padding: 3px; width: 180px; }
         </select></label>
       </div>
 
-      <div class="col">
-        <label><input type="checkbox" id="s_livret_on" checked> Livrets</label>
-        <label>Capital livrets (€) <input type="number" id="s_livret_cap" value="60900"></label>
-        <label>Taux livrets (%) <input type="number" id="s_livret_rdt" value="1.7" step="0.1"></label>
-        <label>Transfert annuel livrets → PEA (€) <input type="number" id="s_livret_transfert" value="3000"></label>
-      </div>
-
-      <div class="col">
-        <label><input type="checkbox" id="s_av_on"> Assurance vie</label>
-        <label>Capital AV (€) <input type="number" id="s_av_cap" value="0"></label>
-        <label>Rendement AV (%) <input type="number" id="s_av_rdt" value="3.5" step="0.5"></label>
-        <label>Part du PER vers AV (%) <input type="number" id="s_av_part" value="0" step="5"></label>
-      </div>
-
     </div>
     <div class="small" style="margin-top:8px; color:#b30000;" id="s_warn_parts"></div>
   </div>
@@ -243,6 +270,59 @@ input { padding: 3px; width: 180px; }
   <button onclick="calculerStrategie()">Calculer la stratégie</button>
 
   <div class="result" id="resultat_strategie"></div>
+
+</div>
+
+<!-- ONGLET COMPARATEURS -->
+<div id="tab-comparateurs" class="tab">
+
+  <h2>Comparateurs stratégiques</h2>
+  <div class="small">Ces deux outils répondent aux deux grandes questions sur la sortie du PER : faut-il sortir en rente ou en capital, et le PER vaut-il mieux qu'un placement direct ?</div>
+
+  <!-- COMPARATEUR RENTE VS CAPITAL -->
+  <div class="section">
+    <h3>1. Rente viagère vs capital placé</h3>
+    <div class="small">Renseignez la rente proposée par votre assureur pour comparer son rendement implicite à vos enveloppes de placement.</div>
+    <div class="row">
+      <div class="col">
+        <label><input type="checkbox" id="s_rente_on"> Activer ce comparateur</label>
+        <label>Capital concerné par la rente (€) <input type="number" id="s_rente_capital" value="50000"></label>
+        <label>Rente annuelle proposée (€/an) <input type="number" id="s_rente_montant" value="2345"></label>
+      </div>
+      <div class="col">
+        <label>Âge du titulaire de la rente <input type="number" id="s_rente_age" value="61"></label>
+        <label>Espérance de vie estimée (ans restants) <input type="number" id="s_rente_esperance" value="27"></label>
+        <label>Rendement de référence pour comparaison (%) <input type="number" id="s_rente_rdt_ref" value="6" step="0.5"></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARATEUR PER VS PEA DIRECT -->
+  <div class="section">
+    <h3>2. PER vs placement direct (PEA/CTO)</h3>
+    <div class="small">Compare le versement sur PER (avec déduction fiscale) à un placement direct du même effort d'épargne, sans PER.</div>
+    <div class="row">
+      <div class="col">
+        <label><input type="checkbox" id="c_perpea_on"> Activer ce comparateur</label>
+        <label>Versement annuel envisagé (€) <input type="number" id="c_perpea_versement" value="4000"></label>
+        <label>TMI à l'entrée (%) <input type="number" id="c_perpea_tmi_entree" value="11" step="0.5"></label>
+        <label>TMI à la sortie (%) <input type="number" id="c_perpea_tmi_sortie" value="11" step="0.5"></label>
+      </div>
+      <div class="col">
+        <label>Durée de détention avant sortie (ans) <input type="number" id="c_perpea_duree" value="5"></label>
+        <label>Rendement annuel du placement (%) <input type="number" id="c_perpea_rdt" value="7" step="0.5"></label>
+        <label>Fiscalité de sortie alternative (PEA) <select id="c_perpea_fisc_alt" style="padding:3px;width:184px;">
+          <option value="0.172">PEA — PS 17,2% (après 5 ans)</option>
+          <option value="0.30">CTO — PFU 30%</option>
+          <option value="0.11">CTO — Barème 11%</option>
+        </select></label>
+      </div>
+    </div>
+  </div>
+
+  <button onclick="calculerComparateurs()">Calculer les comparateurs</button>
+
+  <div class="result" id="resultat_comparateurs"></div>
 
 </div>
 
@@ -414,7 +494,7 @@ function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  const labels = { simu: 'simulation', strategie: 'strat', params: 'param', sources: 'sources' };
+  const labels = { simu: 'simulation', strategie: 'strat', comparateurs: 'compara', params: 'param', sources: 'sources' };
   const btn = Array.from(document.querySelectorAll('.tab-btn'))
     .find(b => b.textContent.toLowerCase().includes(labels[name]));
   if (btn) btn.classList.add('active');
@@ -461,16 +541,18 @@ function calculerStrategie() {
   const pea1On  = document.getElementById('s_pea1_on').checked;
   const pea2On  = document.getElementById('s_pea2_on').checked;
   const ctoOn   = document.getElementById('s_cto_on').checked;
-  const livOn   = document.getElementById('s_livret_on').checked;
-  const avOn    = document.getElementById('s_av_on').checked;
+  const livOn   = false;
+  const avOn    = false;
 
   const pea1Cap   = +document.getElementById('s_pea1_cap').value || 0;
   const pea1Annee = +document.getElementById('s_pea1_annee').value || 2026;
+  const pea1Mois  = +document.getElementById('s_pea1_mois').value || 1;
   const pea1Rdt   = (+document.getElementById('s_pea1_rdt').value || 7) / 100;
   const pea1Part  = (+document.getElementById('s_pea1_part').value || 0) / 100;
 
   const pea2Cap   = +document.getElementById('s_pea2_cap').value || 0;
   const pea2Annee = +document.getElementById('s_pea2_annee').value || 2026;
+  const pea2Mois  = +document.getElementById('s_pea2_mois').value || 1;
   const pea2Rdt   = (+document.getElementById('s_pea2_rdt').value || 7) / 100;
   const pea2Part  = (+document.getElementById('s_pea2_part').value || 0) / 100;
 
@@ -479,13 +561,12 @@ function calculerStrategie() {
   const ctoPart   = (+document.getElementById('s_cto_part').value || 0) / 100;
   const ctoFisc   = +document.getElementById('s_cto_fisc').value || 0.30;
 
-  const livCap    = +document.getElementById('s_livret_cap').value || 0;
-  const livRdt    = (+document.getElementById('s_livret_rdt').value || 1.7) / 100;
-  const livTrans  = +document.getElementById('s_livret_transfert').value || 0;
-
-  const avCap     = +document.getElementById('s_av_cap').value || 0;
-  const avRdt     = (+document.getElementById('s_av_rdt').value || 3.5) / 100;
-  const avPart    = (+document.getElementById('s_av_part').value || 0) / 100;
+  const livCap    = 0;
+  const livRdt    = 0;
+  const livTrans  = 0;
+  const avCap     = 0;
+  const avRdt     = 0;
+  const avPart    = 0;
 
   // Vérification parts
   const totalParts = (pea1On?pea1Part:0)+(pea2On?pea2Part:0)+(ctoOn?ctoPart:0)+(avOn?avPart:0);
@@ -494,15 +575,34 @@ function calculerStrategie() {
     warnEl.textContent = `⚠️ La somme des parts PER = ${Math.round(totalParts*100)}% (doit être 100%)`;
   } else { warnEl.textContent = ''; }
 
-  // Versement PER vers chaque enveloppe
-  const perPea1 = capitalNet * (pea1On ? pea1Part : 0);
-  const perPea2 = capitalNet * (pea2On ? pea2Part : 0);
-  const perCto  = capitalNet * (ctoOn  ? ctoPart  : 0);
-  const perAv   = capitalNet * (avOn   ? avPart   : 0);
+  // Mode de sortie choisi
+  const modeSortie = document.getElementById('s_mode_sortie').value;
+
+  // Capital net de référence cohérent avec le mode choisi : 
+  // - mode étalé -> capitalNet11 (100% à 11%, puisque tout sort dans la marge année après année)
+  // - mode one-shot -> capitalNet (mix 11%/30%, calculé sur une sortie en une seule année)
+  const capitalNetRef = modeSortie === 'etale' ? capitalNet11 : capitalNet;
+
+  // Versement PER total cible vers chaque enveloppe, cohérent avec le mode choisi
+  const perPea1 = capitalNetRef * (pea1On ? pea1Part : 0);
+  const perPea2 = capitalNetRef * (pea2On ? pea2Part : 0);
+  const perCto  = capitalNetRef * (ctoOn  ? ctoPart  : 0);
+  const perAv   = capitalNetRef * (avOn   ? avPart   : 0);
+
+  // Versement annuel net en mode étalé (marge à 11%, nette d'impôt à 11%)
+  const versementAnnuelBrutEtale = Math.min(margeFoyer, totalPER);
+  const versementAnnuelNetEtale = versementAnnuelBrutEtale * (1 - 0.11);
+  const nbAnneesEtalement = margeFoyer > 0 ? Math.ceil(totalPER / margeFoyer) : 1;
 
   // Simulation sur horizons
   const horizons = [5, 10, 15];
-  const anneeBase = Math.max(annee1, annee2);
+  const anneeBase = +document.getElementById('s_annee_debut').value || Math.max(annee1, annee2);
+
+  // Calcul de la date de déblocage (année + mois) -> on considère le PEA débloqué
+  // dès que l'année simulée atteint ou dépasse l'année de déblocage (le mois affine
+  // seulement la précision sur l'année de transition elle-même)
+  const pea1DeblocageAnnee = pea1Annee + 5;
+  const pea2DeblocageAnnee = pea2Annee + 5;
 
   // Calcul par année pour chaque enveloppe
   function simuler(horizon) {
@@ -513,50 +613,97 @@ function calculerStrategie() {
     let capLiv  = livOn  ? livCap  : 0;
     let capAv   = avOn   ? avCap   : 0;
 
-    // Ajout du capital PER dès l'année de sortie
-    if (pea1On) capPea1 += perPea1;
-    if (pea2On) capPea2 += perPea2;
-    if (ctoOn)  capCto  += perCto;
-    if (avOn)   capAv   += perAv;
+    let capitalPERRestant = totalPER; // suivi du capital PER brut restant à sortir (mode étalé)
+    let gainsCtoEncaisses = 0;        // gains CTO nets retirés et encaissés au fil des ans
+    // Capital net investi = capitaux de départ des enveloppes (avant versements PER)
+    let capitalNetInvesti = (pea1On?pea1Cap:0) + (pea2On?pea2Cap:0) + (ctoOn?ctoCap:0) + (livOn?livCap:0) + (avOn?avCap:0);
+
+    if (modeSortie === 'oneshot') {
+      // Le versement one-shot se fait dans la boucle à l'année de sortie PER, pas avant
+    }
+    // En mode étalé et one-shot, les versements se font dans la boucle à partir de anneeDebutPER
 
     for (let i = 0; i < horizon; i++) {
       const annee = anneeBase + i;
-      const pea1Debloque = annee >= (pea1Annee + 5);
-      const pea2Debloque = annee >= (pea2Annee + 5);
+      // PEA débloqué dès que l'année en cours atteint l'année de déblocage
+      const pea1Debloque = annee >= pea1DeblocageAnnee;
+      const pea2Debloque = annee >= pea2DeblocageAnnee;
+      // CTO : pas de blocage légal, retire ses gains chaque année dès le départ
+      const ctoDebloque = true;
 
-      // Gains bruts
+      const anneeDebutPER = Math.max(annee1, annee2);
+
+      // Mode one-shot : tout le capital net versé en une fois à l'année de sortie PER
+      if (modeSortie === 'oneshot' && annee === anneeDebutPER) {
+        if (pea1On) capPea1 += perPea1;
+        if (pea2On) capPea2 += perPea2;
+        if (ctoOn)  capCto  += perCto;
+        if (avOn)   capAv   += perAv;
+        capitalNetInvesti += capitalNetRef;
+      }
+
+      // Mode étalé : versement progressif seulement à partir de l'année de sortie PER
+      if (modeSortie === 'etale' && capitalPERRestant > 0 && annee >= anneeDebutPER) {
+        const versementBrutAnnee = Math.min(versementAnnuelBrutEtale, capitalPERRestant);
+        const versementNetAnnee = versementBrutAnnee * (1 - 0.11);
+        if (pea1On) capPea1 += versementNetAnnee * pea1Part;
+        if (pea2On) capPea2 += versementNetAnnee * pea2Part;
+        if (ctoOn)  capCto  += versementNetAnnee * ctoPart;
+        if (avOn)   capAv   += versementNetAnnee * avPart;
+        capitalNetInvesti += versementNetAnnee; // on compte le versement net comme capital investi
+        capitalPERRestant -= versementBrutAnnee;
+      }
+
+      // Gains bruts (calculés sur le capital de l'année en cours, après versement)
       const gainPea1 = capPea1 * pea1Rdt;
       const gainPea2 = capPea2 * pea2Rdt;
       const gainCto  = capCto  * ctoRdt;
       const gainLiv  = capLiv  * livRdt;
       const gainAv   = capAv   * avRdt;
 
-      // Gains nets mensuels
-      const netPea1 = pea1On && pea1Debloque ? Math.round(gainPea1 * (1 - 0.172) / 12) : 0;
-      const netPea2 = pea2On && pea2Debloque ? Math.round(gainPea2 * (1 - 0.172) / 12) : 0;
+      // Gains nets mensuels — calculés systématiquement (capitalisés ou retirés selon déblocage)
+      const netPea1 = pea1On ? Math.round(gainPea1 * (1 - 0.172) / 12) : 0;
+      const netPea2 = pea2On ? Math.round(gainPea2 * (1 - 0.172) / 12) : 0;
       const netCto  = ctoOn  ? Math.round(gainCto  * (1 - ctoFisc) / 12) : 0;
       const netLiv  = livOn  ? Math.round(gainLiv  / 12) : 0;
       const netAv   = avOn   ? Math.round(gainAv   * (1 - 0.172) / 12) : 0;
-      const total   = netPea1 + netPea2 + netCto + netLiv + netAv;
-      const ecart   = total - objectif;
 
-      rows.push({ annee, netPea1, netPea2, netCto, netLiv, netAv, total, ecart,
-                  pea1Debloque, pea2Debloque,
-                  capPea1: Math.round(capPea1),
-                  capPea2: Math.round(capPea2),
-                  capCto:  Math.round(capCto),
-                  capLiv:  Math.round(capLiv),
-                  capAv:   Math.round(capAv),
-                  capTotal: Math.round(capPea1 + capPea2 + capCto + capLiv + capAv) });
+      // Total/mois réellement disponible : uniquement les enveloppes débloquées
+      const totalDisponible = (pea1Debloque ? netPea1 : 0) + (pea2Debloque ? netPea2 : 0) + (ctoDebloque ? netCto : 0) + netLiv + netAv;
+      const ecart = totalDisponible - objectif;
 
-      // Évolution capitals — PEA et AV capitalisent, CTO capitalise aussi (gains non retirés)
+      // Gains CTO encaissés cette année (retirés du CTO, pas dans le capital)
+      const gainNetCtoAnnuel = ctoOn ? Math.round(gainCto * (1 - ctoFisc)) : 0;
+      gainsCtoEncaisses += gainNetCtoAnnuel;
+
+      // Application des gains de l'année au capital AVANT enregistrement de la ligne
       if (pea1On) {
         capPea1 += gainPea1;
         if (livOn && livTrans > 0 && capLiv > livTrans) { capPea1 += livTrans; capLiv -= livTrans; }
       }
       if (pea2On) capPea2 += gainPea2;
-      if (ctoOn)  capCto  += gainCto;  // CTO capitalise — gains disponibles mais non forcément retirés
+      if (ctoOn && !ctoDebloque) capCto += gainCto; // capitalise tant que non débloqué
       if (avOn)   capAv   += gainAv;
+
+      // Plus-value cumulée = (capital total actuel + gains CTO déjà encaissés) - capital net investi
+      const capTotalFin = Math.round(capPea1 + capPea2 + capCto + capLiv + capAv);
+      const plusValueCumulee = capTotalFin + gainsCtoEncaisses - Math.round(capitalNetInvesti);
+
+      // Gains nets mensuels séparés pour affichage
+      const gainsPeaMois = (pea1Debloque ? netPea1 : 0) + (pea2Debloque ? netPea2 : 0);
+      const gainsPeaMoisPotentiel = netPea1 + netPea2; // toujours calculé, même si verrouillé
+      const gainsCtoMois = ctoOn ? netCto : 0;
+
+      rows.push({ annee, pea1Debloque, pea2Debloque, ctoDebloque,
+                  capPea1: Math.round(capPea1),
+                  capPea2: Math.round(capPea2),
+                  capCto:  Math.round(capCto),
+                  capLiv:  Math.round(capLiv),
+                  capAv:   Math.round(capAv),
+                  capTotal: capTotalFin,
+                  plusValueCumulee,
+                  gainsPeaMois, gainsPeaMoisPotentiel, gainsCtoMois,
+                  totalDisponible, ecart });
     }
     return rows;
   }
@@ -570,7 +717,10 @@ function calculerStrategie() {
   if (avOn)   cols.push('Assurance vie');
 
   let html = `
-    <h3>Synthèse fiscale — sortie PER totale en ${anneeBase}</h3>
+    <h3>Synthèse fiscale — sortie PER ${anneeBase}${nbAnneesEtalement>1 ? ' à '+(anneeBase+nbAnneesEtalement-1) : ''}</h3>
+    <div class="small" style="margin-bottom:6px;">
+      Mode actif pour la simulation des enveloppes ci-dessous : <strong style="color:${modeSortie==='etale'?'#3B6D11':'#854F0B'};">${modeSortie==='etale' ? 'Sortie étalée à 11% sur '+nbAnneesEtalement+' ans' : 'Sortie totale en 1 an (TMI 30%)'}</strong>
+    </div>
     <table>
       <tr><th>Élément</th><th>Sortie totale en 1 an (TMI 30%)</th><th>Sortie étalée à 11% (~${nbAns11} ans)</th></tr>
       <tr><td>Capital brut PER</td><td>${totalPER.toLocaleString('fr-FR')} €</td><td>${totalPER.toLocaleString('fr-FR')} €</td></tr>
@@ -578,12 +728,15 @@ function calculerStrategie() {
       <tr><td>Capital net placé</td><td style="color:#185FA5;">${capitalNet.toLocaleString('fr-FR')} €</td><td style="color:#3B6D11;">${capitalNet11.toLocaleString('fr-FR')} €</td></tr>
       <tr><td>Marge annuelle à 11%</td><td colspan="2" style="color:#3B6D11;">${margeFoyer.toLocaleString('fr-FR')} €/an</td></tr>
     </table>
+    <div class="small" style="margin-top:6px;">
+      💡 Les deux colonnes ci-dessus comparent l'impact fiscal des deux approches. Seul le mode sélectionné dans "Mode de sortie du PER" est utilisé pour les tableaux de projection des enveloppes plus bas.
+    </div>
 
-    <h3>Répartition du capital net entre enveloppes</h3>
+    <h3>Répartition cible du capital net entre enveloppes <span class="small">(total à terme${modeSortie==='etale' ? ', versé progressivement sur '+nbAnneesEtalement+' ans' : ', versé en une fois'})</span></h3>
     <table>
-      <tr><th>Enveloppe</th><th>Capital PER versé</th><th>Capital total initial</th><th>Rendement</th><th>Fiscalité gains</th></tr>
-      ${pea1On ? `<tr><td>PEA principal</td><td>${Math.round(perPea1).toLocaleString('fr-FR')} €</td><td>${Math.round(pea1Cap+perPea1).toLocaleString('fr-FR')} €</td><td>${(pea1Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea1Annee+5}</td></tr>` : ''}
-      ${pea2On ? `<tr><td>PEA épouse</td><td>${Math.round(perPea2).toLocaleString('fr-FR')} €</td><td>${Math.round(pea2Cap+perPea2).toLocaleString('fr-FR')} €</td><td>${(pea2Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea2Annee+5}</td></tr>` : ''}
+      <tr><th>Enveloppe</th><th>Capital PER total versé</th><th>Capital total initial (à terme)</th><th>Rendement</th><th>Fiscalité gains</th></tr>
+      ${pea1On ? `<tr><td>PEA 1</td><td>${Math.round(perPea1).toLocaleString('fr-FR')} €</td><td>${Math.round(pea1Cap+perPea1).toLocaleString('fr-FR')} €</td><td>${(pea1Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea1Annee+5}</td></tr>` : ''}
+      ${pea2On ? `<tr><td>PEA 2</td><td>${Math.round(perPea2).toLocaleString('fr-FR')} €</td><td>${Math.round(pea2Cap+perPea2).toLocaleString('fr-FR')} €</td><td>${(pea2Rdt*100).toFixed(1)}%</td><td>PS 17,2% après ${pea2Annee+5}</td></tr>` : ''}
       ${ctoOn  ? `<tr><td>CTO</td><td>${Math.round(perCto).toLocaleString('fr-FR')} €</td><td>${Math.round(ctoCap+perCto).toLocaleString('fr-FR')} €</td><td>${(ctoRdt*100).toFixed(1)}%</td><td>${ctoFisc===0.11?'Barème 11%':'PFU 30%'} — gains retirés/an</td></tr>` : ''}
       ${livOn  ? `<tr><td>Livrets</td><td>0 €</td><td>${livCap.toLocaleString('fr-FR')} €</td><td>${(livRdt*100).toFixed(1)}%</td><td>Exonéré — transfert ${livTrans.toLocaleString('fr-FR')}€/an → PEA</td></tr>` : ''}
       ${avOn   ? `<tr><td>Assurance vie</td><td>${Math.round(perAv).toLocaleString('fr-FR')} €</td><td>${Math.round(avCap+perAv).toLocaleString('fr-FR')} €</td><td>${(avRdt*100).toFixed(1)}%</td><td>PS 17,2% après 8 ans</td></tr>` : ''}
@@ -591,34 +744,39 @@ function calculerStrategie() {
   `;
 
   // Tableaux par horizon
+  let htmlOut_legende = `<div class="small" style="margin:8px 0; padding:8px 10px; background:#fafafa; border-radius:6px;">
+    💡 Le "Total/mois" ne compte que les enveloppes débloquées (PEA après 5 ans depuis leur ouverture, CTO disponible immédiatement). La colonne "Plus-value cumulée" = capital total actuel + gains CTO déjà encaissés - capital net investi : c'est la richesse réelle créée par vos placements depuis le départ.
+  </div>`;
+  html += htmlOut_legende;
+
   for (const h of horizons) {
     const rows = simuler(h);
     html += `<h3>Simulation sur ${h} ans (${anneeBase}–${anneeBase+h-1})</h3><table>
       <tr>
         <th>Année</th>
-        ${pea1On ? '<th>PEA principal</th>' : ''}
-        ${pea2On ? '<th>PEA épouse</th>' : ''}
-        ${ctoOn  ? '<th>CTO gains/mois</th>' : ''}
+        ${pea1On ? '<th>Capital PEA 1</th>' : ''}
+        ${pea2On ? '<th>Capital PEA 2</th>' : ''}
         ${ctoOn  ? '<th>Capital CTO</th>' : ''}
-        ${livOn  ? '<th>Livrets</th>' : ''}
-        ${avOn   ? '<th>Assurance vie</th>' : ''}
-        <th>Total/mois</th>
+        ${ctoOn  ? '<th>Gains CTO/mois</th>' : ''}
+        <th>Gains PEA/mois</th>
+        <th>Plus-value cumulée</th>
+        <th>Total/mois disponible</th>
         <th>Objectif ${objectif} €</th>
         <th>Capital total</th>
       </tr>`;
     for (const r of rows) {
-      const couleur = r.total >= objectif ? '#3B6D11' : r.total >= objectif*0.7 ? '#854F0B' : '#A32D2D';
-      const bg = r.total >= objectif ? 'background:#EAF3DE;' : '';
+      const couleur = r.totalDisponible >= objectif && objectif > 0 ? '#3B6D11' : r.totalDisponible >= objectif*0.7 && objectif > 0 ? '#854F0B' : '#A32D2D';
+      const bg = r.totalDisponible >= objectif && objectif > 0 ? 'background:#EAF3DE;' : '';
       html += `<tr style="${bg}">
         <td>${r.annee}</td>
-        ${pea1On ? `<td style="color:#185FA5;">${r.pea1Debloque ? r.netPea1+'€' : '<span style="color:#888;">🔒 cap.</span>'}</td>` : ''}
-        ${pea2On ? `<td style="color:#185FA5;">${r.pea2Debloque ? r.netPea2+'€' : '<span style="color:#888;">🔒 cap.</span>'}</td>` : ''}
-        ${ctoOn  ? `<td style="color:#854F0B;">${r.netCto} €</td>` : ''}
-        ${ctoOn  ? `<td style="color:#854F0B; font-size:11px;">${r.capCto.toLocaleString('fr-FR')} €</td>` : ''}
-        ${livOn  ? `<td style="color:#3B6D11;">${r.netLiv} €</td>` : ''}
-        ${avOn   ? `<td style="color:#185FA5;">${r.netAv} €</td>` : ''}
-        <td style="font-weight:500;color:${couleur};">${r.total} €</td>
-        <td style="color:${r.ecart>=0?'#3B6D11':'#A32D2D'};">${r.ecart>=0?'+':''}${r.ecart} €</td>
+        ${pea1On ? `<td>${r.capPea1.toLocaleString('fr-FR')} €${!r.pea1Debloque ? ' 🔒' : ''}</td>` : ''}
+        ${pea2On ? `<td>${r.capPea2.toLocaleString('fr-FR')} €${!r.pea2Debloque ? ' 🔒' : ''}</td>` : ''}
+        ${ctoOn  ? `<td>${r.capCto.toLocaleString('fr-FR')} €</td>` : ''}
+        ${ctoOn  ? `<td style="color:#854F0B; font-weight:500;">${r.gainsCtoMois} €</td>` : ''}
+        <td style="color:${r.gainsPeaMois>0?'#185FA5':'#999'}; font-weight:500; font-style:${r.gainsPeaMois===0?'italic':'normal'};">${r.gainsPeaMois > 0 ? r.gainsPeaMois+' €' : '🔒 ('+r.gainsPeaMoisPotentiel+' €)'}</td>
+        <td style="color:#185FA5;">${r.plusValueCumulee.toLocaleString('fr-FR')} €</td>
+        <td style="font-weight:500;color:${r.totalDisponible>0?'#3B6D11':'#999'};">${r.totalDisponible} €</td>
+        <td style="color:${r.ecart>=0&&objectif>0?'#3B6D11':'#A32D2D'};">${objectif>0?(r.ecart>=0?'+':'')+r.ecart+' €':'—'}</td>
         <td style="font-weight:500; font-size:11px;">${r.capTotal.toLocaleString('fr-FR')} €</td>
       </tr>`;
     }
@@ -628,6 +786,170 @@ function calculerStrategie() {
   document.getElementById('resultat_strategie').innerHTML = html;
 }
 
+/* ---------------------- COMPARATEURS STRATÉGIQUES ---------------------- */
+function calculerComparateurs() {
+  let htmlOut = '';
+
+  // --- 1. COMPARATEUR RENTE VS CAPITAL ---
+  const renteOn = document.getElementById('s_rente_on').checked;
+  if (renteOn) {
+    const renteCapital   = +document.getElementById('s_rente_capital').value || 0;
+    const renteMontant   = +document.getElementById('s_rente_montant').value || 0;
+    const renteAge       = +document.getElementById('s_rente_age').value || 0;
+    const renteEsperance = +document.getElementById('s_rente_esperance').value || 0;
+    const renteRdtRef    = (+document.getElementById('s_rente_rdt_ref').value || 6) / 100;
+
+    const rendementImplicite = renteCapital > 0 ? (renteMontant / renteCapital * 100) : 0;
+
+    let renteCumulee = 0;
+    let capitalEvolution = renteCapital;
+    let anneeBascule = null;
+    const lignesComparaison = [];
+    const pasAffichage = Math.max(1, Math.round(renteEsperance / 8));
+
+    for (let an = 1; an <= renteEsperance; an++) {
+      renteCumulee += renteMontant;
+      capitalEvolution = capitalEvolution * (1 + renteRdtRef);
+      const gainsCapitalCumules = capitalEvolution - renteCapital;
+      if (anneeBascule === null && renteCumulee > gainsCapitalCumules) anneeBascule = an;
+      if (an % pasAffichage === 0 || an === renteEsperance || an === 1) {
+        lignesComparaison.push({ an, age: renteAge + an, renteCumulee: Math.round(renteCumulee), gainsCapital: Math.round(gainsCapitalCumules) });
+      }
+    }
+
+    const renteGagnante = renteCumulee > (capitalEvolution - renteCapital);
+    const capitalFinalTransmissible = Math.round(capitalEvolution);
+    const renteTotaleVersee = Math.round(renteCumulee);
+
+    htmlOut += `
+      <h3>1. Rente viagère vs capital placé</h3>
+      <table>
+        <tr><th>Élément</th><th>Valeur</th></tr>
+        <tr><td>Capital concerné</td><td>${renteCapital.toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Rente annuelle proposée</td><td>${renteMontant.toLocaleString('fr-FR')} €/an (${Math.round(renteMontant/12).toLocaleString('fr-FR')} €/mois)</td></tr>
+        <tr><td style="font-weight:500;">Rendement implicite de la rente</td><td style="font-weight:500; color:${rendementImplicite < renteRdtRef*100 ? '#A32D2D' : '#3B6D11'};">${rendementImplicite.toFixed(1)} %/an</td></tr>
+        <tr><td>Rendement de référence (vos placements)</td><td>${(renteRdtRef*100).toFixed(1)} %/an</td></tr>
+        <tr><td>Point mort (rente dépasse les gains du capital)</td><td>${anneeBascule ? anneeBascule + ' ans (à ' + (renteAge+anneeBascule) + ' ans)' : 'Jamais sur la période'}</td></tr>
+      </table>
+
+      <h4 style="margin-top:14px;">Évolution comparée sur ${renteEsperance} ans</h4>
+      <table>
+        <tr><th>Année</th><th>Âge</th><th>Rente cumulée</th><th>Gains capital cumulés</th><th>Avantage</th></tr>
+        ${lignesComparaison.map(l => {
+          const avantageRente = l.renteCumulee > l.gainsCapital;
+          return `<tr style="${avantageRente ? 'background:#FEF3F3;' : 'background:#EAF3DE;'}">
+            <td>${l.an}</td><td>${l.age}</td>
+            <td>${l.renteCumulee.toLocaleString('fr-FR')} €</td>
+            <td>${l.gainsCapital.toLocaleString('fr-FR')} €</td>
+            <td style="color:${avantageRente ? '#A32D2D' : '#3B6D11'};">${avantageRente ? 'Rente +' + (l.renteCumulee - l.gainsCapital).toLocaleString('fr-FR') + ' €' : 'Capital +' + (l.gainsCapital - l.renteCumulee).toLocaleString('fr-FR') + ' €'}</td>
+          </tr>`;
+        }).join('')}
+      </table>
+
+      <div style="margin-top:10px; padding:10px 14px; border-left:3px solid ${renteGagnante ? '#854F0B' : '#3B6D11'}; background:${renteGagnante ? '#FAEEDA' : '#EAF3DE'}; border-radius:0 6px 6px 0;">
+        <strong>Sur ${renteEsperance} ans :</strong>
+        ${renteGagnante
+          ? `la rente cumule ${renteTotaleVersee.toLocaleString('fr-FR')} € contre ${Math.round(capitalEvolution-renteCapital).toLocaleString('fr-FR')} € de gains pour le capital placé. La rente est avantageuse en termes de revenus cumulés.`
+          : `le capital de ${renteCapital.toLocaleString('fr-FR')} € placé génère ${Math.round(capitalEvolution-renteCapital).toLocaleString('fr-FR')} € de gains contre ${renteTotaleVersee.toLocaleString('fr-FR')} € versés par la rente. Le capital est plus avantageux.`}
+        <br><strong>Mais</strong> avec la rente, le capital transmissible à votre décès est de <strong>0 €</strong>. Avec l'option capital, ${capitalFinalTransmissible.toLocaleString('fr-FR')} € restent transmissibles à vos héritiers (dont ${renteCapital.toLocaleString('fr-FR')} € de capital initial + ${Math.round(capitalEvolution-renteCapital).toLocaleString('fr-FR')} € de gains).
+      </div>
+      <div class="small" style="margin-top:8px;">
+        ⚠️ Calcul simplifié à titre de réflexion — ne prend pas en compte la fiscalité de la rente (abattement 10% puis barème IR) ni celle du capital (PS et/ou PFU). L'espérance de vie réelle peut différer de l'estimation saisie.
+      </div>
+    `;
+  }
+
+  // --- 2. COMPARATEUR PER VS PEA DIRECT ---
+  const perpeaOn = document.getElementById('c_perpea_on').checked;
+  if (perpeaOn) {
+    const versement   = +document.getElementById('c_perpea_versement').value || 0;
+    const tmiEntree   = (+document.getElementById('c_perpea_tmi_entree').value || 11) / 100;
+    const tmiSortie   = (+document.getElementById('c_perpea_tmi_sortie').value || 11) / 100;
+    const duree       = +document.getElementById('c_perpea_duree').value || 5;
+    const rdt         = (+document.getElementById('c_perpea_rdt').value || 7) / 100;
+    const fiscAlt     = +document.getElementById('c_perpea_fisc_alt').value || 0.172;
+    const fiscAltLabel = document.getElementById('c_perpea_fisc_alt').options[document.getElementById('c_perpea_fisc_alt').selectedIndex].text;
+
+    // Scénario A — avec PER
+    const economieImpot = versement * tmiEntree;
+    const capitalPERBrutFinal = versement * Math.pow(1 + rdt, duree);
+    const impotSortiePER = capitalPERBrutFinal * tmiSortie;
+    const netFinalPER = capitalPERBrutFinal - impotSortiePER;
+
+    // Scénario B — sans PER, placement direct du même effort (versement - économie d'impôt non réalisée)
+    const coutReel = versement - economieImpot;
+    const capitalDirectBrutFinal = coutReel * Math.pow(1 + rdt, duree);
+    const gainsDirects = capitalDirectBrutFinal - coutReel;
+    const impotSortieDirect = gainsDirects * fiscAlt;
+    const netFinalDirect = capitalDirectBrutFinal - impotSortieDirect;
+
+    const ecart = netFinalPER - netFinalDirect;
+    const perGagnant = ecart > 0;
+
+    htmlOut += `
+      <h3>2. PER vs placement direct (PEA/CTO)</h3>
+      <table>
+        <tr><th>Hypothèses</th><th>Valeur</th></tr>
+        <tr><td>Versement annuel</td><td>${versement.toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>TMI entrée / sortie</td><td>${(tmiEntree*100).toFixed(1)}% / ${(tmiSortie*100).toFixed(1)}%</td></tr>
+        <tr><td>Durée de détention</td><td>${duree} ans</td></tr>
+        <tr><td>Rendement annuel</td><td>${(rdt*100).toFixed(1)}%</td></tr>
+        <tr><td>Fiscalité alternative</td><td>${fiscAltLabel}</td></tr>
+      </table>
+
+      <h4 style="margin-top:14px;">Scénario A — Avec PER</h4>
+      <table>
+        <tr><td>Économie d'impôt immédiate</td><td style="color:#3B6D11;">${Math.round(economieImpot).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Capital après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalPERBrutFinal).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Impôt à la sortie (TMI ${(tmiSortie*100).toFixed(1)}%)</td><td style="color:#A32D2D;">-${Math.round(impotSortiePER).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td style="font-weight:500;">Capital net final</td><td style="font-weight:500; color:#185FA5;">${Math.round(netFinalPER).toLocaleString('fr-FR')} €</td></tr>
+      </table>
+
+      <h4 style="margin-top:14px;">Scénario B — Sans PER, placement direct</h4>
+      <table>
+        <tr><td>Coût réel pour vous (versement - économie non réalisée)</td><td>${Math.round(coutReel).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Capital après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalDirectBrutFinal).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Fiscalité sur les gains (${fiscAltLabel})</td><td style="color:#A32D2D;">-${Math.round(impotSortieDirect).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td style="font-weight:500;">Capital net final</td><td style="font-weight:500; color:#185FA5;">${Math.round(netFinalDirect).toLocaleString('fr-FR')} €</td></tr>
+      </table>
+
+      <div style="margin-top:10px; padding:10px 14px; border-left:3px solid ${perGagnant ? '#3B6D11' : '#854F0B'}; background:${perGagnant ? '#EAF3DE' : '#FAEEDA'}; border-radius:0 6px 6px 0;">
+        <strong>${perGagnant ? 'Le PER est gagnant' : 'Le placement direct est gagnant'} de ${Math.abs(Math.round(ecart)).toLocaleString('fr-FR')} €</strong> sur cette simulation (${Math.round(netFinalPER).toLocaleString('fr-FR')} € avec PER contre ${Math.round(netFinalDirect).toLocaleString('fr-FR')} € en direct).
+        ${tmiEntree === tmiSortie ? ` Avec un TMI identique à l'entrée et à la sortie, le PER reste avantageux car il fait fructifier un capital de départ plus important (l'économie d'impôt travaille aussi pendant la durée de détention).` : ''}
+        ${tmiSortie > tmiEntree ? ` Attention : votre TMI de sortie est supérieur à celui d'entrée — c'est le scénario le plus défavorable au PER.` : ''}
+        ${tmiSortie < tmiEntree ? ` Votre TMI de sortie est inférieur à celui d'entrée — c'est le scénario le plus favorable au PER.` : ''}
+      </div>
+      <div class="small" style="margin-top:8px;">
+        ⚠️ Calcul simplifié — suppose un seul versement suivi d'une seule sortie après la durée indiquée. Ne tient pas compte des plafonds de versement ni de l'évolution du barème entre l'entrée et la sortie.
+      </div>
+    `;
+  }
+
+  if (!renteOn && !perpeaOn) {
+    htmlOut = `<div class="small">Activez au moins un comparateur ci-dessus pour afficher les résultats.</div>`;
+  }
+
+  document.getElementById('resultat_comparateurs').innerHTML = htmlOut;
+}
+
+
+/* ---------------------- ABATTEMENT SALAIRES ---------------------- */
+function abattementSalaires(s, fraisReelsOn, fraisReels) {
+  if (s <= 0) return 0;
+  if (fraisReelsOn) return Math.min(fraisReels, s); // frais réels plafonnés au salaire
+  let a = s * 0.10;
+  const min = 495, max = 14171;
+  a = Math.max(a, min);
+  a = Math.min(a, max);
+  return Math.min(a, s);
+}
+
+/* ---------------------- TOGGLE FRAIS RÉELS ---------------------- */
+function toggleFraisReels(n) {
+  const on = document.getElementById('fraisReels'+n+'_on').checked;
+  document.getElementById('blocFraisReels'+n).style.display = on ? 'block' : 'none';
+  calculer();
+}
 
 /* ---------------------- ABATTEMENT PENSIONS ---------------------- */
 function abattementPensions(p) {
@@ -725,11 +1047,17 @@ function calculer() {
   const perImp1      = +document.getElementById('perImp1').value      || 0;
   const plafondPER1  = +document.getElementById('plafondPER1').value  || 0;
   const versementPER1= +document.getElementById('versementPER1').value|| 0;
+  const salaires1    = +document.getElementById('salaires1').value    || 0;
+  const fraisReels1On = document.getElementById('fraisReels1_on').checked;
+  const fraisReels1  = +document.getElementById('fraisReels1').value  || 0;
 
   const pensions2    = isCouple ? (+document.getElementById('pensions2').value    || 0) : 0;
   const perImp2      = isCouple ? (+document.getElementById('perImp2').value      || 0) : 0;
   const plafondPER2  = isCouple ? (+document.getElementById('plafondPER2').value  || 0) : 0;
   const versementPER2= isCouple ? (+document.getElementById('versementPER2').value|| 0) : 0;
+  const salaires2    = isCouple ? (+document.getElementById('salaires2').value    || 0) : 0;
+  const fraisReels2On = isCouple ? document.getElementById('fraisReels2_on').checked : false;
+  const fraisReels2  = isCouple ? (+document.getElementById('fraisReels2').value  || 0) : 0;
 
   const parts   = +document.getElementById('parts').value   || (isCouple ? 2 : 1);
   const don66   = +document.getElementById('don66').value   || 0;
@@ -741,6 +1069,20 @@ function calculer() {
 
   const impPensions1 = pensions1 - ab1;
   const impPensions2 = pensions2 - ab2;
+
+  // Abattement salaires (10% forfaitaire ou frais réels)
+  const abSal1 = abattementSalaires(salaires1, fraisReels1On, fraisReels1);
+  const abSal2 = abattementSalaires(salaires2, fraisReels2On, fraisReels2);
+  const impSalaires1 = salaires1 - abSal1;
+  const impSalaires2 = salaires2 - abSal2;
+
+  // Affichage de l'abattement salaires sous les champs
+  const abSal1El = document.getElementById('abattSalaires1');
+  const abSal2El = document.getElementById('abattSalaires2');
+  if (abSal1El && salaires1 > 0) abSal1El.textContent = fraisReels1On ? `Frais réels déduits : ${abSal1.toLocaleString('fr-FR')} €` : `Abattement 10% : ${abSal1.toLocaleString('fr-FR')} € → Imposable : ${impSalaires1.toLocaleString('fr-FR')} €`;
+  else if (abSal1El) abSal1El.textContent = '';
+  if (abSal2El && salaires2 > 0) abSal2El.textContent = fraisReels2On ? `Frais réels déduits : ${abSal2.toLocaleString('fr-FR')} €` : `Abattement 10% : ${abSal2.toLocaleString('fr-FR')} € → Imposable : ${impSalaires2.toLocaleString('fr-FR')} €`;
+  else if (abSal2El) abSal2El.textContent = '';
 
   const d1_non     = Math.min(versementPER1, plafondPER1);
   const d2_non     = Math.min(versementPER2, plafondPER2);
@@ -760,7 +1102,7 @@ function calculer() {
     gainMut = totalDed - total_non;
   }
 
-  let revenu = arr(impPensions1 + impPensions2 + perImp1 + perImp2 - d1 - d2);
+  let revenu = arr(impPensions1 + impPensions2 + impSalaires1 + impSalaires2 + perImp1 + perImp2 - d1 - d2);
   let quotient = arr(revenu / parts);
 
   const bareme = getBareme();
@@ -815,7 +1157,7 @@ function calculer() {
   // On cherche par dichotomie le versement qui annule l'impôt net
   const decParams2 = getDecoteParams();
   function calcImpotNet(versementSupp) {
-    const revenuTest = arr(impPensions1 + impPensions2 + perImp1 + perImp2 - d1 - d2 - versementSupp);
+    const revenuTest = arr(impPensions1 + impPensions2 + impSalaires1 + impSalaires2 + perImp1 + perImp2 - d1 - d2 - versementSupp);
     if (revenuTest <= 0) return 0;
     const quotientTest = arr(revenuTest / parts);
     let impPartTest = 0, basTest = 0;
@@ -858,8 +1200,11 @@ function calculer() {
     <strong>Quotient familial :</strong> ${quotient.toFixed(0)} €<br><br>
 
     <h3>Déclarant 1</h3>
+    ${salaires1 > 0 ? `Salaires : ${salaires1.toFixed(2)} €<br>
+    ${fraisReels1On ? `Frais réels : ${abSal1.toFixed(2)} €<br>` : `Abattement 10% salaires : ${abSal1.toFixed(2)} €<br>`}
+    Salaires imposables : ${impSalaires1.toFixed(2)} €<br>` : ''}
     Pensions : ${pensions1.toFixed(2)} €<br>
-    Abattement 10 % : ${ab1.toFixed(2)} €<br>
+    Abattement 10 % pensions : ${ab1.toFixed(2)} €<br>
     Pensions imposables : ${impPensions1.toFixed(2)} €<br>
     Retraits PER imposables : ${perImp1.toFixed(2)} €<br>
     Versement PER : ${versementPER1.toFixed(2)} €<br>
@@ -871,8 +1216,11 @@ function calculer() {
   if (isCouple) {
     html += `
       <h3>Déclarant 2</h3>
+      ${salaires2 > 0 ? `Salaires : ${salaires2.toFixed(2)} €<br>
+      ${fraisReels2On ? `Frais réels : ${abSal2.toFixed(2)} €<br>` : `Abattement 10% salaires : ${abSal2.toFixed(2)} €<br>`}
+      Salaires imposables : ${impSalaires2.toFixed(2)} €<br>` : ''}
       Pensions : ${pensions2.toFixed(2)} €<br>
-      Abattement 10 % : ${ab2.toFixed(2)} €<br>
+      Abattement 10 % pensions : ${ab2.toFixed(2)} €<br>
       Pensions imposables : ${impPensions2.toFixed(2)} €<br>
       Retraits PER imposables : ${perImp2.toFixed(2)} €<br>
       Versement PER : ${versementPER2.toFixed(2)} €<br>

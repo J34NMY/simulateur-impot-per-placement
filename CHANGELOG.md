@@ -6,13 +6,46 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ---
 
+## [1.6] — 2026-06-20
+
+### Ajouté
+- Onglet **Comparateurs** séparé avec deux modules indépendants
+- **Comparateur 1 — Rente viagère vs capital placé** : calcul du rendement implicite de la rente, point mort, évolution comparée sur l'espérance de vie, capital transmissible
+- **Comparateur 2 — PER vs placement direct (PEA/CTO)** : comparaison nette après fiscalité, verdict contextuel selon TMI entrée/sortie
+- Onglet **Stratégie PER** entièrement refondu :
+  - 3 enveloppes : PEA 1, PEA 2, CTO (Livrets et AV supprimés pour simplifier)
+  - Champ "Année de début de simulation" paramétrable (défaut 2026)
+  - Champ "Mois d'ouverture" pour chaque PEA (précision du déblocage au mois près)
+  - Mode de sortie PER : étalé à 11% ou one-shot (TMI 30%) au choix
+  - Versements PER conditionnés à l'année de sortie réelle (pas avant 2028 si c'est la date choisie)
+  - CTO disponible immédiatement sans blocage artificiel, gains retirés chaque année
+  - PEA capitalisent jusqu'au déblocage, gains disponibles après 5 ans
+  - Colonne "Gains CTO/mois" (disponibles immédiatement)
+  - Colonne "Gains PEA/mois" avec potentiel affiché même pendant le blocage
+  - Colonne "Plus-value cumulée" = capital total + gains CTO encaissés - capital investi
+  - Objectif mensuel à 0 par défaut (paramétrable)
+- Onglet **Simulation** : ajout des salaires par déclarant avec abattement 10% automatique (plancher 495 €, plafond 14 171 €) et option frais réels
+- Calcul du plafond PER automatique depuis le PASS avec reports cumulés N-1/N-2/N-3
+
+### Corrigé
+- Capital affiché en fin d'année (après gains) et non en début d'année
+- Versements PER démarrent bien à l'année de sortie choisie, pas avant
+- Capital net de référence cohérent avec le mode de sortie choisi (étalé → capitalNet11, one-shot → capitalNet)
+- Plus-value cumulée remplace les "intérêts cumulés" qui n'avaient pas de signification financière réelle
+
+### Renommé
+- PEA principal / PEA épouse → PEA 1 / PEA 2 (libellés neutres)
+- Fichier : `simulateur_impot_PER_et_placement_V1.5.1.html` → `simulateur_impot_PER_et_placement_V1.6.html`
+
+---
+
 ## [1.5.1] — 2026-06-10
 
 ### Ajouté
 - Footer disclaimer permanent visible en bas de page sur tous les onglets
 - Bloc "Avertissement" avec lien vers le simulateur officiel DGFiP
-- Bloc "Bon usage" précisant les cas d'utilisation légitimes (réflexion, préparation entretien, compréhension des mécanismes) et la non-application au conseil en investissement (MIF2)
-- Bloc "Co-création" mentionnant explicitement la collaboration avec Claude (Anthropic) et la validation systématique par l'utilisateur
+- Bloc "Bon usage" précisant les cas d'utilisation légitimes
+- Bloc "Co-création" mentionnant la collaboration avec Claude (Anthropic)
 - Lien vers le dépôt GitHub et rappel de la licence MIT en pied de page
 
 ### Renommé
@@ -24,15 +57,9 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ### Ajouté
 - Onglet **Stratégie PER** : simulation du rapatriement des PER sur 5/10/15 ans
-- 5 enveloppes de placement activables/désactivables : PEA principal, PEA épouse, CTO, Livrets, Assurance vie
-- Affichage du capital CTO en évolution année par année (capitalisation)
-- Affichage du capital total patrimoine en évolution sur toute la période
-- Calcul automatique du plafond PER depuis le PASS (onglet Paramètres)
-- Champs de report plafond PER cumulé N-1/N-2/N-3 par déclarant
+- 5 enveloppes activables/désactivables : PEA principal, PEA épouse, CTO, Livrets, Assurance vie
+- Calcul automatique du plafond PER depuis le PASS
 - Calcul par dichotomie du versement PER exact pour devenir non imposable
-- Avertissement si la somme des parts d'affectation PER ≠ 100%
-- Transfert annuel livrets → PEA configurable
-- PEA affiché 🔒 avant la date de déblocage (5 ans après ouverture)
 - Synthèse fiscale : comparaison sortie totale (TMI 30%) vs sortie étalée (11%)
 
 ### Corrigé
@@ -43,23 +70,15 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 ## [1.4] — 2026-06-10
 
 ### Ajouté
-- Onglet **Sources & historique** : URLs officielles cliquables et tableau comparatif barèmes 2025/2026
-- Fusion du fichier sources_parametres_annuels.txt dans le simulateur (un seul fichier)
-- Mise à jour barème 2026 (revenus 2025) : revalorisation +0,9%
-- Mention de la version et du barème en vigueur sous le titre
-
-### Modifié
-- Fonction showTab mise à jour pour gérer 3 onglets (+ sources)
+- Onglet **Sources & historique** avec URLs officielles et tableau comparatif barèmes
+- Mise à jour barème 2026 (revenus 2025, revalorisation +0,9%)
 
 ---
 
 ## [1.3] — 2026-06-10
 
 ### Ajouté
-- **TMI** (Taux Marginal d'Imposition) affiché dans les résultats avec note explicative
-- **Taux moyen effectif** affiché dans les résultats
-- **Marge de sortie PER avant tranche 30%** : montant foyer disponible à 11%
-- Mention "(par part)" dans le titre "Détail par tranche"
+- TMI, taux moyen effectif, marge de sortie PER avant tranche 30%
 
 ---
 
@@ -67,29 +86,17 @@ Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/).
 
 ### Ajouté
 - Onglet **Paramètres annuels** : barème IR et décote entièrement modifiables
-- Barème dynamique lu depuis les champs de l'onglet (plus besoin de modifier le code)
-- Décote dynamique (seuils, constantes, coefficient modifiables)
-
-### Modifié
-- Séparation logique calcul / paramètres pour faciliter la mise à jour annuelle
 
 ---
 
 ## [1.1] — 2026-06-10
 
 ### Ajouté
-- Support du **déclarant 2** avec animation d'apparition/disparition
-- **Mutualisation des plafonds PER** entre conjoints (mode M3 avec priorité plafond restant)
-- Dons à 66% et 75% avec réductions automatiques
-- Crédits d'impôt
-- Abattement pensions avec plancher (442 €) et plafond (4 321 €)
+- Déclarant 2, mutualisation PER mode M3, dons, crédits d'impôt
 
 ---
 
 ## [1.0] — 2026-06-10
 
 ### Ajouté
-- Version initiale du simulateur
-- Calcul IR foyer : barème progressif, décote, abattement pensions
-- 1 déclarant, versements PER déductibles avec plafond
-- Arrondi fiscal à l'euro le plus proche
+- Version initiale : calcul IR foyer, barème progressif, décote, abattement pensions
