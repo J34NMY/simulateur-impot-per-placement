@@ -870,18 +870,26 @@ function calculerComparateurs() {
     const fiscAlt     = +document.getElementById('c_perpea_fisc_alt').value || 0.172;
     const fiscAltLabel = document.getElementById('c_perpea_fisc_alt').options[document.getElementById('c_perpea_fisc_alt').selectedIndex].text;
 
-    // Scénario A — avec PER
-    const economieImpot = versement * tmiEntree;
-    const capitalPERBrutFinal = versement * Math.pow(1 + rdt, duree);
-    const impotSortiePER = capitalPERBrutFinal * tmiSortie;
-    const netFinalPER = capitalPERBrutFinal - impotSortiePER;
+    // Scénario A — avec PER : versements annuels, tout sorti en une fois à la fin
+    const economieImpotAnnuelle = versement * tmiEntree;
+    const economieImpotTotale = economieImpotAnnuelle * duree;
+    let capitalPERBrut = 0;
+    for (let an = 0; an < duree; an++) {
+      capitalPERBrut = (capitalPERBrut + versement) * (1 + rdt);
+    }
+    const impotSortiePER = capitalPERBrut * tmiSortie;
+    const netFinalPER = capitalPERBrut - impotSortiePER;
 
-    // Scénario B — sans PER, placement direct du même effort (versement - économie d'impôt non réalisée)
-    const coutReel = versement - economieImpot;
-    const capitalDirectBrutFinal = coutReel * Math.pow(1 + rdt, duree);
-    const gainsDirects = capitalDirectBrutFinal - coutReel;
-    const impotSortieDirect = gainsDirects * fiscAlt;
-    const netFinalDirect = capitalDirectBrutFinal - impotSortieDirect;
+    // Scénario B — sans PER, versements nets annuels dans PEA/CTO
+    const versementNet = versement * (1 - tmiEntree);
+    let capitalDirect = 0;
+    for (let an = 0; an < duree; an++) {
+      capitalDirect = (capitalDirect + versementNet) * (1 + rdt);
+    }
+    const totalVersementsNets = versementNet * duree;
+    const gainsDirect = capitalDirect - totalVersementsNets;
+    const impotSortieDirect = gainsDirect * fiscAlt;
+    const netFinalDirect = capitalDirect - impotSortieDirect;
 
     const ecart = netFinalPER - netFinalDirect;
     const perGagnant = ecart > 0;
@@ -890,37 +898,38 @@ function calculerComparateurs() {
       <h3>2. PER vs placement direct (PEA/CTO)</h3>
       <table>
         <tr><th>Hypothèses</th><th>Valeur</th></tr>
-        <tr><td>Versement annuel</td><td>${versement.toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Versement annuel</td><td>${versement.toLocaleString('fr-FR')} €/an</td></tr>
+        <tr><td>Durée de versement</td><td>${duree} ans</td></tr>
         <tr><td>TMI entrée / sortie</td><td>${(tmiEntree*100).toFixed(1)}% / ${(tmiSortie*100).toFixed(1)}%</td></tr>
-        <tr><td>Durée de détention</td><td>${duree} ans</td></tr>
         <tr><td>Rendement annuel</td><td>${(rdt*100).toFixed(1)}%</td></tr>
-        <tr><td>Fiscalité alternative</td><td>${fiscAltLabel}</td></tr>
+        <tr><td>Fiscalité alternative à la sortie</td><td>${fiscAltLabel}</td></tr>
       </table>
 
-      <h4 style="margin-top:14px;">Scénario A — Avec PER</h4>
+      <h4 style="margin-top:14px;">Scénario A — Avec PER (${duree} versements de ${versement.toLocaleString('fr-FR')} €)</h4>
       <table>
-        <tr><td>Économie d'impôt immédiate</td><td style="color:#3B6D11;">${Math.round(economieImpot).toLocaleString('fr-FR')} €</td></tr>
-        <tr><td>Capital après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalPERBrutFinal).toLocaleString('fr-FR')} €</td></tr>
-        <tr><td>Impôt à la sortie (TMI ${(tmiSortie*100).toFixed(1)}%)</td><td style="color:#A32D2D;">-${Math.round(impotSortiePER).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Économie d'impôt annuelle</td><td style="color:#3B6D11;">${Math.round(economieImpotAnnuelle).toLocaleString('fr-FR')} €/an</td></tr>
+        <tr><td>Économie d'impôt totale sur ${duree} ans</td><td style="color:#3B6D11;">${Math.round(economieImpotTotale).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Capital brut accumulé après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalPERBrut).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Impôt à la sortie (TMI ${(tmiSortie*100).toFixed(1)}% sur tout le capital)</td><td style="color:#A32D2D;">-${Math.round(impotSortiePER).toLocaleString('fr-FR')} €</td></tr>
         <tr><td style="font-weight:500;">Capital net final</td><td style="font-weight:500; color:#185FA5;">${Math.round(netFinalPER).toLocaleString('fr-FR')} €</td></tr>
       </table>
 
-      <h4 style="margin-top:14px;">Scénario B — Sans PER, placement direct</h4>
+      <h4 style="margin-top:14px;">Scénario B — Sans PER, placement direct (${duree} versements nets de ${Math.round(versementNet).toLocaleString('fr-FR')} €)</h4>
       <table>
-        <tr><td>Coût réel pour vous (versement - économie non réalisée)</td><td>${Math.round(coutReel).toLocaleString('fr-FR')} €</td></tr>
-        <tr><td>Capital après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalDirectBrutFinal).toLocaleString('fr-FR')} €</td></tr>
-        <tr><td>Fiscalité sur les gains (${fiscAltLabel})</td><td style="color:#A32D2D;">-${Math.round(impotSortieDirect).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Versement net annuel (après impôt non économisé)</td><td>${Math.round(versementNet).toLocaleString('fr-FR')} €/an</td></tr>
+        <tr><td>Capital brut accumulé après ${duree} ans à ${(rdt*100).toFixed(1)}%</td><td>${Math.round(capitalDirect).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td>Fiscalité sur les gains uniquement (${fiscAltLabel})</td><td style="color:#A32D2D;">-${Math.round(impotSortieDirect).toLocaleString('fr-FR')} €</td></tr>
         <tr><td style="font-weight:500;">Capital net final</td><td style="font-weight:500; color:#185FA5;">${Math.round(netFinalDirect).toLocaleString('fr-FR')} €</td></tr>
       </table>
 
       <div style="margin-top:10px; padding:10px 14px; border-left:3px solid ${perGagnant ? '#3B6D11' : '#854F0B'}; background:${perGagnant ? '#EAF3DE' : '#FAEEDA'}; border-radius:0 6px 6px 0;">
-        <strong>${perGagnant ? 'Le PER est gagnant' : 'Le placement direct est gagnant'} de ${Math.abs(Math.round(ecart)).toLocaleString('fr-FR')} €</strong> sur cette simulation (${Math.round(netFinalPER).toLocaleString('fr-FR')} € avec PER contre ${Math.round(netFinalDirect).toLocaleString('fr-FR')} € en direct).
-        ${tmiEntree === tmiSortie ? ` Avec un TMI identique à l'entrée et à la sortie, le PER reste avantageux car il fait fructifier un capital de départ plus important (l'économie d'impôt travaille aussi pendant la durée de détention).` : ''}
+        <strong>${perGagnant ? 'Le PER est gagnant' : 'Le placement direct est gagnant'} de ${Math.abs(Math.round(ecart)).toLocaleString('fr-FR')} €</strong> sur ${duree} ans de versements (${Math.round(netFinalPER).toLocaleString('fr-FR')} € avec PER contre ${Math.round(netFinalDirect).toLocaleString('fr-FR')} € en direct).
+        ${tmiEntree === tmiSortie ? ` Avec un TMI identique à l'entrée et à la sortie, le PER reste avantageux car il fait fructifier un capital plus important (l'économie d'impôt annuelle travaille aussi pendant toute la durée).` : ''}
         ${tmiSortie > tmiEntree ? ` Attention : votre TMI de sortie est supérieur à celui d'entrée — c'est le scénario le plus défavorable au PER.` : ''}
         ${tmiSortie < tmiEntree ? ` Votre TMI de sortie est inférieur à celui d'entrée — c'est le scénario le plus favorable au PER.` : ''}
       </div>
       <div class="small" style="margin-top:8px;">
-        ⚠️ Calcul simplifié — suppose un seul versement suivi d'une seule sortie après la durée indiquée. Ne tient pas compte des plafonds de versement ni de l'évolution du barème entre l'entrée et la sortie.
+        ⚠️ Calcul sur versements annuels répétés, sortie globale en fin de période. Ne tient pas compte des plafonds de versement PER ni de l'évolution du barème entre l'entrée et la sortie.
       </div>
     `;
   }
