@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulateur Impôt PER et Placement</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1B3A5C;
+      --green:  #4A7C59;
+      --cream:  #F7F6F3;
+      --gold:   #C9A84C;
+      --slate:  #6B7280;
+      --white:  #FFFFFF;
+      --navy-light: #2A5280;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--navy);
+      padding: 80px 24px 72px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, rgba(201,168,76,.12) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(74,124,89,.10) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.18;
+      max-width: 720px;
+      margin: 0 auto 18px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.72);
+      max-width: 540px;
+      margin: 0 auto 48px;
+      line-height: 1.6;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: .95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); opacity: .93; }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      box-shadow: 0 4px 18px rgba(201,168,76,.35);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,.4);
+    }
+
+    .btn-secondary:hover { border-color: rgba(255,255,255,.8); }
+
+    .btn-icon { font-size: 1.1em; }
+
+    /* ── STAT STRIP ── */
+    .strip {
+      background: var(--white);
+      border-bottom: 1px solid #E5E7EB;
+      padding: 28px 24px;
+    }
+
+    .strip-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 10px 24px;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-num span {
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .strip-divider {
+      width: 1px;
+      height: 40px;
+      background: #E5E7EB;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      max-width: 900px;
+      margin: 64px auto;
+      padding: 0 24px;
+    }
+
+    .features-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--navy);
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--green);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      font-size: .95rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: .85rem;
+      color: var(--slate);
+      line-height: 1.55;
+    }
+
+    /* ── CTA ── */
+    .cta {
+      background: var(--navy);
+      padding: 64px 24px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: rgba(255,255,255,.65);
+      font-size: .95rem;
+      margin-bottom: 36px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--cream);
+      border-top: 1px solid #E5E7EB;
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    footer p {
+      font-size: .8rem;
+      color: var(--slate);
+      line-height: 1.7;
+    }
+
+    footer a { color: var(--navy); text-decoration: none; font-weight: 500; }
+    footer a:hover { text-decoration: underline; }
+
+    .disclaimer {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 24px;
+      background: #FFF8E7;
+      border: 1px solid #F0D98A;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: .8rem;
+      color: #7A6200;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .strip-divider { display: none; }
+      .stat { padding: 8px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Outil open source · Gratuit · Sans inscription</p>
+  <h1>Optimisez votre <em>stratégie PER</em><br>et vos placements retraite</h1>
+  <p class="hero-sub">
+    Simulateur fiscal complet pour foyer français — calcul IR, stratégie de rapatriement PER,
+    comparateur rente vs capital, PER vs PEA direct.
+  </p>
+  <div class="btn-group">
+    <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn btn-primary">
+      <span class="btn-icon">📊</span> Lancer le simulateur
+    </a>
+    <a href="MODE_EMPLOI.md" class="btn btn-secondary">
+      <span class="btn-icon">📖</span> Mode d'emploi
+    </a>
+  </div>
+</section>
+
+<!-- STAT STRIP -->
+<div class="strip">
+  <div class="strip-inner">
+    <div class="stat">
+      <span class="stat-num">4 <span>onglets</span></span>
+      <span class="stat-label">Simulation · Stratégie · Comparateurs · Paramètres</span>
+    </div>
+    <div class="strip-divider"></div>
+    <div class="stat">
+      <span class="stat-num">0 <span>€</span></span>
+      <span class="stat-label">Gratuit, sans pub, sans données collectées</span>
+    </div>
+    <div class="strip-divider"></div>
+    <div class="stat">
+      <span class="stat-num">100<span>%</span></span>
+      <span class="stat-label">Local — tourne dans votre navigateur</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features">
+  <h2 class="features-title">Ce que vous pouvez simuler</h2>
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <span class="feature-icon">🧮</span>
+      <div class="feature-title">Calcul IR complet</div>
+      <p class="feature-desc">Salaires, pensions, retraits PER, versements PER déductibles. Abattement 10% automatique, option frais réels, décote, dons. TMI, taux moyen effectif et marge avant tranche 30% affichés.</p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">📈</span>
+      <div class="feature-title">Stratégie de rapatriement PER</div>
+      <p class="feature-desc">Simulation sur 5, 10 et 15 ans. Répartition PEA 1 / PEA 2 / CTO. Gains disponibles vs capitalisés, plus-value cumulée, mode étalé à 11% ou sortie totale en comparaison.</p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">⚖️</span>
+      <div class="feature-title">Rente viagère vs capital placé</div>
+      <p class="feature-desc">Calcul du rendement implicite de votre rente, point mort, évolution comparée sur l'espérance de vie, et capital transmissible à vos héritiers.</p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🔄</span>
+      <div class="feature-title">PER vs placement direct</div>
+      <p class="feature-desc">Versements annuels répétés sur la durée choisie. Comparaison nette après fiscalité entre PER (déduction + impôt sortie) et PEA/CTO direct. Verdict contextuel selon votre TMI.</p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🗓️</span>
+      <div class="feature-title">Paramètres annuels modifiables</div>
+      <p class="feature-desc">Barème IR, décote, PASS — tout est modifiable sans toucher au code. Mise à jour annuelle en quelques minutes. Historique des barèmes 2025 et 2026 intégré.</p>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <div class="feature-title">Vos données restent chez vous</div>
+      <p class="feature-desc">Fichier HTML autonome, aucune connexion serveur, aucune donnée envoyée. Fonctionne hors ligne une fois téléchargé. Compatible Chrome, Firefox, Edge, Safari.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Prêt à simuler ?</h2>
+  <p>Aucune installation. Ouvrez directement dans votre navigateur.</p>
+  <div class="btn-group">
+    <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn btn-primary">
+      <span class="btn-icon">📊</span> Lancer le simulateur
+    </a>
+    <a href="MODE_EMPLOI.md" class="btn btn-secondary">
+      <span class="btn-icon">📖</span> Mode d'emploi
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    Version 1.6 · Juin 2026 ·
+    <a href="https://github.com/J34NMY/simulateur-impot-per-placement">Code source GitHub</a> ·
+    Licence MIT
+  </p>
+  <div class="disclaimer">
+    ⚠️ Outil de <strong>réflexion personnelle</strong> — ne se substitue pas au
+    <a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank">simulateur officiel DGFiP</a>
+    ni à un conseil professionnel. Vérifiez vos résultats sur impots.gouv.fr avant toute décision.
+    Co-créé avec <strong>Claude</strong> (Anthropic) — chaque fonctionnalité validée par l'utilisateur avant intégration.
+  </div>
+</footer>
+
+</body>
+</html>
