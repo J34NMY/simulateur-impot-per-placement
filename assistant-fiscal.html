@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide fiscal PER — Assistant fiscal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1B3A5C;
+      --green:  #4A7C59;
+      --cream:  #F7F6F3;
+      --gold:   #C9A84C;
+      --slate:  #6B7280;
+      --white:  #FFFFFF;
+      --red:    #A32D2D;
+      --light:  #E8F0E9;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .wiz-header {
+      background: var(--navy);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .wiz-logo {
+      font-family: 'Playfair Display', serif;
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .wiz-logo span { color: var(--gold); }
+
+    .wiz-expert-link {
+      font-size: .8rem;
+      color: rgba(255,255,255,.6);
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 6px 14px;
+      border-radius: 4px;
+      transition: .15s;
+    }
+
+    .wiz-expert-link:hover { color: white; border-color: rgba(255,255,255,.6); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      background: var(--white);
+      border-bottom: 1px solid #E5E7EB;
+      padding: 14px 24px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: .78rem;
+      color: var(--slate);
+    }
+
+    .progress-phase { font-weight: 600; color: var(--navy); }
+
+    .progress-bar {
+      height: 4px;
+      background: #E5E7EB;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      border-radius: 2px;
+      transition: width .4s ease;
+    }
+
+    /* ── MAIN CARD ── */
+    .wiz-body {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; animation: fadeIn .3s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-eyebrow {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: .9rem;
+      color: var(--slate);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    /* ── FIELDS ── */
+    .field { margin-bottom: 20px; }
+
+    .field label {
+      display: block;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .field .hint {
+      font-size: .78rem;
+      color: var(--slate);
+      margin-bottom: 6px;
+      font-weight: 400;
+    }
+
+    .field input[type="number"],
+    .field input[type="text"],
+    .field select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 6px;
+      font-size: .95rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--navy);
+      background: var(--white);
+      transition: border-color .15s;
+      -moz-appearance: textfield;
+    }
+
+    .field input::-webkit-outer-spin-button,
+    .field input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(74,124,89,.12);
+    }
+
+    /* Choix toggle */
+    .toggle-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: 14px 20px;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 8px;
+      background: var(--white);
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--navy);
+      transition: .15s;
+    }
+
+    .toggle-btn:hover { border-color: var(--green); }
+    .toggle-btn.selected {
+      border-color: var(--green);
+      background: var(--light);
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .toggle-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+    /* Two cols */
+    .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 520px) { .two-cols { grid-template-columns: 1fr; } }
+
+    /* Checkbox inline */
+    .check-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+
+    .check-field input[type="checkbox"] { margin-top: 2px; accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; }
+    .check-field span { font-size: .88rem; color: var(--navy); line-height: 1.5; }
+
+    /* Section divider */
+    .section-sep {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 24px 0;
+    }
+
+    .section-label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--slate);
+      margin-bottom: 16px;
+    }
+
+    /* ── RESULT CARDS ── */
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .result-card {
+      background: var(--white);
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .result-card.highlight { border-color: var(--green); background: var(--light); }
+    .result-card.warn { border-color: var(--gold); background: #FFF8E7; }
+
+    .result-label { font-size: .75rem; color: var(--slate); margin-bottom: 4px; font-weight: 500; }
+    .result-value { font-size: 1.4rem; font-weight: 700; color: var(--navy); }
+    .result-value.green { color: var(--green); }
+    .result-value.gold { color: var(--gold); }
+    .result-value.red { color: var(--red); }
+
+    .result-note { font-size: .75rem; color: var(--slate); margin-top: 4px; }
+
+    /* Table résultat */
+    .res-table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-bottom: 20px; }
+    .res-table tr { border-bottom: 1px solid #F3F4F6; }
+    .res-table td { padding: 8px 6px; }
+    .res-table td:last-child { text-align: right; font-weight: 500; }
+    .res-table tr.total td { font-weight: 700; font-size: .95rem; border-top: 2px solid var(--navy); padding-top: 12px; }
+
+    /* Info box */
+    .info-box {
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: .83rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .info-box.green { background: var(--light); border-left: 3px solid var(--green); color: #27500A; }
+    .info-box.gold  { background: #FFF8E7; border-left: 3px solid var(--gold); color: #7A6200; }
+    .info-box.blue  { background: #E6F1FB; border-left: 3px solid #185FA5; color: #0C447C; }
+    .info-box.red   { background: #FEF3F3; border-left: 3px solid var(--red); color: #7A1F1F; }
+
+    /* ── NAV BUTTONS ── */
+    .wiz-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid #E5E7EB;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #D1D5DB;
+      color: var(--slate);
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+
+    .btn-next {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 13px 32px;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .btn-next:hover { background: var(--navy-light, #2A5280); }
+    .btn-next.gold { background: var(--gold); color: var(--navy); }
+    .btn-next.green { background: var(--green); }
+
+    .btn-skip {
+      background: transparent;
+      border: none;
+      color: var(--slate);
+      font-size: .82rem;
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* optional badge */
+    .badge-optional {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 600;
+      background: #F3F4F6;
+      color: var(--slate);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* Synthèse finale */
+    .synth-block {
+      background: var(--white);
+      border: 1px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+
+    .synth-block h3 {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #F3F4F6;
+    }
+
+    .synth-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: .85rem;
+      padding: 5px 0;
+      border-bottom: 1px solid #F9FAFB;
+    }
+
+    .synth-row:last-child { border-bottom: none; }
+    .synth-row .val { font-weight: 600; }
+
+    /* Disclaimer */
+    .disclaimer-small {
+      font-size: .75rem;
+      color: var(--slate);
+      line-height: 1.6;
+      padding: 14px;
+      background: #F9FAFB;
+      border-radius: 6px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="wiz-header">
+  <div class="wiz-logo">Mon <span>Impôt</span> Malin</div>
+  <a href="simulateur_impot_PER_et_placement_V1.6.html" class="wiz-expert-link">⚡ Mode expert</a>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-meta">
+    <span class="progress-phase" id="prog-phase">Étape 1 sur 12 — Votre situation</span>
+    <span id="prog-pct">8%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:8%"></div></div>
+</div>
+
+<!-- WIZARD BODY -->
+<div class="wiz-body">
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 1 — BIENVENUE / FOYER -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step active" id="step-1">
+    <p class="step-eyebrow">Votre situation · Étape 1</p>
+    <h1 class="step-title">Qui déclare vos impôts ?</h1>
+    <div class="info-box blue" style="margin-bottom:24px;">
+      Vous hésitez entre le PER, le PEA ou le CTO pour placer votre argent ? Vous voulez savoir quel placement vous permettrait réellement de réduire vos impôts cette année ?
+      <br><br>
+      Ce simulateur gratuit a été conçu pour vous aider à y voir plus clair. Entrez simplement vos revenus et vos objectifs : l'outil calcule automatiquement l'économie d'impôt potentielle et vous guide vers la solution la plus adaptée à votre situation.
+      <br><br>
+      <strong>Simple, gratuit et 100% privé</strong> : aucune de vos données ne quitte votre appareil.
+    </div>
+    <p class="step-desc">Commençons par votre situation fiscale.</p>
+
+    <div class="field">
+      <label>Déclaration</label>
+      <div class="toggle-group">
+        <button class="toggle-btn selected" onclick="selectToggle(this,'foyer','seul')" data-group="foyer" data-val="seul">
+          <span class="toggle-icon">👤</span> Seul(e)
+        </button>
+        <button class="toggle-btn" onclick="selectToggle(this,'foyer','couple')" data-group="foyer" data-val="couple">
+          <span class="toggle-icon">👥</span> En couple
+        </button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Nombre de parts fiscales</label>
+      <div class="hint">1 part = célibataire sans enfant · 2 parts = couple sans enfant · +0,5 part par enfant</div>
+      <input type="number" id="w_parts" value="1" min="1" max="10" step="0.5">
+    </div>
+
+    <div class="wiz-nav">
+      <span></span>
+      <button class="btn-next" onclick="goStep(2)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 2 — REVENUS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-2">
+    <p class="step-eyebrow">Vos revenus · Étape 2</p>
+    <h1 class="step-title">Quels revenus déclarez-vous ?</h1>
+    <p class="step-desc">Saisissez les montants pré-remplis de votre déclaration — ils intègrent déjà la CSG déductible pour les pensions.</p>
+
+    <p class="section-label">Déclarant 1</p>
+
+    <div class="field">
+      <label>Salaires (€)</label>
+      <div class="hint">L'abattement de 10% sera calculé automatiquement (plancher 495 €, plafond 14 171 €)</div>
+      <input type="number" id="w_sal1" value="0" min="0">
+    </div>
+
+    <label class="check-field">
+      <input type="checkbox" id="w_frais1_on" onchange="toggleEl('w_frais1_bloc')">
+      <span>J'opte pour les <strong>frais réels</strong> à la place de l'abattement 10%</span>
+    </label>
+    <div id="w_frais1_bloc" style="display:none;" class="field">
+      <label>Frais réels déclarant 1 (€)</label>
+      <input type="number" id="w_frais1" value="0" min="0">
+    </div>
+
+    <div class="field">
+      <label>Pensions / retraites (€)</label>
+      <div class="hint">Montant pré-rempli de votre déclaration (cases 1AS ou 1BS)</div>
+      <input type="number" id="w_pen1" value="0" min="0">
+    </div>
+
+    <div id="w_bloc_d2">
+      <hr class="section-sep">
+      <p class="section-label">Déclarant 2</p>
+
+      <div class="field">
+        <label>Salaires (€)</label>
+        <input type="number" id="w_sal2" value="0" min="0">
+      </div>
+
+      <label class="check-field">
+        <input type="checkbox" id="w_frais2_on" onchange="toggleEl('w_frais2_bloc')">
+        <span>Frais réels déclarant 2</span>
+      </label>
+      <div id="w_frais2_bloc" style="display:none;" class="field">
+        <label>Frais réels déclarant 2 (€)</label>
+        <input type="number" id="w_frais2" value="0" min="0">
+      </div>
+
+      <div class="field">
+        <label>Pensions / retraites (€)</label>
+        <input type="number" id="w_pen2" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(1)">← Retour</button>
+      <button class="btn-next" onclick="goStep(3)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 3 — PER -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-3">
+    <p class="step-eyebrow">Votre PER · Étape 3</p>
+    <h1 class="step-title">Vos versements PER cette année</h1>
+    <p class="step-desc">Le PER (Plan d'Épargne Retraite) permet de déduire vos versements de votre revenu imposable, dans la limite d'un plafond annuel.</p>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Versement PER — Déclarant 1 (€)</label>
+        <input type="number" id="w_ver1" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Plafond PER — Déclarant 1 (€)</label>
+        <div class="hint">Figurant sur votre avis d'imposition page 2</div>
+        <input type="number" id="w_plaf1" value="4710" min="0">
+      </div>
+    </div>
+
+    <div id="w_per_d2">
+      <hr class="section-sep">
+      <div class="two-cols">
+        <div class="field">
+          <label>Versement PER — Déclarant 2 (€)</label>
+          <input type="number" id="w_ver2" value="0" min="0">
+        </div>
+        <div class="field">
+          <label>Plafond PER — Déclarant 2 (€)</label>
+          <input type="number" id="w_plaf2" value="4710" min="0">
+        </div>
+      </div>
+    </div>
+
+    <label class="check-field" style="margin-top:8px;">
+      <input type="checkbox" id="w_mut_on">
+      <span>Mutualiser les plafonds PER entre conjoints (si l'un des deux a un plafond plus élevé)</span>
+    </label>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(2)">← Retour</button>
+      <button class="btn-next" onclick="goStep(4)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 4 — DONS ET CRÉDITS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-4">
+    <p class="step-eyebrow">Réductions · Étape 4 <span class="badge-optional">Optionnel</span></p>
+    <h1 class="step-title">Dons et crédits d'impôt</h1>
+    <p class="step-desc">Si vous n'avez rien à déclarer dans ces rubriques, passez directement à la suite.</p>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Dons à 66 % (€)</label>
+        <div class="hint">Associations, fondations reconnues</div>
+        <input type="number" id="w_don66" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Dons à 75 % (€)</label>
+        <div class="hint">Aide aux personnes en difficulté</div>
+        <input type="number" id="w_don75" value="0" min="0">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Crédits d'impôt (€)</label>
+      <div class="hint">Emploi à domicile, garde d'enfant, travaux...</div>
+      <input type="number" id="w_credits" value="0" min="0">
+    </div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(3)">← Retour</button>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="btn-skip" onclick="goStep(5)">Passer</button>
+        <button class="btn-next" onclick="goStep(5)">Continuer →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 5 — RÉSULTATS FISCAUX -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-5">
+    <p class="step-eyebrow">Résultats fiscaux · Étape 5</p>
+    <h1 class="step-title">Votre situation fiscale</h1>
+    <p class="step-desc">Voici le calcul de votre impôt et les indicateurs clés pour optimiser vos décisions.</p>
+
+    <div class="result-grid" id="w_res_fiscal"></div>
+    <table class="res-table" id="w_res_detail"></table>
+    <div id="w_res_marge"></div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(4)">← Retour</button>
+      <button class="btn-next green" onclick="goStep(6)">Stratégie PER →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 6 — CAPITAL PER -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-6">
+    <p class="step-eyebrow">Stratégie PER · Étape 6</p>
+    <h1 class="step-title">Quel capital PER allez-vous rapatrier ?</h1>
+    <p class="step-desc">Renseignez les capitaux bruts de vos PER et l'année à laquelle vous prévoyez de les sortir (en général l'année de votre départ à la retraite ou l'année suivante).</p>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital PER 1 brut (€)</label>
+        <input type="number" id="w_per1_cap" value="50000" min="0">
+      </div>
+      <div class="field">
+        <label>Année de sortie PER 1</label>
+        <input type="number" id="w_per1_an" value="2028" min="2024" max="2050">
+      </div>
+    </div>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital PER 2 brut (€) <span class="badge-optional">si applicable</span></label>
+        <input type="number" id="w_per2_cap" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Année de sortie PER 2</label>
+        <input type="number" id="w_per2_an" value="2028" min="2024" max="2050">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Objectif de complément mensuel (€)</label>
+      <div class="hint">Ex : perte de salaire à la retraite. Laissez 0 si vous ne savez pas encore.</div>
+      <input type="number" id="w_objectif" value="0" min="0">
+    </div>
+
+    <div class="field">
+      <label>Année de début de simulation</label>
+      <div class="hint">Ex : 2026 pour voir l'évolution depuis maintenant</div>
+      <input type="number" id="w_annee_debut" value="2026" min="2024" max="2050">
+    </div>
+
+    <div class="field">
+      <label>Mode de sortie</label>
+      <div class="toggle-group">
+        <button class="toggle-btn selected" onclick="selectToggle(this,'mode_sortie','etale')" data-group="mode_sortie" data-val="etale">
+          <span class="toggle-icon">📅</span>
+          <span>Étalée à 11%</span><br>
+          <small style="font-size:.75rem;color:var(--slate);">~6 ans, fiscalement optimal</small>
+        </button>
+        <button class="toggle-btn" onclick="selectToggle(this,'mode_sortie','oneshot')" data-group="mode_sortie" data-val="oneshot">
+          <span class="toggle-icon">⚡</span>
+          <span>Totale en 1 an</span><br>
+          <small style="font-size:.75rem;color:var(--slate);">Pour comparaison fiscale</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(5)">← Retour</button>
+      <button class="btn-next" onclick="goStep(7)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 7 — ENVELOPPES -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-7">
+    <p class="step-eyebrow">Vos placements · Étape 7</p>
+    <h1 class="step-title">Vos enveloppes de placement</h1>
+    <p class="step-desc">Renseignez vos enveloppes actuelles et la répartition souhaitée du capital PER. La somme des pourcentages doit faire 100%.</p>
+
+    <p class="section-label">PEA 1</p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel PEA 1 (€)</label>
+        <input type="number" id="w_pea1_cap" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Part du PER vers PEA 1 (%)</label>
+        <input type="number" id="w_pea1_part" value="40" min="0" max="100">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Année d'ouverture PEA 1</label>
+        <input type="number" id="w_pea1_an" value="2026" min="2000" max="2030">
+      </div>
+      <div class="field">
+        <label>Mois d'ouverture (1-12)</label>
+        <input type="number" id="w_pea1_mois" value="1" min="1" max="12">
+      </div>
+    </div>
+    <div class="field">
+      <label>Rendement PEA 1 (%/an)</label>
+      <input type="number" id="w_pea1_rdt" value="7" min="0" max="20" step="0.5">
+    </div>
+
+    <hr class="section-sep">
+    <p class="section-label">PEA 2 <span class="badge-optional">Optionnel</span></p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel PEA 2 (€)</label>
+        <input type="number" id="w_pea2_cap" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Part du PER vers PEA 2 (%)</label>
+        <input type="number" id="w_pea2_part" value="10" min="0" max="100">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Année d'ouverture PEA 2</label>
+        <input type="number" id="w_pea2_an" value="2026" min="2000" max="2030">
+      </div>
+      <div class="field">
+        <label>Mois d'ouverture (1-12)</label>
+        <input type="number" id="w_pea2_mois" value="1" min="1" max="12">
+      </div>
+    </div>
+    <div class="field">
+      <label>Rendement PEA 2 (%/an)</label>
+      <input type="number" id="w_pea2_rdt" value="7" min="0" max="20" step="0.5">
+    </div>
+
+    <hr class="section-sep">
+    <p class="section-label">CTO</p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel CTO (€)</label>
+        <input type="number" id="w_cto_cap" value="0" min="0">
+      </div>
+      <div class="field">
+        <label>Part du PER vers CTO (%)</label>
+        <input type="number" id="w_cto_part" value="50" min="0" max="100">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Rendement CTO (%/an)</label>
+        <input type="number" id="w_cto_rdt" value="7" min="0" max="20" step="0.5">
+      </div>
+      <div class="field">
+        <label>Fiscalité CTO</label>
+        <select id="w_cto_fisc">
+          <option value="0.30">PFU 30%</option>
+          <option value="0.11">Barème 11%</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="w_parts_warn" class="info-box red" style="display:none;">⚠️ La somme des parts doit faire 100%. Vérifiez vos pourcentages.</div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(6)">← Retour</button>
+      <button class="btn-next" onclick="goStep(8)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 8 — RÉSULTATS STRATÉGIE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-8">
+    <p class="step-eyebrow">Résultats stratégie · Étape 8</p>
+    <h1 class="step-title">Projection de vos placements</h1>
+    <p class="step-desc">Voici l'évolution de votre patrimoine et de vos revenus disponibles sur 5, 10 et 15 ans.</p>
+
+    <div id="w_res_strat_synth"></div>
+    <div id="w_res_strat_tables"></div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(7)">← Retour</button>
+      <button class="btn-next green" onclick="goStep(9)">Comparateurs →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 9 — COMPARATEUR RENTE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-9">
+    <p class="step-eyebrow">Comparateur · Étape 9 <span class="badge-optional">Optionnel</span></p>
+    <h1 class="step-title">Rente viagère ou capital placé ?</h1>
+    <p class="step-desc">Si votre assureur vous propose une rente viagère, comparez-la ici à ce que rapporterait ce même capital placé.</p>
+
+    <label class="check-field">
+      <input type="checkbox" id="w_rente_on" onchange="toggleEl('w_rente_bloc')">
+      <span>Activer ce comparateur</span>
+    </label>
+
+    <div id="w_rente_bloc" style="display:none;">
+      <div class="two-cols">
+        <div class="field">
+          <label>Capital de la rente (€)</label>
+          <input type="number" id="w_rente_cap" value="50000" min="0" oninput="updateRendementImplicite()">
+        </div>
+        <div class="field">
+          <label>Rente annuelle proposée (€/an)</label>
+          <input type="number" id="w_rente_mnt" value="2345" min="0" oninput="updateRendementImplicite()">
+        </div>
+      </div>
+
+      <!-- Rendement implicite affiché dynamiquement -->
+      <div id="w_rente_impl_bloc" style="display:none;" class="info-box blue" style="margin-bottom:20px;">
+        <strong>Rendement implicite de cette rente : <span id="w_rente_impl_val">—</span>%/an</strong>
+        <br><span style="font-size:.8rem;">C'est le taux que votre assureur vous verse implicitement. Pour le comparateur ci-dessous, vous avez deux options :</span>
+        <ul style="margin:8px 0 0 16px;font-size:.8rem;line-height:1.7;">
+          <li><strong>Option A — Mettre ce même taux (<span id="w_rente_impl_val2">—</span>%)</strong> : répond à "mon capital placé au même rendement que la rente fait-il mieux ?"</li>
+          <li><strong>Option B — Mettre votre rendement PEA/CTO réel (ex: 7%)</strong> : répond à "mon capital dans mes vraies enveloppes fait-il mieux ?" <em>— généralement le choix le plus utile</em></li>
+        </ul>
+      </div>
+
+      <div class="two-cols">
+        <div class="field">
+          <label>Âge du titulaire</label>
+          <input type="number" id="w_rente_age" value="61" min="40" max="90">
+        </div>
+        <div class="field">
+          <label>Espérance de vie restante (ans)</label>
+          <input type="number" id="w_rente_esp" value="27" min="5" max="50">
+        </div>
+      </div>
+      <div class="field">
+        <label>Rendement de référence de vos placements (%/an)</label>
+        <div class="hint">Votre choix : rendement implicite de la rente (Option A) ou rendement réel de vos enveloppes (Option B, recommandé)</div>
+        <input type="number" id="w_rente_rdt" value="7" min="0" max="15" step="0.5">
+      </div>
+    </div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(8)">← Retour</button>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="btn-skip" onclick="goStep(10)">Passer</button>
+        <button class="btn-next" onclick="goStep(10)">Continuer →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 10 — COMPARATEUR PER vs PEA -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-10">
+    <p class="step-eyebrow">Comparateur · Étape 10 <span class="badge-optional">Optionnel</span></p>
+    <h1 class="step-title">PER ou placement direct ?</h1>
+    <p class="step-desc">Comparez l'avantage réel du PER (déduction fiscale à l'entrée, impôt à la sortie) face à un placement direct en PEA ou CTO sur la même durée.</p>
+
+    <label class="check-field">
+      <input type="checkbox" id="w_perpea_on" onchange="toggleEl('w_perpea_bloc')">
+      <span>Activer ce comparateur</span>
+    </label>
+
+    <div id="w_perpea_bloc" style="display:none;">
+      <div class="two-cols">
+        <div class="field">
+          <label>Versement annuel (€)</label>
+          <input type="number" id="w_pp_ver" value="1200" min="0">
+        </div>
+        <div class="field">
+          <label>Durée (ans)</label>
+          <input type="number" id="w_pp_duree" value="27" min="1" max="50">
+        </div>
+      </div>
+      <div class="two-cols">
+        <div class="field">
+          <label>TMI à l'entrée (%)</label>
+          <input type="number" id="w_pp_tmi_e" value="11" min="0" max="45" step="0.5">
+        </div>
+        <div class="field">
+          <label>TMI à la sortie (%)</label>
+          <input type="number" id="w_pp_tmi_s" value="11" min="0" max="45" step="0.5">
+        </div>
+      </div>
+      <div class="two-cols">
+        <div class="field">
+          <label>Fiscalité alternative</label>
+          <select id="w_pp_fisc">
+            <option value="0.172">PEA — PS 17,2%</option>
+            <option value="0.30">CTO — PFU 30%</option>
+            <option value="0.11">CTO — Barème 11%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Rendement utilisé</label>
+          <div class="hint">Repris automatiquement de l'étape 9</div>
+          <div id="w_pp_rdt_display" style="padding:11px 14px;background:#F3F4F6;border-radius:6px;font-weight:600;color:var(--navy);">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(9)">← Retour</button>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <button class="btn-skip" onclick="goStep(11)">Passer</button>
+        <button class="btn-next" onclick="goStep(11)">Continuer →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 11 — RÉSULTATS COMPARATEURS -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-11">
+    <p class="step-eyebrow">Résultats comparateurs · Étape 11</p>
+    <h1 class="step-title">Vos comparateurs</h1>
+    <div id="w_res_compara"></div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(10)">← Retour</button>
+      <button class="btn-next gold" onclick="goStep(12)">Synthèse finale →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 12 — SYNTHÈSE FINALE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-12">
+    <p class="step-eyebrow">Synthèse · Étape 12</p>
+    <h1 class="step-title">Récapitulatif de votre situation</h1>
+    <p class="step-desc">Voici un résumé de toutes vos simulations. Vous pouvez revenir en arrière pour modifier n'importe quelle donnée.</p>
+
+    <div id="w_synthese"></div>
+
+    <div style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
+      <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn-next" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+        ⚡ Ouvrir en mode expert
+      </a>
+      <button class="btn-back" onclick="window.print()">🖨️ Imprimer</button>
+    </div>
+
+    <div class="disclaimer-small">
+      ⚠️ Outil de réflexion personnelle — ne se substitue pas au simulateur officiel DGFiP ni à un conseil professionnel. Co-créé avec Claude (Anthropic). Licence MIT · <a href="https://github.com/J34NMY/simulateur-impot-per-placement">GitHub</a>
+    </div>
+  </div>
+
+</div><!-- /wiz-body -->
+
+<script>
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+let currentStep = 1;
+const TOTAL = 12;
+
+const PHASES = {
+  1:'Votre situation', 2:'Vos revenus', 3:'Votre PER',
+  4:'Dons & crédits', 5:'Résultats fiscaux',
+  6:'Capital PER', 7:'Vos enveloppes', 8:'Résultats stratégie',
+  9:'Rente viagère', 10:'PER vs PEA', 11:'Résultats comparateurs', 12:'Synthèse'
+};
+
+const toggles = {}; // stocke les valeurs des toggle buttons
+
+/* ═══════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════ */
+function goStep(n) {
+  // Calculs à la volée avant affichage
+  if (n === 5) calcFiscal();
+  if (n === 8) calcStrategie();
+  if (n === 10) {
+    // Reprendre le rendement de l'étape 9
+    const rdt = +document.getElementById('w_rente_rdt').value || 7;
+    document.getElementById('w_pp_rdt_display').textContent = rdt.toFixed(1) + '%/an';
+    window._rdtEtape9 = rdt;
+  }
+  if (n === 11) calcComparateurs();
+  if (n === 12) buildSynthese();
+
+  document.getElementById('step-'+currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step-'+n).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  const pct = Math.round((n / TOTAL) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-phase').textContent = 'Étape ' + n + ' sur ' + TOTAL + ' — ' + PHASES[n];
+}
+
+/* ═══════════════════════════════════════════════
+   TOGGLE BUTTONS
+═══════════════════════════════════════════════ */
+function selectToggle(btn, group, val) {
+  document.querySelectorAll('[data-group="'+group+'"]').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  toggles[group] = val;
+
+  // Effets de bord
+  if (group === 'foyer') {
+    const isCouple = val === 'couple';
+    document.getElementById('w_bloc_d2').style.display = isCouple ? 'block' : 'none';
+    document.getElementById('w_per_d2').style.display = isCouple ? 'block' : 'none';
+    if (!isCouple) document.getElementById('w_parts').value = 1;
+    else if (document.getElementById('w_parts').value < 2) document.getElementById('w_parts').value = 2;
+  }
+}
+
+function toggleEl(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+/* ═══════════════════════════════════════════════
+   HELPERS FISCAUX
+═══════════════════════════════════════════════ */
+function arr(x) { return Math.round(x); }
+
+function abattPensions(p) {
+  if (p <= 0) return 0;
+  let a = p * 0.10;
+  a = Math.max(a, 442); a = Math.min(a, 4321); return Math.min(a, p);
+}
+
+function abattSalaires(s, fraisOn, frais) {
+  if (s <= 0) return 0;
+  if (fraisOn) return Math.min(frais, s);
+  let a = s * 0.10;
+  a = Math.max(a, 495); a = Math.min(a, 14171); return Math.min(a, s);
+}
+
+function getBareme() {
+  return [
+    {plafond:11600, taux:0}, {plafond:29579, taux:0.11},
+    {plafond:84577, taux:0.30}, {plafond:181917, taux:0.41},
+    {plafond:Infinity, taux:0.45}
+  ];
+}
+
+function calcIR(revenu, parts, isCouple, impBrut0) {
+  const bareme = getBareme();
+  const quotient = arr(revenu / parts);
+  let impPart = 0, bas = 0, details = [];
+  for (const t of bareme) {
+    if (quotient > bas) {
+      const tr = Math.min(quotient, t.plafond) - bas;
+      details.push({taux: t.taux*100, montant: tr*t.taux});
+      impPart += tr * t.taux;
+      bas = t.plafond;
+    }
+  }
+  let impBrut = arr(impPart * parts);
+
+  // Décote
+  let decote = 0;
+  if (!isCouple && impBrut < 1982) decote = 897 - 0.4525*impBrut;
+  if (isCouple && impBrut < 3277) decote = 1483 - 0.4525*impBrut;
+  decote = Math.max(0, arr(decote));
+
+  return { quotient, impBrut, decote, details };
+}
+
+/* ═══════════════════════════════════════════════
+   RENDEMENT IMPLICITE RENTE (étape 9 → étape 10)
+═══════════════════════════════════════════════ */
+function updateRendementImplicite() {
+  const cap = +document.getElementById('w_rente_cap').value || 0;
+  const mnt = +document.getElementById('w_rente_mnt').value || 0;
+  const bloc = document.getElementById('w_rente_impl_bloc');
+  if (cap > 0 && mnt > 0) {
+    const rdtImpl = (mnt / cap * 100).toFixed(1);
+    document.getElementById('w_rente_impl_val').textContent = rdtImpl;
+    document.getElementById('w_rente_impl_val2').textContent = rdtImpl;
+    bloc.style.display = 'block';
+    // Pré-remplir le rendement de référence avec le rendement implicite si non modifié
+    window._rdtImpliciteRente = parseFloat(rdtImpl);
+  } else {
+    bloc.style.display = 'none';
+    window._rdtImpliciteRente = null;
+  }
+}
+
+
+function calcFiscal() {
+  const isCouple = (toggles['foyer'] || 'seul') === 'couple';
+  const parts = +document.getElementById('w_parts').value || (isCouple?2:1);
+
+  const sal1 = +document.getElementById('w_sal1').value || 0;
+  const fr1on = document.getElementById('w_frais1_on').checked;
+  const fr1 = +document.getElementById('w_frais1').value || 0;
+  const pen1 = +document.getElementById('w_pen1').value || 0;
+  const ver1 = +document.getElementById('w_ver1').value || 0;
+  const plaf1 = +document.getElementById('w_plaf1').value || 0;
+
+  const sal2 = isCouple ? (+document.getElementById('w_sal2').value||0) : 0;
+  const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
+  const fr2 = isCouple ? (+document.getElementById('w_frais2').value||0) : 0;
+  const pen2 = isCouple ? (+document.getElementById('w_pen2').value||0) : 0;
+  const ver2 = isCouple ? (+document.getElementById('w_ver2').value||0) : 0;
+  const plaf2 = isCouple ? (+document.getElementById('w_plaf2').value||0) : 0;
+  const mutOn = document.getElementById('w_mut_on').checked;
+
+  const don66 = +document.getElementById('w_don66').value||0;
+  const don75 = +document.getElementById('w_don75').value||0;
+  const credits = +document.getElementById('w_credits').value||0;
+
+  // Abattements
+  const ab_sal1 = abattSalaires(sal1, fr1on, fr1);
+  const ab_pen1 = abattPensions(pen1);
+  const ab_sal2 = abattSalaires(sal2, fr2on, fr2);
+  const ab_pen2 = abattPensions(pen2);
+
+  // Déductions PER
+  let d1 = Math.min(ver1, plaf1), d2 = Math.min(ver2, plaf2);
+  // (simplification : pas de mutualisation M3 complète dans le wizard)
+
+  const revenu = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2)-d1-d2);
+
+  const {quotient, impBrut, decote, details} = calcIR(revenu, parts, isCouple);
+
+  const reduc66 = don66*0.66, reduc75 = don75*0.75;
+  let impNet = impBrut - decote - arr(reduc66+reduc75) - credits;
+  impNet = Math.max(0, arr(impNet));
+
+  // TMI
+  const bareme = getBareme();
+  let tmi = 0;
+  for (let i=0; i<bareme.length; i++) if (quotient > (i===0?0:bareme[i-1].plafond)) tmi = bareme[i].taux*100;
+
+  const tauxMoyen = revenu > 0 ? (impNet/revenu*100) : 0;
+
+  // Marge avant 30%
+  const margeQ = Math.max(0, bareme[1].plafond - quotient);
+  const margeFoyer = arr(margeQ * parts);
+
+  // Versement pour non-imposition
+  let versNonImp = 0;
+  if (impNet > 0) {
+    let lo=0, hi=revenu;
+    for (let k=0; k<50; k++) {
+      const mid = arr((lo+hi)/2);
+      const rv2 = Math.max(0, revenu-mid);
+      const q2 = arr(rv2/parts);
+      let ip2=0,b2=0;
+      for (const t of bareme) { if(q2>b2){ip2+=(Math.min(q2,t.plafond)-b2)*t.taux;b2=t.plafond;} }
+      let ib2=arr(ip2*parts);
+      let dec2=0;
+      if (!isCouple&&ib2<1982) dec2=897-0.4525*ib2;
+      if (isCouple&&ib2<3277) dec2=1483-0.4525*ib2;
+      dec2=Math.max(0,arr(dec2));
+      let in2=Math.max(0,ib2-dec2-arr(reduc66+reduc75)-credits);
+      if (in2<=0) hi=mid; else lo=mid+1;
+    }
+    versNonImp = hi;
+  }
+
+  // Affichage
+  document.getElementById('w_res_fiscal').innerHTML = `
+    <div class="result-card"><div class="result-label">Revenu imposable</div><div class="result-value">${revenu.toLocaleString('fr-FR')} €</div></div>
+    <div class="result-card ${impNet===0?'highlight':''}"><div class="result-label">Impôt net</div><div class="result-value ${impNet===0?'green':''}">${impNet.toLocaleString('fr-FR')} €</div></div>
+    <div class="result-card"><div class="result-label">TMI</div><div class="result-value">${tmi.toFixed(0)} %</div></div>
+    <div class="result-card"><div class="result-label">Taux moyen effectif</div><div class="result-value">${tauxMoyen.toFixed(1)} %</div></div>
+  `;
+
+  let det = '<tr><th style="text-align:left;padding:8px 6px;font-size:.78rem;color:var(--slate);">Tranche</th><th style="text-align:right;padding:8px 6px;font-size:.78rem;color:var(--slate);">Montant (par part)</th></tr>';
+  for (const d of details) det += `<tr><td>${d.taux}%</td><td>${d.montant.toFixed(2)} €</td></tr>`;
+  det += `<tr class="total"><td>Impôt brut</td><td>${impBrut.toLocaleString('fr-FR')} €</td></tr>`;
+  document.getElementById('w_res_detail').innerHTML = det;
+
+  document.getElementById('w_res_marge').innerHTML = `
+    <div class="info-box green">
+      <strong>Marge de sortie PER avant tranche 30% :</strong> ${margeFoyer.toLocaleString('fr-FR')} €
+      <br><span style="font-size:.8rem;">Montant maximum à sortir du PER cette année sans passer en tranche 30%.</span>
+    </div>
+    ${impNet>0 ? `<div class="info-box blue">
+      <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
+      <br><span style="font-size:.8rem;">⚠️ Vérifiez votre plafond disponible sur votre avis d'imposition avant de verser.</span>
+    </div>` : '<div class="info-box green">✓ Vous êtes déjà non imposable avec vos versements actuels.</div>'}
+  `;
+
+  // Stockage pour synthèse
+  window._fiscal = {revenu, impNet, tmi, tauxMoyen, margeFoyer, versNonImp, parts, isCouple};
+}
+
+/* ═══════════════════════════════════════════════
+   ÉTAPE 8 — CALCUL STRATÉGIE
+═══════════════════════════════════════════════ */
+function calcStrategie() {
+  const f = window._fiscal || {};
+  const margeFoyer = f.margeFoyer || 0;
+
+  const per1Cap = +document.getElementById('w_per1_cap').value||0;
+  const per2Cap = +document.getElementById('w_per2_cap').value||0;
+  const per1An  = +document.getElementById('w_per1_an').value||2028;
+  const per2An  = +document.getElementById('w_per2_an').value||2028;
+  const totalPER = per1Cap + per2Cap;
+  const objectif = +document.getElementById('w_objectif').value||0;
+  const anneeBase = +document.getElementById('w_annee_debut').value||2026;
+  const modeSortie = toggles['mode_sortie'] || 'etale';
+  const anneeDebutPER = Math.max(per1An, per2An);
+
+  const pea1Cap  = +document.getElementById('w_pea1_cap').value||0;
+  const pea1Part = (+document.getElementById('w_pea1_part').value||0)/100;
+  const pea1An   = +document.getElementById('w_pea1_an').value||2026;
+  const pea1Mois = +document.getElementById('w_pea1_mois').value||1;
+  const pea1Rdt  = (+document.getElementById('w_pea1_rdt').value||7)/100;
+
+  const pea2Cap  = +document.getElementById('w_pea2_cap').value||0;
+  const pea2Part = (+document.getElementById('w_pea2_part').value||0)/100;
+  const pea2An   = +document.getElementById('w_pea2_an').value||2026;
+  const pea2Mois = +document.getElementById('w_pea2_mois').value||1;
+  const pea2Rdt  = (+document.getElementById('w_pea2_rdt').value||7)/100;
+
+  const ctoCap  = +document.getElementById('w_cto_cap').value||0;
+  const ctoPart = (+document.getElementById('w_cto_part').value||0)/100;
+  const ctoRdt  = (+document.getElementById('w_cto_rdt').value||7)/100;
+  const ctoFisc = +document.getElementById('w_cto_fisc').value||0.30;
+
+  // Vérif parts
+  const totalParts = pea1Part + pea2Part + ctoPart;
+  document.getElementById('w_parts_warn').style.display = Math.abs(totalParts-1)>0.01 ? 'block' : 'none';
+
+  // Capital net selon mode
+  const versAnnuelBrut = Math.min(margeFoyer, totalPER);
+  const nbAns11 = margeFoyer > 0 ? Math.ceil(totalPER/margeFoyer) : 1;
+  const capitalNet11 = totalPER - arr(totalPER*0.11);
+  const impMix = arr(Math.min(totalPER,margeFoyer)*0.11) + arr(Math.max(0,totalPER-margeFoyer)*0.30);
+  const capitalNetMix = totalPER - impMix;
+  const capitalNetRef = modeSortie==='etale' ? capitalNet11 : capitalNetMix;
+
+  const perPea1 = capitalNetRef*pea1Part;
+  const perPea2 = capitalNetRef*pea2Part;
+  const perCto  = capitalNetRef*ctoPart;
+
+  // Synthèse fiscale
+  document.getElementById('w_res_strat_synth').innerHTML = `
+    <div class="result-grid">
+      <div class="result-card"><div class="result-label">Capital PER total</div><div class="result-value">${totalPER.toLocaleString('fr-FR')} €</div></div>
+      <div class="result-card highlight"><div class="result-label">Capital net (mode ${modeSortie==='etale'?'étalé':'one-shot'})</div><div class="result-value green">${capitalNetRef.toLocaleString('fr-FR')} €</div></div>
+      <div class="result-card warn"><div class="result-label">Impôt total</div><div class="result-value gold">${(totalPER-capitalNetRef).toLocaleString('fr-FR')} €</div></div>
+      <div class="result-card"><div class="result-label">Durée (étalé à 11%)</div><div class="result-value">~${nbAns11} ans</div></div>
+    </div>
+  `;
+
+  // Simulation par horizon
+  const horizons = [5, 10, 15];
+  let tablesHTML = '';
+
+  for (const h of horizons) {
+    let capPea1=pea1Cap, capPea2=pea2Cap, capCto=ctoCap;
+    let capitalPERRestant=totalPER, capitalNetInvesti=pea1Cap+pea2Cap+ctoCap;
+    let gainsCtoEncaisses=0;
+    let rows=[];
+
+    for (let i=0; i<h; i++) {
+      const annee = anneeBase + i;
+      const pea1Debloque = annee >= (pea1An+5);
+      const pea2Debloque = annee >= (pea2An+5);
+      const ctoDebloque = true;
+
+      if (modeSortie==='oneshot' && annee===anneeDebutPER) {
+        capPea1+=perPea1; capPea2+=perPea2; capCto+=perCto;
+        capitalNetInvesti+=capitalNetRef;
+      }
+      if (modeSortie==='etale' && capitalPERRestant>0 && annee>=anneeDebutPER) {
+        const vb=Math.min(versAnnuelBrut,capitalPERRestant);
+        const vn=vb*(1-0.11);
+        capPea1+=vn*pea1Part; capPea2+=vn*pea2Part; capCto+=vn*ctoPart;
+        capitalNetInvesti+=vn; capitalPERRestant-=vb;
+      }
+
+      const gPea1=capPea1*pea1Rdt, gPea2=capPea2*pea2Rdt, gCto=capCto*ctoRdt;
+      const nPea1=arr(gPea1*(1-0.172)/12), nPea2=arr(gPea2*(1-0.172)/12);
+      const nCto=arr(gCto*(1-ctoFisc)/12);
+      const nPeaMois=(pea1Debloque?nPea1:0)+(pea2Debloque?nPea2:0);
+      const totalDispo=nPeaMois+nCto;
+      const nPeaPot=nPea1+nPea2;
+
+      gainsCtoEncaisses+=arr(gCto*(1-ctoFisc));
+      capPea1+=gPea1; capPea2+=gPea2;
+
+      const capTot=arr(capPea1+capPea2+capCto);
+      const pv=capTot+gainsCtoEncaisses-arr(capitalNetInvesti);
+      rows.push({annee, capPea1:arr(capPea1), capPea2:arr(capPea2), capCto:arr(capCto),
+                 nCto, nPeaMois, nPeaPot, pea1Debloque, pea2Debloque,
+                 totalDispo, pv, capTot, ecart:totalDispo-objectif});
+    }
+
+    tablesHTML += `<h3 style="margin:24px 0 12px;font-size:1rem;color:var(--navy);">Sur ${h} ans (${anneeBase}–${anneeBase+h-1})</h3>
+    <div style="overflow-x:auto;">
+    <table class="res-table" style="min-width:600px;">
+      <tr>
+        <th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">PEA 1</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">PEA 2</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">CTO</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains CTO/mois</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains PEA/mois</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Total dispo/mois</th>
+        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Plus-value cumulée</th>
+      </tr>`;
+    for (const r of rows) {
+      const bg = r.totalDispo>=objectif&&objectif>0 ? 'background:#E8F0E9;' : '';
+      const couleur = r.totalDispo>=objectif&&objectif>0 ? 'var(--green)' : 'var(--navy)';
+      tablesHTML += `<tr style="${bg}">
+        <td style="padding:6px;">${r.annee}</td>
+        <td style="text-align:right;font-size:.82rem;">${r.capPea1.toLocaleString('fr-FR')} €${!r.pea1Debloque?' 🔒':''}</td>
+        <td style="text-align:right;font-size:.82rem;">${r.capPea2.toLocaleString('fr-FR')} €${!r.pea2Debloque?' 🔒':''}</td>
+        <td style="text-align:right;font-size:.82rem;">${r.capCto.toLocaleString('fr-FR')} €</td>
+        <td style="text-align:right;color:#854F0B;font-weight:500;">${r.nCto} €</td>
+        <td style="text-align:right;color:${r.nPeaMois>0?'#185FA5':'#999'};font-style:${r.nPeaMois===0?'italic':'normal'};">${r.nPeaMois>0?r.nPeaMois+' €':'🔒 ('+r.nPeaPot+' €)'}</td>
+        <td style="text-align:right;font-weight:700;color:${couleur};">${r.totalDispo} €</td>
+        <td style="text-align:right;color:#185FA5;">${r.pv.toLocaleString('fr-FR')} €</td>
+      </tr>`;
+    }
+    tablesHTML += `</table></div>`;
+  }
+
+  document.getElementById('w_res_strat_tables').innerHTML = tablesHTML;
+  window._strat = {totalPER, capitalNetRef, nbAns11, modeSortie, anneeDebutPER};
+}
+
+/* ═══════════════════════════════════════════════
+   ÉTAPE 11 — CALCUL COMPARATEURS
+═══════════════════════════════════════════════ */
+function calcComparateurs() {
+  let html = '';
+
+  // Rente
+  if (document.getElementById('w_rente_on').checked) {
+    const cap   = +document.getElementById('w_rente_cap').value||0;
+    const mnt   = +document.getElementById('w_rente_mnt').value||0;
+    const age   = +document.getElementById('w_rente_age').value||61;
+    const esp   = +document.getElementById('w_rente_esp').value||27;
+    const rdt   = (+document.getElementById('w_rente_rdt').value||7)/100;
+    const rdtImpl = cap>0 ? (mnt/cap*100) : 0;
+
+    let renteCum=0, capEvo=cap, bascule=null;
+    let rows=[], pas=Math.max(1,Math.round(esp/8));
+    for (let an=1; an<=esp; an++) {
+      renteCum+=mnt; capEvo*=(1+rdt);
+      const gains=capEvo-cap;
+      if (!bascule && renteCum>gains) bascule=an;
+      if (an%pas===0||an===esp||an===1) rows.push({an,age:age+an,rc:arr(renteCum),gc:arr(gains)});
+    }
+    const capFinal=arr(capEvo);
+
+    html += `<h3 style="margin-bottom:12px;font-size:1rem;">1. Rente viagère vs capital placé</h3>
+    <div class="result-grid">
+      <div class="result-card"><div class="result-label">Rendement implicite de la rente</div><div class="result-value ${rdtImpl<rdt*100?'red':'green'}">${rdtImpl.toFixed(1)}%/an</div></div>
+      <div class="result-card"><div class="result-label">Rendement de vos placements</div><div class="result-value">${(rdt*100).toFixed(1)}%/an</div></div>
+      <div class="result-card"><div class="result-label">Point mort rente vs capital</div><div class="result-value">${bascule?bascule+' ans':'Jamais'}</div></div>
+    </div>
+    <div style="overflow-x:auto;"><table class="res-table" style="min-width:400px;">
+      <tr><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Âge</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Rente cumulée</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains capital cumulés</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Avantage</th></tr>`;
+    for (const r of rows) {
+      const capG=r.rc>r.gc;
+      html+=`<tr style="${!capG?'background:#E8F0E9;':''}"><td>${r.an}</td><td>${r.age}</td><td style="text-align:right;">${r.rc.toLocaleString('fr-FR')} €</td><td style="text-align:right;">${r.gc.toLocaleString('fr-FR')} €</td><td style="text-align:right;color:${capG?'var(--red)':'var(--green)'};">${capG?'Rente +':'Capital +'+(r.gc-r.rc).toLocaleString('fr-FR')+' €'}</td></tr>`;
+    }
+    html+=`</table></div>
+    <div class="info-box ${arr(renteCum)>(capFinal-cap)?'gold':'green'}" style="margin-top:12px;">
+      <strong>Sur ${esp} ans :</strong> le capital de ${cap.toLocaleString('fr-FR')} € placé génère ${(capFinal-cap).toLocaleString('fr-FR')} € de gains contre ${arr(renteCum).toLocaleString('fr-FR')} € versés par la rente.
+      <br>Avec l'option capital, <strong>${capFinal.toLocaleString('fr-FR')} € restent transmissibles</strong> à vos héritiers (dont ${cap.toLocaleString('fr-FR')} € de capital initial + ${(capFinal-cap).toLocaleString('fr-FR')} € de gains). Avec la rente : 0 €.
+    </div>`;
+  }
+
+  // PER vs PEA
+  if (document.getElementById('w_perpea_on').checked) {
+    const ver  = +document.getElementById('w_pp_ver').value||0;
+    const duree= +document.getElementById('w_pp_duree').value||27;
+    const tmiE = (+document.getElementById('w_pp_tmi_e').value||11)/100;
+    const tmiS = (+document.getElementById('w_pp_tmi_s').value||11)/100;
+    const rdt  = (window._rdtEtape9 || 7) / 100;  // repris de l'étape 9
+    const fisc = +document.getElementById('w_pp_fisc').value||0.172;
+    const fiscLbl = document.getElementById('w_pp_fisc').options[document.getElementById('w_pp_fisc').selectedIndex].text;
+
+    let capPER=0;
+    for (let an=0;an<duree;an++) capPER=(capPER+ver)*(1+rdt);
+    const impSortiePER=capPER*tmiS;
+    const netPER=capPER-impSortiePER;
+
+    const verNet=ver*(1-tmiE);
+    let capDirect=0;
+    for (let an=0;an<duree;an++) capDirect=(capDirect+verNet)*(1+rdt);
+    const gainsD=capDirect-verNet*duree;
+    const netDirect=capDirect-gainsD*fisc;
+    const ecart=netPER-netDirect;
+
+    html+=`<hr style="border:none;border-top:1px solid #E5E7EB;margin:24px 0;">
+    <h3 style="margin-bottom:12px;font-size:1rem;">2. PER vs placement direct (${duree} versements de ${ver.toLocaleString('fr-FR')} €/an)</h3>
+    <div class="result-grid">
+      <div class="result-card highlight"><div class="result-label">PER — Capital net final</div><div class="result-value green">${arr(netPER).toLocaleString('fr-FR')} €</div></div>
+      <div class="result-card"><div class="result-label">${fiscLbl} — Capital net final</div><div class="result-value">${arr(netDirect).toLocaleString('fr-FR')} €</div></div>
+    </div>
+    <div class="info-box ${ecart>0?'green':'gold'}">
+      <strong>${ecart>0?'Le PER est gagnant':'Le placement direct est gagnant'} de ${Math.abs(arr(ecart)).toLocaleString('fr-FR')} €</strong> sur ${duree} ans de versements.
+      ${tmiE===tmiS?' Même TMI entrée/sortie : le PER reste avantageux car l\'économie d\'impôt travaille aussi pendant toute la durée.':''}
+      ${tmiS>tmiE?' Attention : TMI de sortie supérieur à l\'entrée — scénario défavorable au PER.':''}
+      ${tmiS<tmiE?' TMI de sortie inférieur à l\'entrée — scénario très favorable au PER.':''}
+    </div>`;
+  }
+
+  if (!html) html = '<div class="info-box blue">Aucun comparateur activé — vous pouvez revenir en arrière pour en activer un.</div>';
+  document.getElementById('w_res_compara').innerHTML = html;
+  window._compara = {html};
+}
+
+/* ═══════════════════════════════════════════════
+   ÉTAPE 12 — SYNTHÈSE
+═══════════════════════════════════════════════ */
+function buildSynthese() {
+  const f = window._fiscal || {};
+  const s = window._strat || {};
+  const isCouple = (toggles['foyer']||'seul')==='couple';
+  const parts = document.getElementById('w_parts').value;
+
+  let html = `
+    <div class="synth-block">
+      <h3>🧮 Situation fiscale</h3>
+      <div class="synth-row"><span>Foyer</span><span class="val">${isCouple?'Couple':'Célibataire'} — ${parts} part(s)</span></div>
+      <div class="synth-row"><span>Revenu imposable</span><span class="val">${(f.revenu||0).toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row"><span>Impôt net</span><span class="val">${(f.impNet||0).toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row"><span>TMI</span><span class="val">${f.tmi||0} %</span></div>
+      <div class="synth-row"><span>Taux moyen effectif</span><span class="val">${(f.tauxMoyen||0).toFixed(1)} %</span></div>
+      <div class="synth-row"><span>Marge PER avant 30%</span><span class="val" style="color:var(--green);">${(f.margeFoyer||0).toLocaleString('fr-FR')} €/an</span></div>
+      ${f.versNonImp>0?`<div class="synth-row"><span>Versement pour non-imposition</span><span class="val" style="color:#185FA5;">${f.versNonImp.toLocaleString('fr-FR')} €</span></div>`:''}
+    </div>`;
+
+  if (s.totalPER) {
+    html += `
+    <div class="synth-block">
+      <h3>📈 Stratégie PER</h3>
+      <div class="synth-row"><span>Capital PER total</span><span class="val">${s.totalPER.toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row"><span>Mode de sortie</span><span class="val">${s.modeSortie==='etale'?'Étalée à 11%':'Totale one-shot'}</span></div>
+      <div class="synth-row"><span>Capital net placé</span><span class="val" style="color:var(--green);">${s.capitalNetRef.toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row"><span>Durée de sortie (mode étalé)</span><span class="val">~${s.nbAns11} ans</span></div>
+    </div>`;
+  }
+
+  html += `
+    <div class="synth-block">
+      <h3>⚖️ Comparateurs</h3>
+      ${document.getElementById('w_rente_on').checked
+        ? `<div class="synth-row"><span>Rente vs capital</span><span class="val">Voir étape 11</span></div>`
+        : `<div class="synth-row"><span>Rente vs capital</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
+      ${document.getElementById('w_perpea_on').checked
+        ? `<div class="synth-row"><span>PER vs PEA direct</span><span class="val">Voir étape 11</span></div>`
+        : `<div class="synth-row"><span>PER vs PEA direct</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
+    </div>`;
+
+  document.getElementById('w_synthese').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+toggles['foyer'] = 'seul';
+toggles['mode_sortie'] = 'etale';
+document.getElementById('w_bloc_d2').style.display = 'none';
+document.getElementById('w_per_d2').style.display = 'none';
+</script>
+</body>
+</html>
