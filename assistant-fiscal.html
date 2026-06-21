@@ -435,9 +435,15 @@
     </div>
 
     <div class="field">
-      <label>Nombre de parts fiscales</label>
-      <div class="hint">1 part = célibataire sans enfant · 2 parts = couple sans enfant · +0,5 part par enfant</div>
-      <input type="number" id="w_parts" value="1" min="1" max="10" step="0.5">
+      <label>Nombre d'enfants à charge</label>
+      <div class="hint">Le nombre de parts est calculé automatiquement : +0,5 par enfant pour les 2 premiers, +1 part à partir du 3ème</div>
+      <input type="number" id="w_enfants" value="0" min="0" max="10" step="1" oninput="calcParts()">
+    </div>
+
+    <div class="field">
+      <label>Nombre de parts fiscales <span style="font-size:.75rem;color:var(--slate);font-weight:400;">(calculé automatiquement)</span></label>
+      <div class="hint">Si votre situation est particulière (garde alternée, parent isolé, invalidité), corrigez directement ce chiffre — il correspond à la case "Nombre de parts" de votre avis d'imposition</div>
+      <input type="number" id="w_parts" value="1" min="0.5" max="10" step="0.5">
     </div>
 
     <div class="wiz-nav">
@@ -997,8 +1003,7 @@ function selectToggle(btn, group, val) {
     const isCouple = val === 'couple';
     document.getElementById('w_bloc_d2').style.display = isCouple ? 'block' : 'none';
     document.getElementById('w_per_d2').style.display = isCouple ? 'block' : 'none';
-    if (!isCouple) document.getElementById('w_parts').value = 1;
-    else if (document.getElementById('w_parts').value < 2) document.getElementById('w_parts').value = 2;
+    calcParts(); // recalcule les parts selon seul/couple + enfants
   }
 }
 
@@ -1057,8 +1062,24 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
 }
 
 /* ═══════════════════════════════════════════════
-   RENDEMENT IMPLICITE RENTE (étape 9 → étape 10)
+   CALCUL AUTOMATIQUE DES PARTS
 ═══════════════════════════════════════════════ */
+function calcParts() {
+  const isCouple = (toggles['foyer'] || 'seul') === 'couple';
+  const enfants = +document.getElementById('w_enfants').value || 0;
+  const baseCouple = isCouple ? 2 : 1;
+
+  // Règle fiscale française
+  let partsEnfants = 0;
+  if (enfants >= 1) partsEnfants += 0.5;
+  if (enfants >= 2) partsEnfants += 0.5;
+  if (enfants >= 3) partsEnfants += (enfants - 2) * 1;
+
+  const total = baseCouple + partsEnfants;
+  document.getElementById('w_parts').value = total;
+}
+
+
 function updateRendementImplicite() {
   const cap = +document.getElementById('w_rente_cap').value || 0;
   const mnt = +document.getElementById('w_rente_mnt').value || 0;
