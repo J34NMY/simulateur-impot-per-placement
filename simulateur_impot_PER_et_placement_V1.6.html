@@ -165,20 +165,31 @@ input { padding: 3px; width: 180px; }
 
   </div>
 
-  <!-- FOYER -->
+  <!-- DONS ET CRÉDITS -->
   <div class="section">
-    <h2>Dons et crédits</h2>
+    <h2>Réductions et crédits d'impôt</h2>
+    <div class="small">Saisissez vos dépenses brutes — le simulateur calcule automatiquement la réduction ou le crédit correspondant.</div>
 
-    <label>Dons à 66 % (€)
-      <input type="number" id="don66" value="0">
+    <h3>Réductions d'impôt (déduites de l'impôt, non remboursables)</h3>
+    <label>Dons à 66 % — associations, fondations reconnues (€)
+      <input type="number" id="don66" value="0" oninput="calculer()">
+    </label>
+    <label>Dons à 75 % — aide aux personnes en difficulté (€)
+      <input type="number" id="don75" value="0" oninput="calculer()">
     </label>
 
-    <label>Dons à 75 % (€)
-      <input type="number" id="don75" value="0">
+    <h3 style="margin-top:12px;">Crédits d'impôt (remboursés même si impôt = 0)</h3>
+    <label>Emploi à domicile — aide ménagère, jardinage, garde d'enfant à domicile, aide aux personnes âgées (€)
+      <input type="number" id="ci_domicile" value="0" oninput="calculer()">
+      <span class="small">Crédit = 50% de la dépense, plafonné à 6 000 € de crédit (12 000 € de dépenses)</span>
     </label>
-
-    <label>Crédits d'impôt (€)
-      <input type="number" id="credits" value="0">
+    <label>Garde d'enfants hors domicile — crèche, assistante maternelle (€)
+      <input type="number" id="ci_garde" value="0" oninput="calculer()">
+      <span class="small">Crédit = 50% de la dépense, plafonné à 1 750 € de crédit (3 500 € de dépenses) par enfant — saisissez le total</span>
+    </label>
+    <label>Cotisations syndicales (€)
+      <input type="number" id="ci_syndic" value="0" oninput="calculer()">
+      <span class="small">Crédit = 66% de la cotisation</span>
     </label>
   </div>
 
@@ -1070,9 +1081,20 @@ function calculer() {
   const fraisReels2  = isCouple ? (+document.getElementById('fraisReels2').value  || 0) : 0;
 
   const parts   = +document.getElementById('parts').value   || (isCouple ? 2 : 1);
-  const don66   = +document.getElementById('don66').value   || 0;
-  const don75   = +document.getElementById('don75').value   || 0;
-  const credits = +document.getElementById('credits').value || 0;
+  const don66      = +document.getElementById('don66').value      || 0;
+  const don75      = +document.getElementById('don75').value      || 0;
+  const ciDomicile = +document.getElementById('ci_domicile').value || 0;
+  const ciGarde    = +document.getElementById('ci_garde').value    || 0;
+  const ciSyndic   = +document.getElementById('ci_syndic').value   || 0;
+
+  // Calcul automatique des réductions et crédits
+  const reduc66  = arr(don66 * 0.66);
+  const reduc75  = arr(don75 * 0.75);
+  const crDomicile = Math.min(arr(ciDomicile * 0.50), 6000);
+  const crGarde    = arr(ciGarde * 0.50);
+  const crSyndic   = arr(ciSyndic * 0.66);
+  const totalRed = reduc66 + reduc75;
+  const credits  = crDomicile + crGarde + crSyndic;
 
   const ab1 = abattementPensions(pensions1);
   const ab2 = abattementPensions(pensions2);
@@ -1140,10 +1162,6 @@ function calculer() {
   }
   if (decote < 0) decote = 0;
   decote = arr(decote);
-
-  const reduc66 = don66 * 0.66;
-  const reduc75 = don75 * 0.75;
-  let totalRed = arr(reduc66 + reduc75);
 
   let impNet = impBrut - decote - totalRed - credits;
   if (impNet < 0) impNet = 0;
@@ -1272,10 +1290,13 @@ function calculer() {
   html += `
     <br><strong>Impôt brut :</strong> ${impBrut.toFixed(0)} €<br>
     <strong>Décote :</strong> ${decote.toFixed(0)} €<br>
-    <strong>Réduction dons 66 % :</strong> ${reduc66.toFixed(2)} €<br>
-    <strong>Réduction dons 75 % :</strong> ${reduc75.toFixed(2)} €<br>
+    <strong>Réduction dons 66 % :</strong> ${reduc66.toFixed(0)} € (dépense : ${don66.toLocaleString('fr-FR')} €)<br>
+    <strong>Réduction dons 75 % :</strong> ${reduc75.toFixed(0)} € (dépense : ${don75.toLocaleString('fr-FR')} €)<br>
     <strong>Total réductions :</strong> ${totalRed.toFixed(0)} €<br>
-    <strong>Crédits d'impôt :</strong> ${credits.toFixed(2)} €<br>
+    ${crDomicile > 0 ? `<strong>Crédit emploi à domicile (50%) :</strong> ${crDomicile.toLocaleString('fr-FR')} €<br>` : ''}
+    ${crGarde > 0 ? `<strong>Crédit garde d'enfants (50%) :</strong> ${crGarde.toLocaleString('fr-FR')} €<br>` : ''}
+    ${crSyndic > 0 ? `<strong>Crédit cotisations syndicales (66%) :</strong> ${crSyndic.toLocaleString('fr-FR')} €<br>` : ''}
+    ${credits > 0 ? `<strong>Total crédits d'impôt :</strong> ${credits.toLocaleString('fr-FR')} €<br>` : ''}
     <hr>
     <strong>Impôt net à payer :</strong> ${impNet.toFixed(0)} €<br>
     <hr>

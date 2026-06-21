@@ -562,27 +562,44 @@
   <!-- ÉTAPE 4 — DONS ET CRÉDITS -->
   <!-- ══════════════════════════════════════════════ -->
   <div class="step" id="step-4">
-    <p class="step-eyebrow">Réductions · Étape 4 <span class="badge-optional">Optionnel</span></p>
-    <h1 class="step-title">Dons et crédits d'impôt</h1>
-    <p class="step-desc">Si vous n'avez rien à déclarer dans ces rubriques, passez directement à la suite.</p>
+    <p class="step-eyebrow">Réductions & crédits · Étape 4 <span class="badge-optional">Optionnel</span></p>
+    <h1 class="step-title">Dons et dépenses déductibles</h1>
+    <p class="step-desc">Saisissez vos dépenses brutes — le simulateur calcule automatiquement la réduction ou le crédit correspondant. Laissez à 0 si vous n'avez pas ces dépenses.</p>
+
+    <p class="section-label">Réductions d'impôt <span style="font-weight:400;font-size:.78rem;">(déduites de l'impôt, non remboursables)</span></p>
 
     <div class="two-cols">
       <div class="field">
         <label>Dons à 66 % (€)</label>
-        <div class="hint">Associations, fondations reconnues</div>
+        <div class="hint">Associations, fondations reconnues d'utilité publique — réduction = 66% du don</div>
         <input type="number" id="w_don66" value="0" min="0">
       </div>
       <div class="field">
         <label>Dons à 75 % (€)</label>
-        <div class="hint">Aide aux personnes en difficulté</div>
+        <div class="hint">Aide aux personnes en difficulté (Restos du Cœur, Croix-Rouge...) — réduction = 75% du don</div>
         <input type="number" id="w_don75" value="0" min="0">
       </div>
     </div>
 
+    <hr class="section-sep">
+    <p class="section-label">Crédits d'impôt <span style="font-weight:400;font-size:.78rem;">(remboursés même si impôt = 0)</span></p>
+
     <div class="field">
-      <label>Crédits d'impôt (€)</label>
-      <div class="hint">Emploi à domicile, garde d'enfant, travaux...</div>
-      <input type="number" id="w_credits" value="0" min="0">
+      <label>Emploi à domicile (€)</label>
+      <div class="hint">Aide ménagère, jardinage, garde d'enfant à domicile, aide aux personnes âgées — crédit = 50% de la dépense, plafonné à 6 000 € de crédit</div>
+      <input type="number" id="w_ci_domicile" value="0" min="0">
+    </div>
+
+    <div class="field">
+      <label>Garde d'enfants hors domicile (€)</label>
+      <div class="hint">Crèche, assistante maternelle — crédit = 50% de la dépense, plafonné à 1 750 € de crédit par enfant</div>
+      <input type="number" id="w_ci_garde" value="0" min="0">
+    </div>
+
+    <div class="field">
+      <label>Cotisations syndicales (€)</label>
+      <div class="hint">Crédit = 66% de la cotisation versée</div>
+      <input type="number" id="w_ci_syndic" value="0" min="0">
     </div>
 
     <div class="wiz-nav">
@@ -1119,7 +1136,18 @@ function calcFiscal() {
 
   const don66 = +document.getElementById('w_don66').value||0;
   const don75 = +document.getElementById('w_don75').value||0;
-  const credits = +document.getElementById('w_credits').value||0;
+  const ciDomicile = +document.getElementById('w_ci_domicile').value||0;
+  const ciGarde    = +document.getElementById('w_ci_garde').value||0;
+  const ciSyndic   = +document.getElementById('w_ci_syndic').value||0;
+
+  // Calcul automatique réductions et crédits
+  const reduc66    = arr(don66 * 0.66);
+  const reduc75    = arr(don75 * 0.75);
+  const crDomicile = Math.min(arr(ciDomicile * 0.50), 6000);
+  const crGarde    = arr(ciGarde * 0.50);
+  const crSyndic   = arr(ciSyndic * 0.66);
+  const totalRed   = reduc66 + reduc75;
+  const credits    = crDomicile + crGarde + crSyndic;
 
   // Abattements
   const ab_sal1 = abattSalaires(sal1, fr1on, fr1);
@@ -1135,8 +1163,7 @@ function calcFiscal() {
 
   const {quotient, impBrut, decote, details} = calcIR(revenu, parts, isCouple);
 
-  const reduc66 = don66*0.66, reduc75 = don75*0.75;
-  let impNet = impBrut - decote - arr(reduc66+reduc75) - credits;
+  let impNet = impBrut - decote - totalRed - credits;
   impNet = Math.max(0, arr(impNet));
 
   // TMI
@@ -1165,7 +1192,7 @@ function calcFiscal() {
       if (!isCouple&&ib2<1982) dec2=897-0.4525*ib2;
       if (isCouple&&ib2<3277) dec2=1483-0.4525*ib2;
       dec2=Math.max(0,arr(dec2));
-      let in2=Math.max(0,ib2-dec2-arr(reduc66+reduc75)-credits);
+      let in2=Math.max(0,ib2-dec2-totalRed-credits);
       if (in2<=0) hi=mid; else lo=mid+1;
     }
     versNonImp = hi;
