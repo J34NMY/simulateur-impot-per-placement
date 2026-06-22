@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <title>Simulateur impôt foyer – PER + paramètres</title>
 
   <style>
@@ -121,8 +120,11 @@ input { padding: 3px; width: 180px; }
       </label>
 
       <label>Plafond PER (€)
-        <input type="number" id="plafondPER1" value="0">
+        <input type="number" id="plafondPER1" value="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;" title="Calculé automatiquement depuis le PASS et les reports (onglet Paramètres annuels)">
       </label>
+      <div class="small" style="margin-top:6px; margin-bottom:12px; color:#888;">
+        Calculé automatiquement — modifiable via l'onglet <strong>Paramètres annuels</strong> (PASS + reports N-1/N-2/N-3)
+      </div>
 
       <label>Versement PER (€)
         <input type="number" id="versementPER1" value="0">
@@ -156,8 +158,11 @@ input { padding: 3px; width: 180px; }
       </label>
 
       <label>Plafond PER (€)
-        <input type="number" id="plafondPER2" value="0">
+        <input type="number" id="plafondPER2" value="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;" title="Calculé automatiquement depuis le PASS et les reports (onglet Paramètres annuels)">
       </label>
+      <div class="small" style="margin-top:6px; margin-bottom:12px; color:#888;">
+        Calculé automatiquement — modifiable via l'onglet <strong>Paramètres annuels</strong> (PASS + reports N-1/N-2/N-3)
+      </div>
 
       <label>Versement PER (€)
         <input type="number" id="versementPER2" value="0">
