@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guide fiscal PER — Assistant fiscal</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -522,29 +521,42 @@
     <h1 class="step-title">Vos versements PER cette année</h1>
     <p class="step-desc">Le PER (Plan d'Épargne Retraite) permet de déduire vos versements de votre revenu imposable, dans la limite d'un plafond annuel.</p>
 
+    <p class="section-label">Déclarant 1</p>
     <div class="two-cols">
       <div class="field">
-        <label>Versement PER — Déclarant 1 (€)</label>
+        <label>Versement PER (€)</label>
         <input type="number" id="w_ver1" value="0" min="0">
       </div>
       <div class="field">
-        <label>Plafond PER — Déclarant 1 (€)</label>
-        <div class="hint">Figurant sur votre avis d'imposition page 2</div>
-        <input type="number" id="w_plaf1" value="4710" min="0">
+        <label>Plafond PER (€)</label>
+        <div class="hint">Calculé automatiquement depuis le PASS</div>
+        <input type="number" id="w_plaf1" value="4710" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
       </div>
+    </div>
+    <div class="field">
+      <label>Reports plafond non utilisés N-1/N-2/N-3 (€)</label>
+      <div class="hint">Cumul des plafonds non consommés les 3 années précédentes — figurant sur votre <strong>avis d'imposition page 2</strong>, case <em>"Plafond épargne retraite disponible"</em>. Laissez 0 si vous n'avez pas de reports.</div>
+      <input type="number" id="w_report1" value="0" min="0" oninput="updatePlafondPER()">
     </div>
 
     <div id="w_per_d2">
       <hr class="section-sep">
+      <p class="section-label">Déclarant 2</p>
       <div class="two-cols">
         <div class="field">
-          <label>Versement PER — Déclarant 2 (€)</label>
+          <label>Versement PER (€)</label>
           <input type="number" id="w_ver2" value="0" min="0">
         </div>
         <div class="field">
-          <label>Plafond PER — Déclarant 2 (€)</label>
-          <input type="number" id="w_plaf2" value="4710" min="0">
+          <label>Plafond PER (€)</label>
+          <div class="hint">Calculé automatiquement depuis le PASS</div>
+          <input type="number" id="w_plaf2" value="4710" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
         </div>
+      </div>
+      <div class="field">
+        <label>Reports plafond non utilisés N-1/N-2/N-3 (€)</label>
+        <div class="hint">Même principe que pour le déclarant 1 — avis d'imposition page 2.</div>
+        <input type="number" id="w_report2" value="0" min="0" oninput="updatePlafondPER()">
       </div>
     </div>
 
@@ -1080,8 +1092,21 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
 }
 
 /* ═══════════════════════════════════════════════
-   CALCUL AUTOMATIQUE DES PARTS
+   MISE À JOUR PLAFOND PER AVEC REPORTS
 ═══════════════════════════════════════════════ */
+function updatePlafondPER() {
+  const PASS = 47100; // valeur de base
+  const report1 = +document.getElementById('w_report1').value || 0;
+  const report2 = +(document.getElementById('w_report2')?.value || 0);
+  const baseP1 = Math.round(PASS * 0.10);
+  const baseP2 = Math.round(PASS * 0.10);
+  document.getElementById('w_plaf1').value = baseP1 + report1;
+  if (document.getElementById('w_plaf2')) {
+    document.getElementById('w_plaf2').value = baseP2 + report2;
+  }
+}
+
+
 function calcParts() {
   const isCouple = (toggles['foyer'] || 'seul') === 'couple';
   const enfants = +document.getElementById('w_enfants').value || 0;
