@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://j34nmy.github.io/simulateur-impot-per-placement/sitemap.xml
