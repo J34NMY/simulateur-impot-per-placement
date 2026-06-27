@@ -377,14 +377,18 @@
 
     /* Disclaimer */
     .disclaimer-small {
-      font-size: .75rem;
-      color: var(--slate);
+      font-size: .8rem;
+      color: #7c2d12;
+      font-weight: 500;
       line-height: 1.6;
-      padding: 14px;
-      background: #F9FAFB;
-      border-radius: 6px;
+      padding: 16px 20px;
+      background: #fff7ed;
+      border: 2px solid #f97316;
+      border-radius: 8px;
       margin-top: 24px;
     }
+    .disclaimer-small strong { color: #c2410c; }
+    .disclaimer-small a { color: #c2410c; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -971,7 +975,13 @@
     </div>
 
     <div class="disclaimer-small">
-      ⚠️ Outil de réflexion personnelle — ne se substitue pas au simulateur officiel DGFiP ni à un conseil professionnel. Co-créé avec Claude (Anthropic). Licence MIT · <a href="https://github.com/J34NMY/simulateur-impot-per-placement">GitHub</a>
+      <strong>⚠️ Outil éducatif NON OFFICIEL — Résultats non contractuels</strong><br>
+      Outil de réflexion personnelle gratuit. Ne se substitue pas au 
+      <a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank">simulateur officiel DGFiP</a>
+      ni à un <strong>expert-comptable ou conseiller fiscal agréé</strong>.
+      Vérifiez vos résultats sur <a href="https://www.impots.gouv.fr" target="_blank">impots.gouv.fr</a>
+      avant toute décision fiscale ou patrimoniale.<br>
+      Co-créé avec Claude (Anthropic). Licence MIT · <a href="https://github.com/J34NMY/simulateur-impot-per-placement">GitHub</a>
     </div>
   </div>
 
