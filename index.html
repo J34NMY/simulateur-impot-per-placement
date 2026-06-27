@@ -269,13 +269,21 @@
       max-width: 700px;
       margin: 0 auto;
       padding: 20px 24px;
-      background: #FFF8E7;
-      border: 1px solid #F0D98A;
+      background: #fff7ed;
+      border: 2px solid #f97316;
       border-radius: 8px;
       margin-top: 16px;
-      font-size: .8rem;
-      color: #7A6200;
+      font-size: .85rem;
+      color: #7c2d12;
       line-height: 1.6;
+      font-weight: 500;
+    }
+    .disclaimer-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #c2410c;
+      display: block;
+      margin-bottom: 8px;
     }
 
     @media (max-width: 600px) {
@@ -393,9 +401,13 @@
     Licence MIT
   </p>
   <div class="disclaimer">
-    ⚠️ Outil de <strong>réflexion personnelle</strong> — ne se substitue pas au
-    <a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank">simulateur officiel DGFiP</a>
-    ni à un conseil professionnel. Vérifiez vos résultats sur impots.gouv.fr avant toute décision.
+    <span class="disclaimer-title">⚠️ Outil éducatif NON OFFICIEL — Résultats non contractuels</span>
+    Ce simulateur est un outil de <strong>réflexion personnelle</strong> gratuit et open source.
+    Il ne se substitue pas au <a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank" style="color:#c2410c;font-weight:700;">simulateur officiel DGFiP</a>
+    ni à un <strong>expert-comptable ou conseiller fiscal agréé</strong>.
+    Les calculs sont fournis à titre indicatif — vérifiez vos résultats sur
+    <a href="https://www.impots.gouv.fr" target="_blank" style="color:#c2410c;font-weight:700;">impots.gouv.fr</a>
+    avant toute décision fiscale ou patrimoniale.<br><br>
     Co-créé avec <strong>Claude</strong> (Anthropic) — chaque fonctionnalité validée par l'utilisateur avant intégration.
   </div>
 </footer>
