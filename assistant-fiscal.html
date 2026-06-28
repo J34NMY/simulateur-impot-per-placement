@@ -28,6 +28,9 @@
 
     /* ── HEADER ── */
     .wiz-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
       background: var(--navy);
       padding: 16px 24px;
       display: flex;
@@ -58,6 +61,10 @@
 
     /* ── PROGRESS BAR ── */
     .progress-wrap {
+      position: fixed;
+      top: 56px; /* hauteur du header */
+      left: 0; right: 0;
+      z-index: 99;
       background: var(--white);
       border-bottom: 1px solid #E5E7EB;
       padding: 14px 24px;
@@ -88,10 +95,13 @@
     }
 
     /* ── MAIN CARD ── */
+    body {
+      padding-top: 160px; /* header + progress + tmi */
+    }
     .wiz-body {
       max-width: 680px;
-      margin: 40px auto;
-      padding: 0 20px 60px;
+      margin: 0 auto;
+      padding: 20px 20px 60px;
     }
 
     .step { display: none; }
@@ -389,7 +399,112 @@
     }
     .disclaimer-small strong { color: #c2410c; }
     .disclaimer-small a { color: #c2410c; font-weight: 700; }
-  </style>
+  
+  /* ── Bandeau TMI dynamique ── */
+  #tmi-banner {
+    position: fixed;
+    top: 112px; /* header(56) + progress(56) */
+    left: 0; right: 0;
+    z-index: 98;
+    padding: 0;
+  }
+  #tmi-banner-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    font-size: .85rem;
+    font-weight: 600;
+    transition: background 0.3s;
+  }
+  #tmi-banner-inner.tmi-0  { background:#d1fae5; color:#065f46; }
+  #tmi-banner-inner.tmi-11 { background:#dbeafe; color:#1e3a8a; }
+  #tmi-banner-inner.tmi-30 { background:#fef3c7; color:#92400e; }
+  #tmi-banner-inner.tmi-41, #tmi-banner-inner.tmi-45 { background:#fee2e2; color:#7f1d1d; }
+  #tmi-banner-label { font-weight: 400; opacity: .8; }
+  #tmi-banner-value { font-size: 1.1rem; font-weight: 800; }
+  #tmi-banner-detail { font-weight: 400; opacity: .75; font-size: .8rem; }
+
+  /* ── Bandeau Marge PER sticky ── */
+  #marge-banner {
+    position: fixed;
+    top: 150px; /* header(56) + progress(56) + tmi(38) */
+    left: 0; right: 0;
+    z-index: 97;
+  }
+  #marge-banner-inner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 24px;
+    font-size: .82rem;
+    font-weight: 600;
+    border-top: 1px solid rgba(0,0,0,.06);
+    transition: background 0.3s;
+  }
+  #marge-banner-inner.marge-ok  { background:#d1fae5; color:#065f46; }
+  #marge-banner-inner.marge-warn { background:#fef3c7; color:#92400e; }
+  #marge-banner-inner.marge-danger { background:#fee2e2; color:#7f1d1d; }
+  #marge-banner-label { font-weight: 400; opacity: .8; }
+  #marge-banner-value { font-size: 1rem; font-weight: 800; }
+  #marge-banner-detail { font-weight: 400; opacity: .75; font-size: .78rem; }
+
+  /* ── Bloc pédagogique TMI ── */
+  .tmi-explainer {
+    background: #f0f4ff;
+    border: 1px solid #c7d4f0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .tmi-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 14px 16px;
+    text-align: left;
+    font-size: .92rem;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .tmi-toggle:hover { background: #e4ecff; }
+  #tmi-explainer-body {
+    padding: 0 16px 16px 16px;
+    font-size: .88rem;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  #tmi-explainer-body p { margin: 8px 0; }
+  .tmi-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: .84rem;
+  }
+  .tmi-table th {
+    background: var(--navy);
+    color: #fff;
+    padding: 6px 10px;
+    text-align: left;
+  }
+  .tmi-table td { padding: 5px 10px; border-bottom: 1px solid #dde3f0; }
+  .tmi-table tr:last-child td { border-bottom: none; }
+  .tmi-rate { font-weight: 700; color: var(--navy); }
+  .tmi-rate.warn { color: #c0392b; }
+  .tmi-levers { margin: 6px 0 6px 18px; }
+  .tmi-levers li { margin-bottom: 4px; }
+  /* info-box orange */
+  .info-box.orange {
+    background: #fff7ed;
+    border-left: 4px solid #f59e0b;
+    color: #7c4a00;
+  }
+</style>
 </head>
 <body>
 
@@ -406,6 +521,24 @@
     <span id="prog-pct">8%</span>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:8%"></div></div>
+</div>
+
+<!-- BANDEAU TMI DYNAMIQUE -->
+<div id="tmi-banner" style="display:none;">
+  <div id="tmi-banner-inner">
+    <span id="tmi-banner-label">TMI actuel</span>
+    <span id="tmi-banner-value">—</span>
+    <span id="tmi-banner-detail"></span>
+  </div>
+</div>
+
+<!-- BANDEAU MARGE PER STICKY -->
+<div id="marge-banner" style="display:none;">
+  <div id="marge-banner-inner">
+    <span id="marge-banner-label">Rapatriement fiscal PER avant TMI 30%</span>
+    <span id="marge-banner-value">—</span>
+    <span id="marge-banner-detail"></span>
+  </div>
 </div>
 
 <!-- WIZARD BODY -->
@@ -464,12 +597,41 @@
     <h1 class="step-title">Quels revenus déclarez-vous ?</h1>
     <p class="step-desc">Saisissez les montants pré-remplis de votre déclaration — ils intègrent déjà la CSG déductible pour les pensions.</p>
 
+    <!-- Bloc pédagogique TMI -->
+    <div class="tmi-explainer">
+      <button class="tmi-toggle" onclick="toggleTMI()" id="tmi-toggle-btn">
+        📚 Comprendre le TMI (Taux Marginal d'Imposition) <span id="tmi-chevron">▼</span>
+      </button>
+      <div id="tmi-explainer-body" style="display:none;">
+        <p>Le <strong>TMI</strong> est le taux d'imposition qui s'applique à la <em>dernière tranche</em> de votre revenu — pas à la totalité. C'est le levier clé de toute optimisation fiscale.</p>
+        <p><strong>Exemple :</strong> un couple avec 50 000 € de revenu imposable paie 0% sur les premiers 23 200 €, puis 11% sur le reste. Son TMI est 11%, mais son taux moyen réel est bien inférieur.</p>
+        <table class="tmi-table">
+          <thead><tr><th>Tranche (par part)</th><th>Taux</th></tr></thead>
+          <tbody>
+            <tr><td>Jusqu'à 11 600 €</td><td>0 %</td></tr>
+            <tr><td>De 11 601 € à 29 579 €</td><td class="tmi-rate">11 %</td></tr>
+            <tr><td>De 29 580 € à 84 577 €</td><td class="tmi-rate warn">30 %</td></tr>
+            <tr><td>De 84 578 € à 181 917 €</td><td class="tmi-rate warn">41 %</td></tr>
+            <tr><td>Au-delà de 181 917 €</td><td class="tmi-rate warn">45 %</td></tr>
+          </tbody>
+        </table>
+        <p>💡 <strong>Ce qui fait baisser votre TMI dans cet assistant :</strong></p>
+        <ul class="tmi-levers">
+          <li><strong>Versements PER</strong> — déduits directement du revenu imposable</li>
+          <li><strong>Frais réels</strong> — si supérieurs à l'abattement 10% forfaitaire</li>
+          <li><strong>Dons à 66% ou 75%</strong> — réductions d'impôt (pas du TMI, mais de l'impôt final)</li>
+          <li><strong>Nombre de parts fiscales</strong> — divise le revenu avant application du barème</li>
+        </ul>
+        <p style="font-size:.8rem;color:var(--slate);">L'objectif : rester dans la tranche la plus basse possible, ou descendre d'une tranche grâce aux leviers disponibles.</p>
+      </div>
+    </div>
+
     <p class="section-label">Déclarant 1</p>
 
     <div class="field">
       <label>Salaires (€)</label>
       <div class="hint">L'abattement de 10% sera calculé automatiquement (plancher 495 €, plafond 14 171 €)</div>
-      <input type="number" id="w_sal1" value="0" min="0">
+      <input type="number" id="w_sal1" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <label class="check-field">
@@ -478,13 +640,13 @@
     </label>
     <div id="w_frais1_bloc" style="display:none;" class="field">
       <label>Frais réels déclarant 1 (€)</label>
-      <input type="number" id="w_frais1" value="0" min="0">
+      <input type="number" id="w_frais1" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <div class="field">
       <label>Pensions / retraites (€)</label>
       <div class="hint">Montant pré-rempli de votre déclaration (cases 1AS ou 1BS)</div>
-      <input type="number" id="w_pen1" value="0" min="0">
+      <input type="number" id="w_pen1" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <div id="w_bloc_d2">
@@ -493,7 +655,7 @@
 
       <div class="field">
         <label>Salaires (€)</label>
-        <input type="number" id="w_sal2" value="0" min="0">
+        <input type="number" id="w_sal2" value="0" min="0" oninput="calcFiscalSilent()">
       </div>
 
       <label class="check-field">
@@ -502,12 +664,12 @@
       </label>
       <div id="w_frais2_bloc" style="display:none;" class="field">
         <label>Frais réels déclarant 2 (€)</label>
-        <input type="number" id="w_frais2" value="0" min="0">
+        <input type="number" id="w_frais2" value="0" min="0" oninput="calcFiscalSilent()">
       </div>
 
       <div class="field">
         <label>Pensions / retraites (€)</label>
-        <input type="number" id="w_pen2" value="0" min="0">
+        <input type="number" id="w_pen2" value="0" min="0" oninput="calcFiscalSilent()">
       </div>
     </div>
 
@@ -522,14 +684,14 @@
   <!-- ══════════════════════════════════════════════ -->
   <div class="step" id="step-3">
     <p class="step-eyebrow">Votre PER · Étape 3</p>
-    <h1 class="step-title">Vos versements PER cette année</h1>
-    <p class="step-desc">Le PER (Plan d'Épargne Retraite) permet de déduire vos versements de votre revenu imposable, dans la limite d'un plafond annuel.</p>
+    <h1 class="step-title">Votre PER cette année</h1>
+    <p class="step-desc">Renseignez vos versements PER (déductibles) et vos éventuels retraits PER (imposables). Ces deux paramètres sont les leviers clés de votre optimisation fiscale.</p>
 
     <p class="section-label">Déclarant 1</p>
     <div class="two-cols">
       <div class="field">
         <label>Versement PER (€)</label>
-        <input type="number" id="w_ver1" value="0" min="0">
+        <input type="number" id="w_ver1" value="0" min="0" oninput="updatePlafondPER()">
       </div>
       <div class="field">
         <label>Plafond PER (€)</label>
@@ -542,6 +704,14 @@
       <div class="hint">Cumul des plafonds non consommés les 3 années précédentes — figurant sur votre <strong>avis d'imposition page 2</strong>, case <em>"Plafond épargne retraite disponible"</em>. Laissez 0 si vous n'avez pas de reports.</div>
       <input type="number" id="w_report1" value="0" min="0" oninput="updatePlafondPER()">
     </div>
+    <div id="w_hint_ver1" style="display:none;" class="info-box orange" style="margin-top:4px;"></div>
+    <div id="w_hint_report1" style="display:none;" class="info-box blue"></div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Rapatriement fiscal PER imposable cette année — Déclarant 1 (€)</label>
+      <div class="hint">Si vous avez retiré du capital de votre PER (déduit à l'entrée) — case 4L de votre déclaration. Ce montant s'ajoute à vos revenus imposables. Laissez 0 si vous n'avez pas effectué de retrait.</div>
+      <input type="number" id="w_per_retrait1" value="0" min="0" oninput="calcFiscalSilent()">
+    </div>
 
     <div id="w_per_d2">
       <hr class="section-sep">
@@ -549,7 +719,7 @@
       <div class="two-cols">
         <div class="field">
           <label>Versement PER (€)</label>
-          <input type="number" id="w_ver2" value="0" min="0">
+          <input type="number" id="w_ver2" value="0" min="0" oninput="updatePlafondPER()">
         </div>
         <div class="field">
           <label>Plafond PER (€)</label>
@@ -562,10 +732,20 @@
         <div class="hint">Même principe que pour le déclarant 1 — avis d'imposition page 2.</div>
         <input type="number" id="w_report2" value="0" min="0" oninput="updatePlafondPER()">
       </div>
+      <div id="w_hint_ver2" style="display:none;" class="info-box orange"></div>
+      <div id="w_hint_report2" style="display:none;" class="info-box blue"></div>
+
+      <div class="field" style="margin-top:12px;">
+        <label>Rapatriement fiscal PER imposable cette année — Déclarant 2 (€)</label>
+        <div class="hint">Si vous avez retiré du capital de votre PER (déduit à l'entrée) — case 4M de votre déclaration. Ce montant s'ajoute à vos revenus imposables. Laissez 0 si vous n'avez pas effectué de retrait.</div>
+        <input type="number" id="w_per_retrait2" value="0" min="0" oninput="calcFiscalSilent()">
+      </div>
     </div>
 
+    <div id="w_alert_retrait" style="display:none; margin-top:16px;"></div>
+
     <label class="check-field" style="margin-top:8px;">
-      <input type="checkbox" id="w_mut_on">
+      <input type="checkbox" id="w_mut_on" onchange="updatePlafondPER()">
       <span>Mutualiser les plafonds PER entre conjoints (si l'un des deux a un plafond plus élevé)</span>
     </label>
 
@@ -589,12 +769,12 @@
       <div class="field">
         <label>Dons à 66 % (€)</label>
         <div class="hint">Associations, fondations reconnues d'utilité publique — réduction = 66% du don</div>
-        <input type="number" id="w_don66" value="0" min="0">
+        <input type="number" id="w_don66" value="0" min="0" oninput="calcFiscalSilent()">
       </div>
       <div class="field">
         <label>Dons à 75 % (€)</label>
         <div class="hint">Aide aux personnes en difficulté (Restos du Cœur, Croix-Rouge...) — réduction = 75% du don</div>
-        <input type="number" id="w_don75" value="0" min="0">
+        <input type="number" id="w_don75" value="0" min="0" oninput="calcFiscalSilent()">
       </div>
     </div>
 
@@ -604,19 +784,19 @@
     <div class="field">
       <label>Emploi à domicile (€)</label>
       <div class="hint">Aide ménagère, jardinage, garde d'enfant à domicile, aide aux personnes âgées — crédit = 50% de la dépense, plafonné à 6 000 € de crédit</div>
-      <input type="number" id="w_ci_domicile" value="0" min="0">
+      <input type="number" id="w_ci_domicile" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <div class="field">
       <label>Garde d'enfants hors domicile (€)</label>
       <div class="hint">Crèche, assistante maternelle — crédit = 50% de la dépense, plafonné à 1 750 € de crédit par enfant</div>
-      <input type="number" id="w_ci_garde" value="0" min="0">
+      <input type="number" id="w_ci_garde" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <div class="field">
       <label>Cotisations syndicales (€)</label>
       <div class="hint">Crédit = 66% de la cotisation versée</div>
-      <input type="number" id="w_ci_syndic" value="0" min="0">
+      <input type="number" id="w_ci_syndic" value="0" min="0" oninput="calcFiscalSilent()">
     </div>
 
     <div class="wiz-nav">
@@ -968,6 +1148,7 @@
     <div id="w_synthese"></div>
 
     <div style="margin-top:28px; display:flex; gap:14px; flex-wrap:wrap;">
+      <button class="btn-back" onclick="goStep(11)">← Retour</button>
       <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn-next" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
         ⚡ Ouvrir en mode expert
       </a>
@@ -1006,9 +1187,12 @@ const toggles = {}; // stocke les valeurs des toggle buttons
 /* ═══════════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════════ */
+let currentWizStep = 1;
 function goStep(n) {
+  currentWizStep = n;
   // Calculs à la volée avant affichage
   if (n === 5) calcFiscal();
+  if (n >= 2) calcFiscalSilent(); // updateMargeBanner appelé depuis calcFiscalSilent
   if (n === 8) calcStrategie();
   if (n === 10) {
     // Reprendre le rendement de l'étape 9
@@ -1016,8 +1200,8 @@ function goStep(n) {
     document.getElementById('w_pp_rdt_display').textContent = rdt.toFixed(1) + '%/an';
     window._rdtEtape9 = rdt;
   }
-  if (n === 11) calcComparateurs();
-  if (n === 12) buildSynthese();
+  if (n === 11) { calcFiscal(); calcComparateurs(); }
+  if (n === 12) { calcFiscal(); buildSynthese(); }
 
   document.getElementById('step-'+currentStep).classList.remove('active');
   currentStep = n;
@@ -1105,15 +1289,79 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
    MISE À JOUR PLAFOND PER AVEC REPORTS
 ═══════════════════════════════════════════════ */
 function updatePlafondPER() {
-  const PASS = 47100; // valeur de base
+  const PASS = 47100;
   const report1 = +document.getElementById('w_report1').value || 0;
   const report2 = +(document.getElementById('w_report2')?.value || 0);
-  const baseP1 = Math.round(PASS * 0.10);
-  const baseP2 = Math.round(PASS * 0.10);
-  document.getElementById('w_plaf1').value = baseP1 + report1;
-  if (document.getElementById('w_plaf2')) {
-    document.getElementById('w_plaf2').value = baseP2 + report2;
+  const ver1 = +document.getElementById('w_ver1').value || 0;
+  const ver2 = +(document.getElementById('w_ver2')?.value || 0);
+  const baseP = Math.round(PASS * 0.10);
+  const plaf1 = baseP + report1;
+  const plaf2 = baseP + report2;
+  document.getElementById('w_plaf1').value = plaf1;
+  if (document.getElementById('w_plaf2')) document.getElementById('w_plaf2').value = plaf2;
+  // Message UX déclarant 1
+  const hint1 = document.getElementById('w_hint_report1');
+  if (hint1) {
+    if (report1 > 0 && ver1 < plaf1) {
+      hint1.innerHTML = `💡 Votre plafond disponible est de <strong>${plaf1.toLocaleString('fr-FR')} €</strong> (dont <strong>${report1.toLocaleString('fr-FR')} € de reports</strong>). Vous pouvez encore déduire jusqu'à <strong>${(plaf1-ver1).toLocaleString('fr-FR')} €</strong> supplémentaires en augmentant votre versement PER.`;
+      hint1.style.display = 'block';
+    } else { hint1.style.display = 'none'; }
   }
+  // Message UX déclarant 2
+  const hint2 = document.getElementById('w_hint_report2');
+  if (hint2) {
+    if (report2 > 0 && ver2 < plaf2) {
+      hint2.innerHTML = `💡 Votre plafond disponible est de <strong>${plaf2.toLocaleString('fr-FR')} €</strong> (dont <strong>${report2.toLocaleString('fr-FR')} € de reports</strong>). Vous pouvez encore déduire jusqu'à <strong>${(plaf2-ver2).toLocaleString('fr-FR')} €</strong> supplémentaires en augmentant votre versement PER.`;
+      hint2.style.display = 'block';
+    } else { hint2.style.display = 'none'; }
+  }
+  // Alertes dépassement plafond versement (avec mutualisation)
+  const mutOn = document.getElementById('w_mut_on')?.checked || false;
+  // Plafonds effectifs avec mutualisation
+  const plafTotalMut = plaf1 + plaf2;
+  const versTotalMut = ver1 + ver2;
+  const hv1 = document.getElementById('w_hint_ver1');
+  const hv2 = document.getElementById('w_hint_ver2');
+
+  if (mutOn) {
+    // Avec mutualisation : seul le dépassement du total compte
+    const excTotal = Math.max(0, versTotalMut - plafTotalMut);
+    if (excTotal > 0) {
+      // Afficher l'alerte sur le déclarant qui dépasse
+      const exc1 = Math.max(0, ver1 - plaf1);
+      const exc2 = Math.max(0, ver2 - plaf2);
+      if (hv1) {
+        if (exc1 > 0 && excTotal > 0) {
+          hv1.style.display = 'block';
+          hv1.innerHTML = `⚠️ Même avec mutualisation, l'excédent total de <strong>${excTotal.toLocaleString('fr-FR')} €</strong> ne sera <strong>pas déductible</strong>. Réduisez vos versements ou augmentez vos reports N-1/N-2/N-3.`;
+        } else { hv1.style.display = 'none'; }
+      }
+      if (hv2) hv2.style.display = 'none';
+    } else {
+      // Mutualisation couvre le dépassement — pas d'alerte
+      if (hv1) hv1.style.display = 'none';
+      if (hv2) hv2.style.display = 'none';
+    }
+  } else {
+    // Sans mutualisation : vérifier chaque déclarant séparément
+    if (hv1) {
+      const exc1 = Math.max(0, ver1 - plaf1);
+      if (exc1 > 0) {
+        hv1.style.display = 'block';
+        hv1.innerHTML = `⚠️ Votre versement de <strong>${ver1.toLocaleString('fr-FR')} €</strong> dépasse votre plafond de <strong>${plaf1.toLocaleString('fr-FR')} €</strong>. L'excédent de <strong>${exc1.toLocaleString('fr-FR')} €</strong> ne sera <strong>pas déductible</strong>.<br><span style="font-size:.85rem;">💡 Augmentez vos reports N-1/N-2/N-3 si vous avez des plafonds non utilisés, ou cochez <strong>"Mutualiser les plafonds entre conjoints"</strong> ci-dessous si le déclarant 2 dispose d'un plafond disponible.</span>`;
+      } else { hv1.style.display = 'none'; }
+    }
+    if (hv2) {
+      const exc2 = Math.max(0, ver2 - plaf2);
+      if (exc2 > 0) {
+        hv2.style.display = 'block';
+        hv2.innerHTML = `⚠️ Votre versement de <strong>${ver2.toLocaleString('fr-FR')} €</strong> dépasse votre plafond de <strong>${plaf2.toLocaleString('fr-FR')} €</strong>. L'excédent de <strong>${exc2.toLocaleString('fr-FR')} €</strong> ne sera <strong>pas déductible</strong>.<br><span style="font-size:.85rem;">💡 Augmentez vos reports N-1/N-2/N-3 si vous avez des plafonds non utilisés, ou cochez <strong>"Mutualiser les plafonds entre conjoints"</strong> ci-dessous si le déclarant 1 dispose d'un plafond disponible.</span>`;
+      } else { hv2.style.display = 'none'; }
+    }
+  }
+
+  // Recalcul TMI dynamique
+  calcFiscalSilent();
 }
 
 
@@ -1151,6 +1399,153 @@ function updateRendementImplicite() {
 }
 
 
+function buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp) {
+  const totalRetrait = (perRet1||0) + (perRet2||0);
+  let html = `<div class="info-box green">
+    <strong>Marge de sortie PER avant tranche 30% :</strong> ${margeFoyer.toLocaleString('fr-FR')} €
+    <br><span style="font-size:.8rem;">Montant maximum à sortir du PER cette année sans passer en tranche 30%.</span>
+  </div>`;
+
+  if (totalRetrait > 0) {
+    if (totalRetrait > margeFoyer) {
+      html += `<div class="info-box orange">
+        <strong>⚠️ Retrait PER trop élevé.</strong><br>
+        Votre retrait de <strong>${totalRetrait.toLocaleString('fr-FR')} €</strong> dépasse la marge disponible de <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong>.
+        L'excédent de <strong>${(totalRetrait-margeFoyer).toLocaleString('fr-FR')} €</strong> sera taxé à 30%.
+        <br><span style="font-size:.8rem;">💡 Réduisez votre retrait à <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong> maximum pour rester à 11%.</span>
+      </div>`;
+    } else if (impNet > 0) {
+      html += `<div class="info-box blue">
+        <strong>✓ Retrait dans la marge 11%.</strong><br>
+        Votre retrait de <strong>${totalRetrait.toLocaleString('fr-FR')} €</strong> reste sous la marge disponible (${margeFoyer.toLocaleString('fr-FR')} €).
+        Vous pouvez encore retirer <strong>${(margeFoyer-totalRetrait).toLocaleString('fr-FR')} €</strong> supplémentaires cette année sans passer à 30%.
+      </div>`;
+    } else {
+      html += `<div class="info-box green">✓ Malgré votre retrait PER, vous restez non imposable cette année.</div>`;
+    }
+  } else {
+    const plafTotal = (+document.getElementById('w_plaf1').value||0) + (+(document.getElementById('w_plaf2')?.value||0));
+    const margeVersement = Math.max(0, plafTotal - (ver1||0) - (ver2||0));
+    if (impNet > 0) {
+      if (versNonImp <= margeVersement) {
+        html += `<div class="info-box blue">
+          <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
+          <br><span style="font-size:.8rem;">⚠️ Vérifiez votre plafond disponible sur votre avis d'imposition avant de verser.</span>
+        </div>`;
+      } else {
+        html += `<div class="info-box blue">
+          <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
+          <br><span style="font-size:.8rem;">⚠️ Ce montant dépasse votre plafond disponible (${margeVersement.toLocaleString('fr-FR')} €). Vous ne pouvez pas atteindre la non-imposition par le seul levier PER cette année.</span>
+        </div>`;
+      }
+    } else {
+      html += `<div class="info-box green">✓ Vous êtes déjà non imposable avec vos versements actuels.</div>`;
+    }
+  }
+
+  // Alimenter étape 5 — seulement le message d'alerte retrait (pas la marge déjà dans le bandeau)
+  const el5 = document.getElementById('w_res_marge');
+  if (el5) {
+    // À l'étape 5 on garde uniquement le message contextuel (pas l'encadré vert marge)
+    if (totalRetrait > 0) {
+      el5.innerHTML = totalRetrait > margeFoyer
+        ? `<div class="info-box orange">
+            <strong>⚠️ Rapatriement PER trop élevé.</strong><br>
+            Votre rapatriement de <strong>${totalRetrait.toLocaleString('fr-FR')} €</strong> dépasse la marge disponible de <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong>. L'excédent de <strong>${(totalRetrait-margeFoyer).toLocaleString('fr-FR')} €</strong> sera taxé à 30%.<br>
+            <span style="font-size:.8rem;">💡 Réduisez votre rapatriement à <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong> maximum pour rester à 11%.</span>
+          </div>`
+        : `<div class="info-box green">✓ Rapatriement fiscal PER de <strong>${totalRetrait.toLocaleString('fr-FR')} €</strong> dans la marge 11% — reste <strong>${(margeFoyer-totalRetrait).toLocaleString('fr-FR')} €</strong> disponible avant 30%.</div>`;
+    } else if (impNet > 0 && ver1 === 0 && ver2 === 0) {
+      // Afficher seulement si aucun versement PER déjà saisi
+      const plaf1cur = +document.getElementById('w_plaf1').value||0;
+      const plaf2cur = +(document.getElementById('w_plaf2')?.value||0);
+      const plafTotal = plaf1cur + plaf2cur;
+      const economiePotentielle = Math.min(versNonImp, plafTotal);
+      const impotApres = Math.max(0, impNet - arr(economiePotentielle * (tmi/100)));
+      const economieTotale = arr(plafTotal * (tmi/100));
+      el5.innerHTML = `<div class="info-box blue">
+        💡 <strong>Vous pouvez réduire votre impôt en versant sur votre PER.</strong><br>
+        Plafond déclarant 1 : <strong>${plaf1cur.toLocaleString('fr-FR')} €</strong> — 
+        Plafond déclarant 2 : <strong>${plaf2cur.toLocaleString('fr-FR')} €</strong> — 
+        Total : <strong>${plafTotal.toLocaleString('fr-FR')} €</strong><br>
+        En versant le maximum, vous économiseriez environ <strong>${economieTotale.toLocaleString('fr-FR')} €</strong> d'impôt.<br>
+        <span style="font-size:.8rem;">💡 En cochant "Mutualiser les plafonds" à l'étape 3, vous pouvez rééquilibrer les versements entre les deux déclarants.</span><br>
+        <span style="font-size:.8rem;">👉 Retournez à l'étape 3 pour saisir vos versements PER.</span>
+      </div>`;
+    } else if (impNet > 0) {
+      el5.innerHTML = '';
+    } else {
+      el5.innerHTML = `<div class="info-box green">✓ Vous êtes déjà non imposable avec vos versements actuels.</div>`;
+    }
+  }
+
+  // Alimenter alerte étape 3 (seulement si dépassement)
+  const el3 = document.getElementById('w_alert_retrait');
+  if (el3) {
+    if (totalRetrait > margeFoyer) {
+      el3.style.display = 'block';
+      el3.innerHTML = `<div class="info-box orange">
+        <strong>⚠️ Rapatriement PER trop élevé.</strong><br>
+        Votre rapatriement de <strong>${totalRetrait.toLocaleString('fr-FR')} €</strong> dépasse la marge disponible de <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong>.<br>
+        L'excédent de <strong>${(totalRetrait-margeFoyer).toLocaleString('fr-FR')} €</strong> sera taxé à 30%.<br>
+        <span style="font-size:.8rem;">💡 Réduisez votre rapatriement à <strong>${margeFoyer.toLocaleString('fr-FR')} €</strong> maximum pour rester à 11%.</span>
+      </div>`;
+    } else {
+      el3.style.display = 'none';
+      el3.innerHTML = '';
+    }
+  }
+
+  // Alimenter bandeau sticky marge
+  updateMargeBanner(totalRetrait, margeFoyer, impNet);
+}
+
+function updateMargeBanner(totalRetrait, margeFoyer, impNet) {
+  const banner = document.getElementById('marge-banner');
+  const inner = document.getElementById('marge-banner-inner');
+  const valEl = document.getElementById('marge-banner-value');
+  const detEl = document.getElementById('marge-banner-detail');
+  if (!banner) return;
+
+  // Visible seulement à l'étape 3
+  const onStep3 = (typeof currentWizStep !== 'undefined') && currentWizStep === 3;
+  const showMarge = onStep3 && margeFoyer > 0;
+  banner.style.display = showMarge ? 'block' : 'none';
+  document.body.classList.toggle('has-marge-banner', showMarge);
+  if (!showMarge) return;
+
+  valEl.textContent = '= ' + margeFoyer.toLocaleString('fr-FR') + ' €';
+
+  // Vérifier dépassement plafond versement
+  const plaf1val = +document.getElementById('w_plaf1').value||0;
+  const plaf2val = +(document.getElementById('w_plaf2')?.value||0);
+  const ver1val = +document.getElementById('w_ver1').value||0;
+  const ver2val = +(document.getElementById('w_ver2')?.value||0);
+  const mutOnBanner = document.getElementById('w_mut_on')?.checked || false;
+  // Avec mutualisation : seul le dépassement total compte
+  const versDepasse = mutOnBanner
+    ? (ver1val + ver2val) > (plaf1val + plaf2val)
+    : (ver1val > plaf1val) || (ver2val > plaf2val);
+
+  const reste = margeFoyer - totalRetrait;
+  if (versDepasse) {
+    inner.className = 'marge-warn';
+    detEl.innerHTML = '⚠️ Versement au-delà du plafond — déduction fiscale limitée au plafond disponible';
+  } else if (totalRetrait > margeFoyer) {
+    inner.className = 'marge-danger';
+    detEl.innerHTML = '🔴 Retrait de <strong>' + totalRetrait.toLocaleString('fr-FR') + ' €</strong> — excédent <strong>' + (totalRetrait-margeFoyer).toLocaleString('fr-FR') + ' €</strong> taxé à 30%';
+  } else if (totalRetrait > 0) {
+    inner.className = reste === 0 ? 'marge-warn' : 'marge-ok';
+    detEl.innerHTML = (reste===0 ? '⚠️' : '💡') + ' reste <strong style="color:' + (reste===0?'#92400e':'inherit') + '">' + reste.toLocaleString('fr-FR') + ' €</strong>';
+  } else if (impNet > 0) {
+    inner.className = 'marge-warn';
+    detEl.innerHTML = '💡 reste <strong>' + margeFoyer.toLocaleString('fr-FR') + ' €</strong>';
+  } else {
+    inner.className = 'marge-ok';
+    detEl.innerHTML = '✅ reste <strong>' + margeFoyer.toLocaleString('fr-FR') + ' €</strong>';
+  }
+}
+
 function calcFiscal() {
   const isCouple = (toggles['foyer'] || 'seul') === 'couple';
   const parts = +document.getElementById('w_parts').value || (isCouple?2:1);
@@ -1159,6 +1554,7 @@ function calcFiscal() {
   const fr1on = document.getElementById('w_frais1_on').checked;
   const fr1 = +document.getElementById('w_frais1').value || 0;
   const pen1 = +document.getElementById('w_pen1').value || 0;
+  const perRet1 = +document.getElementById('w_per_retrait1').value || 0;
   const ver1 = +document.getElementById('w_ver1').value || 0;
   const plaf1 = +document.getElementById('w_plaf1').value || 0;
 
@@ -1166,6 +1562,7 @@ function calcFiscal() {
   const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
   const fr2 = isCouple ? (+document.getElementById('w_frais2').value||0) : 0;
   const pen2 = isCouple ? (+document.getElementById('w_pen2').value||0) : 0;
+  const perRet2 = isCouple ? (+document.getElementById('w_per_retrait2').value||0) : 0;
   const ver2 = isCouple ? (+document.getElementById('w_ver2').value||0) : 0;
   const plaf2 = isCouple ? (+document.getElementById('w_plaf2').value||0) : 0;
   const mutOn = document.getElementById('w_mut_on').checked;
@@ -1191,11 +1588,24 @@ function calcFiscal() {
   const ab_sal2 = abattSalaires(sal2, fr2on, fr2);
   const ab_pen2 = abattPensions(pen2);
 
-  // Déductions PER
+  // Déductions PER avec mutualisation
   let d1 = Math.min(ver1, plaf1), d2 = Math.min(ver2, plaf2);
-  // (simplification : pas de mutualisation M3 complète dans le wizard)
+  if (mutOn && isCouple) {
+    // Plafond non utilisé de chaque déclarant
+    const libre1 = Math.max(0, plaf1 - ver1);
+    const libre2 = Math.max(0, plaf2 - ver2);
+    // Excédent de chaque déclarant
+    const exc1 = Math.max(0, ver1 - plaf1);
+    const exc2 = Math.max(0, ver2 - plaf2);
+    // D1 peut utiliser le plafond libre de D2 et vice-versa
+    d1 = Math.min(ver1, plaf1 + libre2);
+    d2 = Math.min(ver2, plaf2 + libre1);
+    // S'assurer que le total ne dépasse pas le total des plafonds
+    const dTot = Math.min(d1 + d2, plaf1 + plaf2);
+    if (d1 + d2 > dTot) { d2 = dTot - d1; }
+  }
 
-  const revenu = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2)-d1-d2);
+  const revenu = arr((sal1-ab_sal1)+(pen1-ab_pen1)+perRet1+(sal2-ab_sal2)+(pen2-ab_pen2)+perRet2-d1-d2);
 
   const {quotient, impBrut, decote, details} = calcIR(revenu, parts, isCouple);
 
@@ -1242,24 +1652,79 @@ function calcFiscal() {
     <div class="result-card"><div class="result-label">Taux moyen effectif</div><div class="result-value">${tauxMoyen.toFixed(1)} %</div></div>
   `;
 
-  let det = '<tr><th style="text-align:left;padding:8px 6px;font-size:.78rem;color:var(--slate);">Tranche</th><th style="text-align:right;padding:8px 6px;font-size:.78rem;color:var(--slate);">Montant (par part)</th></tr>';
+  // Calcul des revenus bruts par source
+  const revBrutSal1 = sal1;
+  const revNetSal1 = arr(sal1 - ab_sal1);
+  const revBrutPen1 = pen1;
+  const revNetPen1 = arr(pen1 - ab_pen1);
+  const revBrutSal2 = sal2;
+  const revNetSal2 = arr(sal2 - ab_sal2);
+  const revBrutPen2 = pen2;
+  const revNetPen2 = arr(pen2 - ab_pen2);
+  const revenuAvantPER = arr(revNetSal1 + revNetPen1 + perRet1 + revNetSal2 + revNetPen2 + perRet2);
+
+  let det = '<tr><th style="text-align:left;padding:8px 6px;font-size:.78rem;color:var(--slate);">Tranche</th><th style="text-align:right;padding:8px 6px;font-size:.78rem;color:var(--slate);">Montant</th></tr>';
+
+  // Bloc revenus avec abattements
+  if (sal1 > 0) {
+    det += `<tr style="color:var(--slate);"><td>Salaires déclarant 1</td><td>${revBrutSal1.toLocaleString('fr-FR')} €</td></tr>`;
+    if (ab_sal1 > 0) det += `<tr style="color:#065f46;font-size:.85rem;"><td>&nbsp;&nbsp;— Abattement ${fr1on?'frais réels':'10%'}</td><td>- ${arr(ab_sal1).toLocaleString('fr-FR')} €</td></tr>`;
+  }
+  if (pen1 > 0) {
+    det += `<tr style="color:var(--slate);"><td>Pensions déclarant 1</td><td>${revBrutPen1.toLocaleString('fr-FR')} €</td></tr>`;
+    if (ab_pen1 > 0) det += `<tr style="color:#065f46;font-size:.85rem;"><td>&nbsp;&nbsp;— Abattement 10%</td><td>- ${arr(ab_pen1).toLocaleString('fr-FR')} €</td></tr>`;
+  }
+  if (perRet1 > 0) det += `<tr style="color:#c0392b;"><td>+ Rapatriement PER déclarant 1</td><td>+ ${perRet1.toLocaleString('fr-FR')} €</td></tr>`;
+  if (isCouple) {
+    if (sal2 > 0) {
+      det += `<tr style="color:var(--slate);"><td>Salaires déclarant 2</td><td>${revBrutSal2.toLocaleString('fr-FR')} €</td></tr>`;
+      if (ab_sal2 > 0) det += `<tr style="color:#065f46;font-size:.85rem;"><td>&nbsp;&nbsp;— Abattement ${fr2on?'frais réels':'10%'}</td><td>- ${arr(ab_sal2).toLocaleString('fr-FR')} €</td></tr>`;
+    }
+    if (pen2 > 0) {
+      det += `<tr style="color:var(--slate);"><td>Pensions déclarant 2</td><td>${revBrutPen2.toLocaleString('fr-FR')} €</td></tr>`;
+      if (ab_pen2 > 0) det += `<tr style="color:#065f46;font-size:.85rem;"><td>&nbsp;&nbsp;— Abattement 10%</td><td>- ${arr(ab_pen2).toLocaleString('fr-FR')} €</td></tr>`;
+    }
+    if (perRet2 > 0) det += `<tr style="color:#c0392b;"><td>+ Rapatriement PER déclarant 2</td><td>+ ${perRet2.toLocaleString('fr-FR')} €</td></tr>`;
+  }
+
+  // Sous-total avant déduction PER
+  if (d1 > 0 || d2 > 0) {
+    det += `<tr class="total" style="border-top:1px solid #ddd;border-bottom:none;font-style:italic;color:var(--slate);"><td>Sous-total avant déduction PER</td><td>${revenuAvantPER.toLocaleString('fr-FR')} €</td></tr>`;
+    if (d1 > 0) det += `<tr style="color:#065f46;"><td>— Versement PER déclarant 1</td><td>- ${d1.toLocaleString('fr-FR')} €</td></tr>`;
+    if (d2 > 0) det += `<tr style="color:#065f46;"><td>— Versement PER déclarant 2</td><td>- ${d2.toLocaleString('fr-FR')} €</td></tr>`;
+  }
+  det += `<tr class="total" style="border-top:2px solid var(--navy);"><td>Revenu imposable</td><td>${revenu.toLocaleString('fr-FR')} €</td></tr>`;
+  det += '<tr><td colspan="2" style="padding:6px 0;"></td></tr>';
+
   for (const d of details) det += `<tr><td>${d.taux}%</td><td>${d.montant.toFixed(2)} €</td></tr>`;
-  det += `<tr class="total"><td>Impôt brut</td><td>${impBrut.toLocaleString('fr-FR')} €</td></tr>`;
+  det += `<tr class="total"><td>Impôt avant déductions</td><td>${impBrut.toLocaleString('fr-FR')} €</td></tr>`;
+  // Ligne décote si applicable
+  if (decote > 0) det += `<tr style="color:#065f46;"><td>— Décote</td><td>- ${decote.toLocaleString('fr-FR')} €</td></tr>`;
+  // Réductions d'impôt
+  if (reduc66 > 0) det += `<tr style="color:#065f46;"><td>— Réduction dons 66%</td><td>- ${reduc66.toLocaleString('fr-FR')} €</td></tr>`;
+  if (reduc75 > 0) det += `<tr style="color:#065f46;"><td>— Réduction dons 75%</td><td>- ${reduc75.toLocaleString('fr-FR')} €</td></tr>`;
+  // Crédits d'impôt
+  if (crDomicile > 0) det += `<tr style="color:#065f46;"><td>— Crédit emploi à domicile</td><td>- ${crDomicile.toLocaleString('fr-FR')} €</td></tr>`;
+  if (crGarde > 0)    det += `<tr style="color:#065f46;"><td>— Crédit garde d'enfants</td><td>- ${crGarde.toLocaleString('fr-FR')} €</td></tr>`;
+  if (crSyndic > 0)   det += `<tr style="color:#065f46;"><td>— Crédit cotisations syndicales</td><td>- ${crSyndic.toLocaleString('fr-FR')} €</td></tr>`;
+  // Impôt net si différent du brut
+  if (decote > 0 || totalRed > 0 || credits > 0) {
+    det += `<tr class="total" style="color:var(--green);border-top:2px solid var(--green);"><td>Impôt net</td><td>${impNet.toLocaleString('fr-FR')} €</td></tr>`;
+  }
   document.getElementById('w_res_detail').innerHTML = det;
 
-  document.getElementById('w_res_marge').innerHTML = `
-    <div class="info-box green">
-      <strong>Marge de sortie PER avant tranche 30% :</strong> ${margeFoyer.toLocaleString('fr-FR')} €
-      <br><span style="font-size:.8rem;">Montant maximum à sortir du PER cette année sans passer en tranche 30%.</span>
-    </div>
-    ${impNet>0 ? `<div class="info-box blue">
-      <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
-      <br><span style="font-size:.8rem;">⚠️ Vérifiez votre plafond disponible sur votre avis d'imposition avant de verser.</span>
-    </div>` : '<div class="info-box green">✓ Vous êtes déjà non imposable avec vos versements actuels.</div>'}
-  `;
+  // Bloc marge PER — alimenter étape 5 ET étape 3
+  buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp);
 
   // Stockage pour synthèse
-  window._fiscal = {revenu, impNet, tmi, tauxMoyen, margeFoyer, versNonImp, parts, isCouple};
+  // Marge hors PER (sur revenus bruts uniquement, sans versements ni rapatriements)
+  const revenuBrutHorsPER = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2));
+  // Ne pas arrondir le quotient pour éviter l'erreur de calcul de marge
+  const quotientBrutHorsPER = revenuBrutHorsPER / parts;
+  const margeHorsPERQ = Math.max(0, getBareme()[1].plafond - quotientBrutHorsPER);
+  window._margeHorsPER = Math.floor(margeHorsPERQ * parts);
+
+  window._fiscal = {revenu, impNet, tmi, tauxMoyen, margeFoyer, versNonImp, parts, isCouple, perRet1, perRet2, ver1, ver2};
 }
 
 /* ═══════════════════════════════════════════════
@@ -1267,13 +1732,45 @@ function calcFiscal() {
 ═══════════════════════════════════════════════ */
 function calcStrategie() {
   const f = window._fiscal || {};
-  const margeFoyer = f.margeFoyer || 0;
+
+  // Recalcul de la marge 11% sur revenus déclarés UNIQUEMENT
+  // (pensions + salaires, sans versements PER ni retraits PER)
+  // C'est ce montant annuel qu'on peut récupérer du PER sans dépasser 11%
+  (function() {
+    try {
+      const isCouple = (toggles['foyer']||'seul')==='couple';
+      const parts = +document.getElementById('w_parts').value||(isCouple?2:1);
+      const sal1 = +document.getElementById('w_sal1').value||0;
+      const fr1on = document.getElementById('w_frais1_on').checked;
+      const fr1 = +document.getElementById('w_frais1').value||0;
+      const pen1 = +document.getElementById('w_pen1').value||0;
+      const sal2 = isCouple?(+document.getElementById('w_sal2').value||0):0;
+      const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
+      const fr2 = isCouple?(+document.getElementById('w_frais2').value||0):0;
+      const pen2 = isCouple?(+document.getElementById('w_pen2').value||0):0;
+      const ab_sal1 = abattSalaires(sal1,fr1on,fr1);
+      const ab_pen1 = abattPensions(pen1);
+      const ab_sal2 = abattSalaires(sal2,fr2on,fr2);
+      const ab_pen2 = abattPensions(pen2);
+      // Revenu hors PER (pas de versements, pas de retraits)
+      const revenuBrut = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2));
+      const bareme = getBareme();
+      const quotientBrut = revenuBrut / parts;
+      const margeQ = Math.max(0, bareme[1].plafond - quotientBrut);
+      window._margeHorsPER = Math.floor(margeQ * parts);
+    } catch(e) { window._margeHorsPER = f.margeFoyer || 0; }
+  })();
+  const margeFoyer = window._margeHorsPER || f.margeFoyer || 0;
 
   const per1Cap = +document.getElementById('w_per1_cap').value||0;
   const per2Cap = +document.getElementById('w_per2_cap').value||0;
   const per1An  = +document.getElementById('w_per1_an').value||2028;
   const per2An  = +document.getElementById('w_per2_an').value||2028;
-  const totalPER = per1Cap + per2Cap;
+  // Déduire les retraits PER déjà effectués cette année
+  const perRet1 = +document.getElementById('w_per_retrait1').value||0;
+  const perRet2 = +document.getElementById('w_per_retrait2').value||0;
+  const totalRetrait = perRet1 + perRet2;
+  const totalPER = Math.max(0, per1Cap + per2Cap - totalRetrait);
   const objectif = +document.getElementById('w_objectif').value||0;
   const anneeBase = +document.getElementById('w_annee_debut').value||2026;
   const modeSortie = toggles['mode_sortie'] || 'etale';
@@ -1490,6 +1987,59 @@ function calcComparateurs() {
 ═══════════════════════════════════════════════ */
 function buildSynthese() {
   const f = window._fiscal || {};
+
+  // Calcul des 3 scénarios pour comparaison pédagogique
+  function calcImpotScenario(avecVersements, avecRapatriement) {
+    try {
+      const isCouple = f.isCouple;
+      const parts = f.parts || (isCouple ? 2 : 1);
+      const sal1 = +document.getElementById('w_sal1').value||0;
+      const fr1on = document.getElementById('w_frais1_on').checked;
+      const fr1 = +document.getElementById('w_frais1').value||0;
+      const pen1 = +document.getElementById('w_pen1').value||0;
+      const sal2 = isCouple?(+document.getElementById('w_sal2').value||0):0;
+      const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
+      const fr2 = isCouple?(+document.getElementById('w_frais2').value||0):0;
+      const pen2 = isCouple?(+document.getElementById('w_pen2').value||0):0;
+      const perRet1 = avecRapatriement ? (f.perRet1||0) : 0;
+      const perRet2 = avecRapatriement ? (f.perRet2||0) : 0;
+      const ver1 = avecVersements ? (f.ver1||0) : 0;
+      const ver2 = avecVersements ? (f.ver2||0) : 0;
+      const plaf1 = +document.getElementById('w_plaf1').value||0;
+      const plaf2 = +(document.getElementById('w_plaf2')?.value||0);
+      const don66 = +document.getElementById('w_don66').value||0;
+      const don75 = +document.getElementById('w_don75').value||0;
+      const ciDomicile = +document.getElementById('w_ci_domicile').value||0;
+      const ciGarde = +document.getElementById('w_ci_garde').value||0;
+      const ciSyndic = +document.getElementById('w_ci_syndic').value||0;
+
+      const ab_sal1 = abattSalaires(sal1,fr1on,fr1);
+      const ab_pen1 = abattPensions(pen1);
+      const ab_sal2 = abattSalaires(sal2,fr2on,fr2);
+      const ab_pen2 = abattPensions(pen2);
+
+      const mutOn = document.getElementById('w_mut_on')?.checked||false;
+      let d1 = Math.min(ver1, plaf1), d2 = Math.min(ver2, plaf2);
+      if (mutOn && isCouple) {
+        const libre1 = Math.max(0,plaf1-ver1), libre2 = Math.max(0,plaf2-ver2);
+        d1 = Math.min(ver1, plaf1+libre2); d2 = Math.min(ver2, plaf2+libre1);
+        const dTot = Math.min(d1+d2, plaf1+plaf2);
+        if (d1+d2>dTot) d2=dTot-d1;
+      }
+
+      const revenu = arr((sal1-ab_sal1)+(pen1-ab_pen1)+perRet1+(sal2-ab_sal2)+(pen2-ab_pen2)+perRet2-d1-d2);
+      const reduc = arr(don66*0.66)+arr(don75*0.75);
+      const credits = Math.min(arr(ciDomicile*0.5),6000)+arr(ciGarde*0.5)+arr(ciSyndic*0.66);
+      const {impBrut, decote} = calcIR(revenu, parts, isCouple);
+      return Math.max(0, arr(impBrut - decote - reduc - credits));
+    } catch(e) { return 0; }
+  }
+
+  const impSansRienBrut = calcImpotScenario(false, false);
+  const impAvecVersSansRapt = calcImpotScenario(true, false);
+  const impActuel = f.impNet || 0;
+  const hasVers = (f.ver1||0)+(f.ver2||0) > 0;
+  const hasRapt = (f.perRet1||0)+(f.perRet2||0) > 0;
   const s = window._strat || {};
   const isCouple = (toggles['foyer']||'seul')==='couple';
   const parts = document.getElementById('w_parts').value;
@@ -1499,16 +2049,65 @@ function buildSynthese() {
       <h3>🧮 Situation fiscale</h3>
       <div class="synth-row"><span>Foyer</span><span class="val">${isCouple?'Couple':'Célibataire'} — ${parts} part(s)</span></div>
       <div class="synth-row"><span>Revenu imposable</span><span class="val">${(f.revenu||0).toLocaleString('fr-FR')} €</span></div>
+      ${((f.perRet1||0)+(f.perRet2||0))>0?`<div class="synth-row"><span>dont retrait PER imposable</span><span class="val" style="color:#c0392b;">${((f.perRet1||0)+(f.perRet2||0)).toLocaleString('fr-FR')} €</span></div>`:''}
       <div class="synth-row"><span>Impôt net</span><span class="val">${(f.impNet||0).toLocaleString('fr-FR')} €</span></div>
       <div class="synth-row"><span>TMI</span><span class="val">${f.tmi||0} %</span></div>
       <div class="synth-row"><span>Taux moyen effectif</span><span class="val">${(f.tauxMoyen||0).toFixed(1)} %</span></div>
-      <div class="synth-row"><span>Marge PER avant 30%</span><span class="val" style="color:var(--green);">${(f.margeFoyer||0).toLocaleString('fr-FR')} €/an</span></div>
-      ${f.versNonImp>0?`<div class="synth-row"><span>Versement pour non-imposition</span><span class="val" style="color:#185FA5;">${f.versNonImp.toLocaleString('fr-FR')} €</span></div>`:''}
+      ${(f.perRet1||0)+(f.perRet2||0)>0 ? `
+      <div class="synth-row" style="margin-top:8px;font-weight:600;color:var(--navy);"><span>Rapatriement PER</span><span></span></div>
+      <div class="synth-row" style="padding-left:12px;"><span>Capacité annuelle avant 30%</span><span class="val" style="color:var(--green);">${(window._margeHorsPER||0).toLocaleString('fr-FR')} €/an</span></div>
+      <div class="synth-row" style="padding-left:12px;"><span>• Utilisé cette année</span><span class="val" style="color:#c0392b;">${((f.perRet1||0)+(f.perRet2||0)).toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row" style="padding-left:12px;"><span>• Reste cette année</span><span class="val" style="color:${Math.max(0,(window._margeHorsPER||0)-((f.perRet1||0)+(f.perRet2||0)))===0?'#92400e':'var(--green)'};">${Math.max(0,(window._margeHorsPER||0)-((f.perRet1||0)+(f.perRet2||0))).toLocaleString('fr-FR')} €</span></div>
+      ` : `
+      <div class="synth-row"><span>Rapatriement PER annuel max avant 30%</span><span class="val" style="color:var(--green);">${(window._margeHorsPER||0).toLocaleString('fr-FR')} €/an</span></div>
+      `}
+      ${(f.versNonImp>0 && (f.perRet1||0)+(f.perRet2||0)===0)?`<div class="synth-row"><span>Versement pour non-imposition</span><span class="val" style="color:#185FA5;">${f.versNonImp.toLocaleString('fr-FR')} €</span></div>`:''}
+      ${((f.ver1||0)+(f.ver2||0))>0 ? `
+      <div class="synth-row" style="margin-top:8px;font-weight:600;color:var(--navy);"><span>Versements PER</span><span></span></div>
+      ${(f.ver1||0)>0?`<div class="synth-row" style="padding-left:12px;"><span>• Déclarant 1</span><span class="val" style="color:#065f46;">${(f.ver1||0).toLocaleString('fr-FR')} €</span></div>`:''}
+      ${(f.ver2||0)>0?`<div class="synth-row" style="padding-left:12px;"><span>• Déclarant 2</span><span class="val" style="color:#065f46;">${(f.ver2||0).toLocaleString('fr-FR')} €</span></div>`:''}
+      ` : ''}
     </div>`;
 
   if (s.totalPER) {
     html += `
     <div class="synth-block">
+      ${hasVers ? `
+      <div style="background:#f0fff4;border:1px solid #a7f3d0;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-weight:700;color:#065f46;margin-bottom:8px;">💰 Impact de vos versements PER</div>
+        <div style="display:flex;justify-content:space-between;font-size:.87rem;padding:4px 0;border-bottom:1px solid #d1fae5;">
+          <span style="color:var(--slate);">Sans versements PER</span>
+          <span style="font-weight:600;">${impSansRienBrut.toLocaleString('fr-FR')} €</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.87rem;padding:4px 0;">
+          <span>Avec versements PER</span>
+          <span style="font-weight:600;">${impAvecVersSansRapt.toLocaleString('fr-FR')} €</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.92rem;padding:6px 0 0 0;border-top:1px solid #a7f3d0;margin-top:4px;">
+          <span style="font-weight:600;">Économie d'impôt</span>
+          <span style="font-weight:800;color:#065f46;">- ${(impSansRienBrut-impAvecVersSansRapt).toLocaleString('fr-FR')} €</span>
+        </div>
+      </div>
+      ` : ''}
+
+      ${hasRapt ? `
+      <div style="background:#fff7f0;border:1px solid #fcd9b8;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-weight:700;color:#92400e;margin-bottom:8px;">📤 Impact du rapatriement PER</div>
+        <div style="display:flex;justify-content:space-between;font-size:.87rem;padding:4px 0;border-bottom:1px solid #fcd9b8;">
+          <span style="color:var(--slate);">Sans rapatriement</span>
+          <span style="font-weight:600;">${impAvecVersSansRapt.toLocaleString('fr-FR')} €</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.87rem;padding:4px 0;">
+          <span>Avec rapatriement de ${((f.perRet1||0)+(f.perRet2||0)).toLocaleString('fr-FR')} €</span>
+          <span style="font-weight:600;">${impActuel.toLocaleString('fr-FR')} €</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.92rem;padding:6px 0 0 0;border-top:1px solid #fcd9b8;margin-top:4px;">
+          <span style="font-weight:600;">Surcoût fiscal</span>
+          <span style="font-weight:800;color:#c0392b;">+ ${(impActuel-impAvecVersSansRapt).toLocaleString('fr-FR')} €</span>
+        </div>
+      </div>
+      ` : ''}
+
       <h3>📈 Stratégie PER</h3>
       <div class="synth-row"><span>Capital PER total</span><span class="val">${s.totalPER.toLocaleString('fr-FR')} €</span></div>
       <div class="synth-row"><span>Mode de sortie</span><span class="val">${s.modeSortie==='etale'?'Étalée à 11%':'Totale one-shot'}</span></div>
@@ -1534,6 +2133,109 @@ function buildSynthese() {
 /* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
+let _debounceTimer = null;
+function calcFiscalSilent() {
+  clearTimeout(_debounceTimer);
+  // Indicateur visuel pendant la saisie
+  const detEl = document.getElementById('tmi-banner-detail');
+  if (detEl) detEl.textContent = '⏳ calcul en cours…';
+  _debounceTimer = setTimeout(_calcFiscalSilentNow, 600);
+}
+function _calcFiscalSilentNow() {
+  // Recalcul fiscal silencieux pour mise à jour du bandeau TMI
+  try {
+    const isCouple = (toggles['foyer'] || 'seul') === 'couple';
+    const parts = +document.getElementById('w_parts').value || (isCouple?2:1);
+    const sal1 = +document.getElementById('w_sal1').value || 0;
+    const fr1on = document.getElementById('w_frais1_on').checked;
+    const fr1 = +document.getElementById('w_frais1').value || 0;
+    const pen1 = +document.getElementById('w_pen1').value || 0;
+    const perRet1 = +document.getElementById('w_per_retrait1').value || 0;
+    const ver1 = +document.getElementById('w_ver1').value || 0;
+    const plaf1 = +document.getElementById('w_plaf1').value || 0;
+    const sal2 = isCouple ? (+document.getElementById('w_sal2').value||0) : 0;
+    const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
+    const fr2 = isCouple ? (+document.getElementById('w_frais2').value||0) : 0;
+    const pen2 = isCouple ? (+document.getElementById('w_pen2').value||0) : 0;
+    const perRet2 = isCouple ? (+document.getElementById('w_per_retrait2').value||0) : 0;
+    const ver2 = isCouple ? (+document.getElementById('w_ver2').value||0) : 0;
+    const plaf2 = isCouple ? (+document.getElementById('w_plaf2').value||0) : 0;
+    const don66 = +document.getElementById('w_don66').value||0;
+    const don75 = +document.getElementById('w_don75').value||0;
+    const ciDomicile = +document.getElementById('w_ci_domicile').value||0;
+    const ciGarde = +document.getElementById('w_ci_garde').value||0;
+    const ciSyndic = +document.getElementById('w_ci_syndic').value||0;
+
+    const ab_sal1 = abattSalaires(sal1, fr1on, fr1);
+    const ab_pen1 = abattPensions(pen1);
+    const ab_sal2 = abattSalaires(sal2, fr2on, fr2);
+    const ab_pen2 = abattPensions(pen2);
+    const mutOnSilent = document.getElementById('w_mut_on')?.checked || false;
+    let d1 = Math.min(ver1, plaf1), d2 = Math.min(ver2, plaf2);
+    if (mutOnSilent && isCouple) {
+      const libre1 = Math.max(0, plaf1 - ver1);
+      const libre2 = Math.max(0, plaf2 - ver2);
+      d1 = Math.min(ver1, plaf1 + libre2);
+      d2 = Math.min(ver2, plaf2 + libre1);
+      const dTot = Math.min(d1 + d2, plaf1 + plaf2);
+      if (d1 + d2 > dTot) { d2 = dTot - d1; }
+    }
+    const revenu = arr((sal1-ab_sal1)+(pen1-ab_pen1)+perRet1+(sal2-ab_sal2)+(pen2-ab_pen2)+perRet2-d1-d2);
+
+    const reduc = arr(don66*0.66) + arr(don75*0.75);
+    const credits = Math.min(arr(ciDomicile*0.5),6000) + arr(ciGarde*0.5) + arr(ciSyndic*0.66);
+    const {quotient, impBrut, decote} = calcIR(revenu, parts, isCouple);
+    const impNet = Math.max(0, arr(impBrut - decote - reduc - credits));
+
+    const bareme = getBareme();
+    let tmi = 0;
+    for (let i=0; i<bareme.length; i++) if (quotient > (i===0?0:bareme[i-1].plafond)) tmi = bareme[i].taux*100;
+
+    updateTMIBanner(tmi, revenu, impNet);
+    // Mise à jour décisionnelle étape 3
+    // Marge calculée sur revenus BRUTS (sans versements ni retraits PER)
+    const revenuBrut = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2));
+    const bareme2 = getBareme();
+    const margeQ = Math.max(0, bareme2[1].plafond - arr(revenuBrut/parts));
+    const margeFoyer = arr(margeQ * parts);
+    // versNonImp calculé sur revenu réel (avec PER)
+    const versNonImp = Math.max(0, arr(revenu - bareme2[0].plafond * parts));
+    buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp);
+  } catch(e) { /* champs pas encore disponibles */ }
+}
+
+function updateTMIBanner(tmi, revenu, impNet) {
+  const banner = document.getElementById('tmi-banner');
+  const inner = document.getElementById('tmi-banner-inner');
+  const valEl = document.getElementById('tmi-banner-value');
+  const detEl = document.getElementById('tmi-banner-detail');
+  if (!banner) return;
+
+  const hasRevenu = revenu > 0;
+  banner.style.display = hasRevenu ? 'block' : 'none';
+  document.body.classList.toggle('has-tmi-banner', hasRevenu);
+  if (!hasRevenu) return;
+
+  // Classe couleur
+  inner.className = tmi === 0 ? 'tmi-0' : tmi === 11 ? 'tmi-11' : tmi === 30 ? 'tmi-30' : tmi === 41 ? 'tmi-41' : 'tmi-45';
+  valEl.textContent = tmi + ' %';
+
+  const emoji = tmi <= 11 ? '✅' : tmi === 30 ? '⚠️' : '🔴';
+  const conseil = tmi === 0 ? 'Non imposable' :
+                  tmi === 11 ? 'Tranche 11% — situation optimisée' :
+                  tmi === 30 ? 'Tranche 30% — des leviers peuvent faire baisser votre TMI' :
+                  'Tranche ' + tmi + '% — optimisation fiscale fortement recommandée';
+  detEl.textContent = emoji + ' ' + conseil;
+}
+
+function toggleTMI() {
+  const body = document.getElementById('tmi-explainer-body');
+  const chevron = document.getElementById('tmi-chevron');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  chevron.textContent = open ? '▲' : '▼';
+}
+
 toggles['foyer'] = 'seul';
 toggles['mode_sortie'] = 'etale';
 document.getElementById('w_bloc_d2').style.display = 'none';
