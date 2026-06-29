@@ -1257,9 +1257,43 @@ function abattSalaires(s, fraisOn, frais) {
 }
 
 function getBareme() {
+  /* ══════════════════════════════════════════════════════════════
+     RÈGLES FISCALES — DÉCLARATION 2026 (REVENUS 2025)
+     ══════════════════════════════════════════════════════════════
+     BARÈME IR : c'est le barème de l'ANNÉE DE DÉCLARATION N qui
+     s'applique aux revenus N-1. Pour déclarer les revenus 2025
+     en 2026, on utilise donc le barème 2025 (pas 2026).
+     Source : vérification sur impots.gouv.fr juin 2026.
+
+     BARÈME 2025 (déclaration 2026, revenus 2025) :
+       0%  jusqu'à 11 600 € / part
+       11% de 11 600 € à 29 579 € / part
+       30% de 29 579 € à 84 577 € / part
+       41% de 84 577 € à 181 917 € / part
+       45% au-delà
+
+     ABATTEMENTS 2026 (sur revenus 2025) :
+       Pensions  : 10%, plancher 454 €, plafond 4 438 €
+       Salaires  : 10%, plancher 495 €, plafond 14 555 €
+
+     DÉCOTE 2025 :
+       Célibataire : 897 - 0,4525 × impôt brut (si impôt < 1 982 €)
+       Couple      : 1 483 - 0,4525 × impôt brut (si impôt < 3 277 €)
+
+     PLAFOND PER (versements 2025, déclarés en 2026) :
+       Salariés : 10% des revenus 2024, min = 10% du PASS 2024
+       PASS 2024 = 46 368 € → plafond min = 4 637 €
+       (le PASS de l'année N-1 s'applique aux versements de l'année N)
+
+     MISE À JOUR ANNUELLE :
+       Chaque année, vérifier sur impots.gouv.fr :
+       - Le barème (année de déclaration, pas de revenus)
+       - Les abattements pensions et salaires
+       - Le PASS de l'année N-1 pour le plafond PER
+  ══════════════════════════════════════════════════════════════ */
   return [
-    {plafond:11809, taux:0}, {plafond:30153, taux:0.11},
-    {plafond:86341, taux:0.30}, {plafond:185472, taux:0.41},
+    {plafond:11600, taux:0}, {plafond:29579, taux:0.11},
+    {plafond:84577, taux:0.30}, {plafond:181917, taux:0.41},
     {plafond:Infinity, taux:0.45}
   ];
 }
