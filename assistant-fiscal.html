@@ -1263,14 +1263,14 @@ function arr(x) { return Math.round(x); }
 function abattPensions(p) {
   if (p <= 0) return 0;
   let a = p * 0.10;
-  a = Math.max(a, 442); a = Math.min(a, 4321); return Math.min(a, p);
+  a = Math.max(a, 454); a = Math.min(a, 4438); return Math.min(a, p);
 }
 
 function abattSalaires(s, fraisOn, frais) {
   if (s <= 0) return 0;
   if (fraisOn) return Math.min(frais, s);
   let a = s * 0.10;
-  a = Math.max(a, 495); a = Math.min(a, 14171); return Math.min(a, s);
+  a = Math.max(a, 495); a = Math.min(a, 14555); return Math.min(a, s);
 }
 
 function getBareme() {
