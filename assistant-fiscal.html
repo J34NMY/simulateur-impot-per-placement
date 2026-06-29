@@ -698,7 +698,7 @@
       <div class="field">
         <label>Plafond PER (€)</label>
         <div class="hint">Calculé automatiquement depuis le PASS</div>
-        <input type="number" id="w_plaf1" value="4710" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
+        <input type="number" id="w_plaf1" value="4637" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
       </div>
     </div>
     <div class="field">
@@ -726,7 +726,7 @@
         <div class="field">
           <label>Plafond PER (€)</label>
           <div class="hint">Calculé automatiquement depuis le PASS</div>
-          <input type="number" id="w_plaf2" value="4710" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
+          <input type="number" id="w_plaf2" value="4637" min="0" readonly style="background:#f3f4f6; color:#6B7280; cursor:not-allowed;">
         </div>
       </div>
       <div class="field">
@@ -1291,7 +1291,7 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
    MISE À JOUR PLAFOND PER AVEC REPORTS
 ═══════════════════════════════════════════════ */
 function updatePlafondPER() {
-  const PASS = 47100;
+  const PASS = 46368; // PASS 2024 — versements 2025 déclarés en 2026
   const report1 = +document.getElementById('w_report1').value || 0;
   const report2 = +(document.getElementById('w_report2')?.value || 0);
   const ver1 = +document.getElementById('w_ver1').value || 0;
