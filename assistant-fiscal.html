@@ -505,8 +505,23 @@
     color: #7c4a00;
   }
 </style>
+  <style>
+    #maintenance-banner {
+      background: #f59e0b;
+      color: #1c1917;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: .88rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 200;
+    }
+  </style>
 </head>
 <body>
+<div id="maintenance-banner">
+  🔧 Outil en cours de mise à jour — certaines fonctionnalités peuvent être instables. Revenez dans quelques heures.
+</div>
 
 <!-- HEADER -->
 <header class="wiz-header">
@@ -1366,13 +1381,20 @@ function updatePlafondPER() {
       // Afficher l'alerte sur le déclarant qui dépasse
       const exc1 = Math.max(0, ver1 - plaf1);
       const exc2 = Math.max(0, ver2 - plaf2);
+      // Afficher le message sur le déclarant qui dépasse (ou D1 si les deux dépassent)
+      const excMsg = `⚠️ Même avec mutualisation, l'excédent total de <strong>${excTotal.toLocaleString('fr-FR')} €</strong> ne sera <strong>pas déductible</strong>. Réduisez vos versements ou augmentez vos reports N-1/N-2/N-3.`;
       if (hv1) {
-        if (exc1 > 0 && excTotal > 0) {
-          hv1.style.display = 'block';
-          hv1.innerHTML = `⚠️ Même avec mutualisation, l'excédent total de <strong>${excTotal.toLocaleString('fr-FR')} €</strong> ne sera <strong>pas déductible</strong>. Réduisez vos versements ou augmentez vos reports N-1/N-2/N-3.`;
+        if (exc1 > 0 || exc2 === 0) { // D1 dépasse, ou D2 dépasse mais pas D1 → on met sur D1 quand même
+          hv1.style.display = exc1 > 0 ? 'block' : 'none';
+          if (exc1 > 0) hv1.innerHTML = excMsg;
         } else { hv1.style.display = 'none'; }
       }
-      if (hv2) hv2.style.display = 'none';
+      if (hv2) {
+        if (exc2 > 0 && exc1 === 0) { // Seulement D2 dépasse → message sur D2
+          hv2.style.display = 'block';
+          hv2.innerHTML = excMsg;
+        } else { hv2.style.display = 'none'; }
+      }
     } else {
       // Mutualisation couvre le dépassement — pas d'alerte
       if (hv1) hv1.style.display = 'none';
