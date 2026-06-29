@@ -505,8 +505,24 @@
     color: #7c4a00;
   }
 </style>
+  <style>
+    #maintenance-banner {
+      background: #f59e0b;
+      color: #1c1917;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: .88rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 200;
+    }
+    #maintenance-banner a { color: #1c1917; }
+  </style>
 </head>
 <body>
+<div id="maintenance-banner">
+  🔧 Outil en cours de mise à jour — certaines fonctionnalités peuvent être instables. Revenez dans quelques heures.
+</div>
 
 <!-- HEADER -->
 <header class="wiz-header">
@@ -1191,7 +1207,7 @@ let currentWizStep = 1;
 function goStep(n) {
   currentWizStep = n;
   // Calculs à la volée avant affichage
-  if (n === 5) calcFiscal();
+  if (n === 5) { try { calcFiscal(); } catch(e) { console.error('calcFiscal error:', e); } }
   if (n >= 2) calcFiscalSilent(); // updateMargeBanner appelé depuis calcFiscalSilent
   if (n === 8) calcStrategie();
   if (n === 10) {
@@ -1200,8 +1216,8 @@ function goStep(n) {
     document.getElementById('w_pp_rdt_display').textContent = rdt.toFixed(1) + '%/an';
     window._rdtEtape9 = rdt;
   }
-  if (n === 11) { calcFiscal(); calcComparateurs(); }
-  if (n === 12) { calcFiscal(); buildSynthese(); }
+  if (n === 11) { try { calcFiscal(); calcComparateurs(); } catch(e) { console.error('n11 error:', e); } }
+  if (n === 12) { try { calcFiscal(); buildSynthese(); } catch(e) { console.error('n12 error:', e); } }
 
   document.getElementById('step-'+currentStep).classList.remove('active');
   currentStep = n;
@@ -1399,7 +1415,7 @@ function updateRendementImplicite() {
 }
 
 
-function buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp) {
+function buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp, tmi) {
   const totalRetrait = (perRet1||0) + (perRet2||0);
   let html = `<div class="info-box green">
     <strong>Marge de sortie PER avant tranche 30% :</strong> ${margeFoyer.toLocaleString('fr-FR')} €
@@ -1714,7 +1730,7 @@ function calcFiscal() {
   document.getElementById('w_res_detail').innerHTML = det;
 
   // Bloc marge PER — alimenter étape 5 ET étape 3
-  buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp);
+  buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp, tmi);
 
   // Stockage pour synthèse
   // Marge hors PER (sur revenus bruts uniquement, sans versements ni rapatriements)
@@ -2200,7 +2216,7 @@ function _calcFiscalSilentNow() {
     const margeFoyer = arr(margeQ * parts);
     // versNonImp calculé sur revenu réel (avec PER)
     const versNonImp = Math.max(0, arr(revenu - bareme2[0].plafond * parts));
-    buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp);
+    buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNonImp, tmi);
   } catch(e) { /* champs pas encore disponibles */ }
 }
 
