@@ -1154,7 +1154,8 @@
   <!-- ══════════════════════════════════════════════ -->
   <div class="step" id="step-11">
     <p class="step-eyebrow">Résultats comparateurs · Étape 11</p>
-    <h1 class="step-title">Vos comparateurs</h1>
+    <h1 class="step-title">PER vs placement direct : que vaut-il mieux à l'entrée ?</h1>
+    <p class="step-desc">Ce comparateur regarde l'entrée : verser sur un PER (déduction immédiate, fiscalité à la sortie) est-il plus avantageux que verser directement sur un PEA (pas de déduction, mais pas d'imposition différée) ? La comparaison rente vs capital a déjà été faite à l'étape 6.</p>
     <div id="w_res_compara"></div>
 
     <div class="wiz-nav">
@@ -2129,44 +2130,6 @@ function calcRenteSeule(targetId) {
 function calcComparateurs() {
   let html = '';
 
-  // Rente
-  if (document.getElementById('w_rente_on').checked) {
-    const cap   = +document.getElementById('w_rente_cap').value||0;
-    const mnt   = +document.getElementById('w_rente_mnt').value||0;
-    const age   = +document.getElementById('w_rente_age').value||61;
-    const esp   = +document.getElementById('w_rente_esp').value||27;
-    const rdt   = (+document.getElementById('w_rente_rdt').value||7)/100;
-    const rdtImpl = cap>0 ? (mnt/cap*100) : 0;
-
-    let renteCum=0, capEvo=cap, bascule=null;
-    let rows=[], pas=Math.max(1,Math.round(esp/8));
-    for (let an=1; an<=esp; an++) {
-      renteCum+=mnt; capEvo*=(1+rdt);
-      const gains=capEvo-cap;
-      if (!bascule && renteCum>gains) bascule=an;
-      if (an%pas===0||an===esp||an===1) rows.push({an,age:age+an,rc:arr(renteCum),gc:arr(gains)});
-    }
-    const capFinal=arr(capEvo);
-
-    html += `<h3 style="margin-bottom:12px;font-size:1rem;">1. Rente viagère vs capital placé</h3>
-    <div class="result-grid">
-      <div class="result-card"><div class="result-label">Rendement implicite de la rente</div><div class="result-value ${rdtImpl<rdt*100?'red':'green'}">${rdtImpl.toFixed(1)}%/an</div></div>
-      <div class="result-card"><div class="result-label">Rendement de vos placements</div><div class="result-value">${(rdt*100).toFixed(1)}%/an</div></div>
-      <div class="result-card"><div class="result-label">Point mort rente vs capital</div><div class="result-value">${bascule?bascule+' ans':'Jamais'}</div></div>
-    </div>
-    <div style="overflow-x:auto;"><table class="res-table" style="min-width:400px;">
-      <tr><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Âge</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Rente cumulée</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains capital cumulés</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Avantage</th></tr>`;
-    for (const r of rows) {
-      const capG=r.rc>r.gc;
-      html+=`<tr style="${!capG?'background:#E8F0E9;':''}"><td>${r.an}</td><td>${r.age}</td><td style="text-align:right;">${r.rc.toLocaleString('fr-FR')} €</td><td style="text-align:right;">${r.gc.toLocaleString('fr-FR')} €</td><td style="text-align:right;color:${capG?'var(--red)':'var(--green)'};">${capG?'Rente +':'Capital +'+(r.gc-r.rc).toLocaleString('fr-FR')+' €'}</td></tr>`;
-    }
-    html+=`</table></div>
-    <div class="info-box ${arr(renteCum)>(capFinal-cap)?'gold':'green'}" style="margin-top:12px;">
-      <strong>Sur ${esp} ans :</strong> le capital de ${cap.toLocaleString('fr-FR')} € placé génère ${(capFinal-cap).toLocaleString('fr-FR')} € de gains contre ${arr(renteCum).toLocaleString('fr-FR')} € versés par la rente.
-      <br>Avec l'option capital, <strong>${capFinal.toLocaleString('fr-FR')} € restent transmissibles</strong> à vos héritiers (dont ${cap.toLocaleString('fr-FR')} € de capital initial + ${(capFinal-cap).toLocaleString('fr-FR')} € de gains). Avec la rente : 0 €.
-    </div>`;
-  }
-
   // PER vs PEA
   if (document.getElementById('w_perpea_on').checked) {
     const ver  = +document.getElementById('w_pp_ver').value||0;
@@ -2190,7 +2153,7 @@ function calcComparateurs() {
     const ecart=netPER-netDirect;
 
     html+=`<hr style="border:none;border-top:1px solid #E5E7EB;margin:24px 0;">
-    <h3 style="margin-bottom:12px;font-size:1rem;">2. PER vs placement direct (${duree} versements de ${ver.toLocaleString('fr-FR')} €/an)</h3>
+    <h3 style="margin-bottom:12px;font-size:1rem;">PER vs placement direct (${duree} versements de ${ver.toLocaleString('fr-FR')} €/an)</h3>
     <div class="result-grid">
       <div class="result-card highlight"><div class="result-label">PER — Capital net final</div><div class="result-value green">${arr(netPER).toLocaleString('fr-FR')} €</div></div>
       <div class="result-card"><div class="result-label">${fiscLbl} — Capital net final</div><div class="result-value">${arr(netDirect).toLocaleString('fr-FR')} €</div></div>
@@ -2346,11 +2309,17 @@ function buildSynthese() {
     <div class="synth-block">
       <h3>⚖️ Comparateurs</h3>
       ${document.getElementById('w_rente_on').checked
-        ? `<div class="synth-row"><span>Rente vs capital</span><span class="val">Voir étape 11</span></div>`
+        ? `<div class="synth-row"><span>Rente vs capital</span><span class="val">Voir étape 6</span></div>`
         : `<div class="synth-row"><span>Rente vs capital</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
       ${document.getElementById('w_perpea_on').checked
         ? `<div class="synth-row"><span>PER vs PEA direct</span><span class="val">Voir étape 11</span></div>`
         : `<div class="synth-row"><span>PER vs PEA direct</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
+    </div>
+
+    <div class="info-box green" style="margin-top:16px;">
+      🧘 <strong>La stratégie d'arbitrage à retenir</strong><br>
+      Chaque année, selon vos fonds disponibles à épargner : tant que vous avez du plafond PER disponible et besoin de réduire votre impôt, <strong>le PER</strong> est pertinent. Une fois le plafond épuisé — ou si vous n'avez pas besoin de déduction cette année-là — <strong>le PEA</strong> prend le relais : fiscalité des gains plus douce (exonération d'impôt sur le revenu après 5 ans, seuls les prélèvements sociaux de 17,2% s'appliquent), et disponibilité sans attendre la retraite.<br>
+      <span style="font-size:.85rem;font-style:italic;">Un PER sans profiter de la déduction n'a d'intérêt que dans des cas spécifiques (transmission, diversification, plafond PEA atteint) — dans le doute, le PEA gagne.</span>
     </div>`;
 
   document.getElementById('w_synthese').innerHTML = html;
