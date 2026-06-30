@@ -591,13 +591,13 @@
     <div class="field">
       <label>Nombre d'enfants à charge</label>
       <div class="hint">Le nombre de parts est calculé automatiquement : +0,5 par enfant pour les 2 premiers, +1 part à partir du 3ème</div>
-      <input type="number" id="w_enfants" value="0" min="0" max="10" step="1" oninput="calcParts()">
+      <input type="number" id="w_enfants" value="0" min="0" max="10" step="1" oninput="calcParts()" onfocus="this.select()">
     </div>
 
     <div class="field">
       <label>Nombre de parts fiscales <span style="font-size:.75rem;color:var(--slate);font-weight:400;">(calculé automatiquement)</span></label>
       <div class="hint">Si votre situation est particulière (garde alternée, parent isolé, invalidité), corrigez directement ce chiffre — il correspond à la case "Nombre de parts" de votre avis d'imposition</div>
-      <input type="number" id="w_parts" value="1" min="0.5" max="10" step="0.5">
+      <input type="number" id="w_parts" value="1" min="0.5" max="10" step="0.5" onfocus="this.select()">
     </div>
 
     <div class="wiz-nav">
@@ -648,7 +648,7 @@
     <div class="field">
       <label>Salaires (€)</label>
       <div class="hint">L'abattement de 10% sera calculé automatiquement (plancher 495 €, plafond 14 171 €)</div>
-      <input type="number" id="w_sal1" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_sal1" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <label class="check-field">
@@ -657,13 +657,13 @@
     </label>
     <div id="w_frais1_bloc" style="display:none;" class="field">
       <label>Frais réels déclarant 1 (€)</label>
-      <input type="number" id="w_frais1" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_frais1" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div class="field">
       <label>Pensions / retraites (€)</label>
       <div class="hint">Montant pré-rempli de votre déclaration (cases 1AS ou 1BS)</div>
-      <input type="number" id="w_pen1" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_pen1" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div id="w_bloc_d2">
@@ -672,7 +672,7 @@
 
       <div class="field">
         <label>Salaires (€)</label>
-        <input type="number" id="w_sal2" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_sal2" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
 
       <label class="check-field">
@@ -681,12 +681,12 @@
       </label>
       <div id="w_frais2_bloc" style="display:none;" class="field">
         <label>Frais réels déclarant 2 (€)</label>
-        <input type="number" id="w_frais2" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_frais2" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
 
       <div class="field">
         <label>Pensions / retraites (€)</label>
-        <input type="number" id="w_pen2" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_pen2" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
     </div>
 
@@ -708,7 +708,7 @@
     <div class="two-cols">
       <div class="field">
         <label>Versement PER (€)</label>
-        <input type="number" id="w_ver1" value="0" min="0" oninput="updatePlafondPER()">
+        <input type="number" id="w_ver1" value="0" min="0" oninput="updatePlafondPER()" onfocus="this.select()">
       </div>
       <div class="field">
         <label>Plafond PER (€)</label>
@@ -719,7 +719,7 @@
     <div class="field">
       <label>Reports plafond non utilisés N-1/N-2/N-3 (€)</label>
       <div class="hint">Cumul des plafonds non consommés les 3 années précédentes — figurant sur votre <strong>avis d'imposition page 2</strong>, case <em>"Plafond épargne retraite disponible"</em>. Laissez 0 si vous n'avez pas de reports.</div>
-      <input type="number" id="w_report1" value="0" min="0" oninput="updatePlafondPER()">
+      <input type="number" id="w_report1" value="0" min="0" oninput="updatePlafondPER()" onfocus="this.select()">
     </div>
     <div id="w_hint_ver1" style="display:none;" class="info-box orange" style="margin-top:4px;"></div>
     <div id="w_hint_report1" style="display:none;" class="info-box blue"></div>
@@ -727,7 +727,7 @@
     <div class="field" style="margin-top:12px;">
       <label>Rapatriement fiscal PER imposable cette année — Déclarant 1 (€)</label>
       <div class="hint">Si vous avez retiré du capital de votre PER (déduit à l'entrée) — case 4L de votre déclaration. Ce montant s'ajoute à vos revenus imposables. Laissez 0 si vous n'avez pas effectué de retrait.</div>
-      <input type="number" id="w_per_retrait1" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_per_retrait1" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div id="w_per_d2">
@@ -736,7 +736,7 @@
       <div class="two-cols">
         <div class="field">
           <label>Versement PER (€)</label>
-          <input type="number" id="w_ver2" value="0" min="0" oninput="updatePlafondPER()">
+          <input type="number" id="w_ver2" value="0" min="0" oninput="updatePlafondPER()" onfocus="this.select()">
         </div>
         <div class="field">
           <label>Plafond PER (€)</label>
@@ -747,7 +747,7 @@
       <div class="field">
         <label>Reports plafond non utilisés N-1/N-2/N-3 (€)</label>
         <div class="hint">Même principe que pour le déclarant 1 — avis d'imposition page 2.</div>
-        <input type="number" id="w_report2" value="0" min="0" oninput="updatePlafondPER()">
+        <input type="number" id="w_report2" value="0" min="0" oninput="updatePlafondPER()" onfocus="this.select()">
       </div>
       <div id="w_hint_ver2" style="display:none;" class="info-box orange"></div>
       <div id="w_hint_report2" style="display:none;" class="info-box blue"></div>
@@ -755,7 +755,7 @@
       <div class="field" style="margin-top:12px;">
         <label>Rapatriement fiscal PER imposable cette année — Déclarant 2 (€)</label>
         <div class="hint">Si vous avez retiré du capital de votre PER (déduit à l'entrée) — case 4M de votre déclaration. Ce montant s'ajoute à vos revenus imposables. Laissez 0 si vous n'avez pas effectué de retrait.</div>
-        <input type="number" id="w_per_retrait2" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_per_retrait2" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
     </div>
 
@@ -786,12 +786,12 @@
       <div class="field">
         <label>Dons à 66 % (€)</label>
         <div class="hint">Associations, fondations reconnues d'utilité publique — réduction = 66% du don</div>
-        <input type="number" id="w_don66" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_don66" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
       <div class="field">
         <label>Dons à 75 % (€)</label>
         <div class="hint">Aide aux personnes en difficulté (Restos du Cœur, Croix-Rouge...) — réduction = 75% du don</div>
-        <input type="number" id="w_don75" value="0" min="0" oninput="calcFiscalSilent()">
+        <input type="number" id="w_don75" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
       </div>
     </div>
 
@@ -801,19 +801,19 @@
     <div class="field">
       <label>Emploi à domicile (€)</label>
       <div class="hint">Aide ménagère, jardinage, garde d'enfant à domicile, aide aux personnes âgées — crédit = 50% de la dépense, plafonné à 6 000 € de crédit</div>
-      <input type="number" id="w_ci_domicile" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_ci_domicile" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div class="field">
       <label>Garde d'enfants hors domicile (€)</label>
       <div class="hint">Crèche, assistante maternelle — crédit = 50% de la dépense, plafonné à 1 750 € de crédit par enfant</div>
-      <input type="number" id="w_ci_garde" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_ci_garde" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div class="field">
       <label>Cotisations syndicales (€)</label>
       <div class="hint">Crédit = 66% de la cotisation versée</div>
-      <input type="number" id="w_ci_syndic" value="0" min="0" oninput="calcFiscalSilent()">
+      <input type="number" id="w_ci_syndic" value="0" min="0" oninput="calcFiscalSilent()" onfocus="this.select()">
     </div>
 
     <div class="wiz-nav">
@@ -843,192 +843,18 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- ÉTAPE 6 — CAPITAL PER -->
-  <!-- ══════════════════════════════════════════════ -->
-  <div class="step" id="step-6">
-    <p class="step-eyebrow">Stratégie PER · Étape 6</p>
-    <h1 class="step-title">Quel capital PER allez-vous rapatrier ?</h1>
-    <p class="step-desc">Renseignez les capitaux bruts de vos PER et l'année à laquelle vous prévoyez de les sortir (en général l'année de votre départ à la retraite ou l'année suivante).</p>
-
-    <div class="two-cols">
-      <div class="field">
-        <label>Capital PER 1 brut (€)</label>
-        <input type="number" id="w_per1_cap" value="50000" min="0">
-      </div>
-      <div class="field">
-        <label>Année de sortie PER 1</label>
-        <input type="number" id="w_per1_an" value="2028" min="2024" max="2050">
-      </div>
-    </div>
-
-    <div class="two-cols">
-      <div class="field">
-        <label>Capital PER 2 brut (€) <span class="badge-optional">si applicable</span></label>
-        <input type="number" id="w_per2_cap" value="0" min="0">
-      </div>
-      <div class="field">
-        <label>Année de sortie PER 2</label>
-        <input type="number" id="w_per2_an" value="2028" min="2024" max="2050">
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Objectif de complément mensuel (€)</label>
-      <div class="hint">Ex : perte de salaire à la retraite. Laissez 0 si vous ne savez pas encore.</div>
-      <input type="number" id="w_objectif" value="0" min="0">
-    </div>
-
-    <div class="field">
-      <label>Année de début de simulation</label>
-      <div class="hint">Ex : 2026 pour voir l'évolution depuis maintenant</div>
-      <input type="number" id="w_annee_debut" value="2026" min="2024" max="2050">
-    </div>
-
-    <div class="field">
-      <label>Mode de sortie</label>
-      <div class="toggle-group">
-        <button class="toggle-btn selected" onclick="selectToggle(this,'mode_sortie','etale')" data-group="mode_sortie" data-val="etale">
-          <span class="toggle-icon">📅</span>
-          <span>Étalée à 11%</span><br>
-          <small style="font-size:.75rem;color:var(--slate);">~6 ans, fiscalement optimal</small>
-        </button>
-        <button class="toggle-btn" onclick="selectToggle(this,'mode_sortie','oneshot')" data-group="mode_sortie" data-val="oneshot">
-          <span class="toggle-icon">⚡</span>
-          <span>Totale en 1 an</span><br>
-          <small style="font-size:.75rem;color:var(--slate);">Pour comparaison fiscale</small>
-        </button>
-      </div>
-    </div>
-
-    <div class="wiz-nav">
-      <button class="btn-back" onclick="goStep(5)">← Retour</button>
-      <button class="btn-next" onclick="goStep(7)">Continuer →</button>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- ÉTAPE 7 — ENVELOPPES -->
-  <!-- ══════════════════════════════════════════════ -->
-  <div class="step" id="step-7">
-    <p class="step-eyebrow">Vos placements · Étape 7</p>
-    <h1 class="step-title">Vos enveloppes de placement</h1>
-    <p class="step-desc">Renseignez vos enveloppes actuelles et la répartition souhaitée du capital PER. La somme des pourcentages doit faire 100%.</p>
-
-    <p class="section-label">PEA 1</p>
-    <div class="two-cols">
-      <div class="field">
-        <label>Capital actuel PEA 1 (€)</label>
-        <input type="number" id="w_pea1_cap" value="0" min="0">
-      </div>
-      <div class="field">
-        <label>Part du PER vers PEA 1 (%)</label>
-        <input type="number" id="w_pea1_part" value="40" min="0" max="100">
-      </div>
-    </div>
-    <div class="two-cols">
-      <div class="field">
-        <label>Année d'ouverture PEA 1</label>
-        <input type="number" id="w_pea1_an" value="2026" min="2000" max="2030">
-      </div>
-      <div class="field">
-        <label>Mois d'ouverture (1-12)</label>
-        <input type="number" id="w_pea1_mois" value="1" min="1" max="12">
-      </div>
-    </div>
-    <div class="field">
-      <label>Rendement PEA 1 (%/an)</label>
-      <input type="number" id="w_pea1_rdt" value="7" min="0" max="20" step="0.5">
-    </div>
-
-    <hr class="section-sep">
-    <p class="section-label">PEA 2 <span class="badge-optional">Optionnel</span></p>
-    <div class="two-cols">
-      <div class="field">
-        <label>Capital actuel PEA 2 (€)</label>
-        <input type="number" id="w_pea2_cap" value="0" min="0">
-      </div>
-      <div class="field">
-        <label>Part du PER vers PEA 2 (%)</label>
-        <input type="number" id="w_pea2_part" value="10" min="0" max="100">
-      </div>
-    </div>
-    <div class="two-cols">
-      <div class="field">
-        <label>Année d'ouverture PEA 2</label>
-        <input type="number" id="w_pea2_an" value="2026" min="2000" max="2030">
-      </div>
-      <div class="field">
-        <label>Mois d'ouverture (1-12)</label>
-        <input type="number" id="w_pea2_mois" value="1" min="1" max="12">
-      </div>
-    </div>
-    <div class="field">
-      <label>Rendement PEA 2 (%/an)</label>
-      <input type="number" id="w_pea2_rdt" value="7" min="0" max="20" step="0.5">
-    </div>
-
-    <hr class="section-sep">
-    <p class="section-label">CTO</p>
-    <div class="two-cols">
-      <div class="field">
-        <label>Capital actuel CTO (€)</label>
-        <input type="number" id="w_cto_cap" value="0" min="0">
-      </div>
-      <div class="field">
-        <label>Part du PER vers CTO (%)</label>
-        <input type="number" id="w_cto_part" value="50" min="0" max="100">
-      </div>
-    </div>
-    <div class="two-cols">
-      <div class="field">
-        <label>Rendement CTO (%/an)</label>
-        <input type="number" id="w_cto_rdt" value="7" min="0" max="20" step="0.5">
-      </div>
-      <div class="field">
-        <label>Fiscalité CTO</label>
-        <select id="w_cto_fisc">
-          <option value="0.30">PFU 30%</option>
-          <option value="0.11">Barème 11%</option>
-        </select>
-      </div>
-    </div>
-
-    <div id="w_parts_warn" class="info-box red" style="display:none;">⚠️ La somme des parts doit faire 100%. Vérifiez vos pourcentages.</div>
-
-    <div class="wiz-nav">
-      <button class="btn-back" onclick="goStep(6)">← Retour</button>
-      <button class="btn-next" onclick="goStep(8)">Continuer →</button>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════════════ -->
-  <!-- ÉTAPE 8 — RÉSULTATS STRATÉGIE -->
-  <!-- ══════════════════════════════════════════════ -->
-  <div class="step" id="step-8">
-    <p class="step-eyebrow">Résultats stratégie · Étape 8</p>
-    <h1 class="step-title">Projection de vos placements</h1>
-    <p class="step-desc">Voici l'évolution de votre patrimoine et de vos revenus disponibles sur 5, 10 et 15 ans.</p>
-
-    <div id="w_res_strat_synth"></div>
-    <div id="w_res_strat_tables"></div>
-
-    <div class="wiz-nav">
-      <button class="btn-back" onclick="goStep(7)">← Retour</button>
-      <button class="btn-next green" onclick="goStep(9)">Comparateurs →</button>
-    </div>
-  </div>
 
   <!-- ══════════════════════════════════════════════ -->
   <!-- ÉTAPE 9 — COMPARATEUR RENTE -->
   <!-- ══════════════════════════════════════════════ -->
-  <div class="step" id="step-9">
-    <p class="step-eyebrow">Comparateur · Étape 9 <span class="badge-optional">Optionnel</span></p>
+  <div class="step" id="step-6">
+    <p class="step-eyebrow">Comparateur · Étape 6 <span class="badge-optional">Optionnel</span></p>
     <h1 class="step-title">Rente viagère ou capital placé ?</h1>
     <p class="step-desc">Si votre assureur vous propose une rente viagère, comparez-la ici à ce que rapporterait ce même capital placé.</p>
+    <div class="info-box blue" style="font-size:.85rem;">📅 <strong>Idéalement, anticipez cette réflexion plusieurs années avant la retraite.</strong> Si vous penchez pour l'option capital plutôt que la rente, mieux vaut ouvrir un PEA dès maintenant : ses gains ne sont exonérés d'impôt sur le revenu qu'après 5 ans d'ancienneté.</div>
 
     <label class="check-field">
-      <input type="checkbox" id="w_rente_on" onchange="toggleEl('w_rente_bloc')">
+      <input type="checkbox" id="w_rente_on" onchange="toggleEl('w_rente_bloc'); calcRenteSeule('w_res_rente_step6');">
       <span>Activer ce comparateur</span>
     </label>
 
@@ -1036,11 +862,11 @@
       <div class="two-cols">
         <div class="field">
           <label>Capital de la rente (€)</label>
-          <input type="number" id="w_rente_cap" value="50000" min="0" oninput="updateRendementImplicite()">
+          <input type="number" id="w_rente_cap" value="50000" min="0" oninput="updateRendementImplicite(); calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
         </div>
         <div class="field">
           <label>Rente annuelle proposée (€/an)</label>
-          <input type="number" id="w_rente_mnt" value="2345" min="0" oninput="updateRendementImplicite()">
+          <input type="number" id="w_rente_mnt" value="2345" min="0" oninput="updateRendementImplicite(); calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
         </div>
       </div>
 
@@ -1056,27 +882,210 @@
 
       <div class="two-cols">
         <div class="field">
-          <label>Âge du titulaire</label>
-          <input type="number" id="w_rente_age" value="61" min="40" max="90">
+          <label>Âge au moment du départ en rente</label>
+          <div class="hint">Pas forcément votre âge actuel — vous pouvez anticiper cette réflexion plusieurs années avant la retraite (par exemple pour décider d'ouvrir un PEA dès maintenant et profiter du délai de 5 ans avant déblocage). Cet âge sert uniquement de repère dans le tableau ci-dessous, pas dans le calcul lui-même.</div>
+          <input type="number" id="w_rente_age" value="61" min="40" max="90" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
         </div>
         <div class="field">
           <label>Espérance de vie restante (ans)</label>
-          <input type="number" id="w_rente_esp" value="27" min="5" max="50">
+          <div class="hint">À compter à partir du départ en rente (pas d'aujourd'hui). C'est cette durée qui détermine la simulation, pas l'âge ci-dessus.<br>📊 Repère INSEE (espérance de vie restante à 65 ans, données 2024) : <strong>~20 ans pour un homme</strong>, <strong>~23 ans pour une femme</strong>. Ajustez selon votre âge réel de départ en rente et votre situation personnelle.</div>
+          <input type="number" id="w_rente_esp" value="27" min="5" max="50" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
         </div>
       </div>
       <div class="field">
         <label>Rendement de référence de vos placements (%/an)</label>
         <div class="hint">Votre choix : rendement implicite de la rente (Option A) ou rendement réel de vos enveloppes (Option B, recommandé)</div>
-        <input type="number" id="w_rente_rdt" value="7" min="0" max="15" step="0.5">
+        <input type="number" id="w_rente_rdt" value="7" min="0" max="15" step="0.5" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
       </div>
+
+      <div id="w_res_rente_step6" style="margin-top:20px;"></div>
+    </div>
+
+    <div class="info-box green" style="margin-top:20px;font-size:.85rem;">
+      ➡️ <strong>Et après ?</strong> Si le capital ressort comme l'option la plus avantageuse, l'étape suivante vous montre comment le rapatrier stratégiquement (en une fois, étalé, ou sur une durée optimisée) et combien il vous rapportera replacé sur PEA/CTO. Sinon, vous pouvez passer directement aux comparateurs.
     </div>
 
     <div class="wiz-nav">
-      <button class="btn-back" onclick="goStep(8)">← Retour</button>
+      <button class="btn-back" onclick="goStep(5)">← Retour</button>
       <div style="display:flex;gap:12px;align-items:center;">
-        <button class="btn-skip" onclick="goStep(10)">Passer</button>
-        <button class="btn-next" onclick="goStep(10)">Continuer →</button>
+        <button class="btn-skip" onclick="goStep(10)">Passer aux comparateurs</button>
+        <button class="btn-next" onclick="goStep(7)">Continuer →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 6 — CAPITAL PER -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-7">
+    <p class="step-eyebrow">Stratégie PER · Étape 7</p>
+    <h1 class="step-title">Quel capital PER allez-vous rapatrier ?</h1>
+    <p class="step-desc">Renseignez les capitaux bruts de vos PER et l'année à laquelle vous prévoyez de les sortir (en général l'année de votre départ à la retraite ou l'année suivante).</p>
+    <div class="info-box blue" style="font-size:.85rem;">📍 <strong>Cette étape</strong> définit le point de départ de votre stratégie : combien d'argent dort dans vos PER et quand vous comptez commencer à le rapatrier.</div>
+    <div class="info-box orange" style="font-size:.85rem;">
+      🎯 <strong>Cette section (étapes 6 à 8) est pensée pour la phase de rapatriement à la retraite</strong> — comparer une sortie progressive, totale, ou optimisée du PER, et la replacer sur PEA/CTO pour générer un complément de revenu.<br>
+      Si vous cherchez plutôt à débloquer votre PER de façon anticipée (achat de résidence principale, invalidité, etc.), cette section ne s'applique pas — la logique de placement long terme n'a pas de sens dans ce cas.
+      <br><br>
+      <button class="btn-back" onclick="goStep(10)" style="font-size:.85rem;">Cette section ne me concerne pas → Passer aux comparateurs</button>
+    </div>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital PER 1 brut (€)</label>
+        <div class="hint">Montant total avant fiscalité — la déduction sera calculée selon votre mode de sortie.</div>
+        <input type="number" id="w_per1_cap" value="0" min="0" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Année de sortie PER 1</label>
+        <div class="hint">L'année où vous commencez à rapatrier ce PER (peut différer de l'année de début de simulation ci-dessous).</div>
+        <input type="number" id="w_per1_an" value="2028" min="2024" max="2050" onfocus="this.select()">
+      </div>
+    </div>
+
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital PER 2 brut (€) <span class="badge-optional">si applicable</span></label>
+        <input type="number" id="w_per2_cap" value="0" min="0" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Année de sortie PER 2</label>
+        <div class="hint">Peut être différente du PER 1 si vos deux PER ne sont pas rapatriés en même temps.</div>
+        <input type="number" id="w_per2_an" value="2028" min="2024" max="2050" onfocus="this.select()">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Objectif de complément mensuel (€)</label>
+      <div class="hint">Ex : perte de salaire à la retraite. Laissez 0 si vous ne savez pas encore.</div>
+      <input type="number" id="w_objectif" value="0" min="0" onfocus="this.select()">
+    </div>
+
+    <div class="field">
+      <label>Année de début de simulation</label>
+      <div class="hint">Ex : 2026 pour voir l'évolution depuis maintenant</div>
+      <input type="number" id="w_annee_debut" value="2026" min="2024" max="2050" onfocus="this.select()">
+    </div>
+
+
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(5)">← Retour</button>
+      <button class="btn-next" onclick="goStep(8)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 7 — ENVELOPPES -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-8">
+    <p class="step-eyebrow">Vos placements · Étape 8</p>
+    <h1 class="step-title">Vos enveloppes de placement</h1>
+    <p class="step-desc">Renseignez vos enveloppes actuelles et la répartition souhaitée du capital PER. La somme des pourcentages doit faire 100%.</p>
+    <div class="info-box blue" style="font-size:.85rem;">📍 <strong>Cette étape</strong> détermine où ira le capital rapatrié de votre PER. Vos PEA et CTO existants continuent de croître avec leur propre rendement, et reçoivent en plus leur part du capital PER selon la répartition choisie.</div>
+
+    <p class="section-label">PEA 1</p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel PEA 1 (€)</label>
+        <input type="number" id="w_pea1_cap" value="0" min="0" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Part du PER vers PEA 1 (%)</label>
+        <div class="hint">% du capital PER rapatrié qui ira sur ce PEA. Le total PEA 1 + PEA 2 + CTO doit faire 100%.</div>
+        <input type="number" id="w_pea1_part" value="40" min="0" max="100" onfocus="this.select()">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Année d'ouverture PEA 1</label>
+        <div class="hint">Important : les gains ne sont exonérés d'impôt sur le revenu (hors prélèvements sociaux 17,2%) qu'après 5 ans d'ancienneté du PEA.</div>
+        <input type="number" id="w_pea1_an" value="2026" min="2000" max="2030" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Mois d'ouverture (1-12)</label>
+        <input type="number" id="w_pea1_mois" value="1" min="1" max="12" onfocus="this.select()">
+      </div>
+    </div>
+    <div class="field">
+      <label>Rendement PEA 1 (%/an)</label>
+      <div class="hint">Indicatif : actions monde (ex. MSCI World) ~7%/an historique sur longue période. Placement prudent (obligations) : 2-4%/an. Ajustez selon votre allocation réelle.</div>
+      <input type="number" id="w_pea1_rdt" value="7" min="0" max="20" step="0.5" onfocus="this.select()">
+    </div>
+
+    <hr class="section-sep">
+    <p class="section-label">PEA 2 <span class="badge-optional">Optionnel</span></p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel PEA 2 (€)</label>
+        <input type="number" id="w_pea2_cap" value="0" min="0" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Part du PER vers PEA 2 (%)</label>
+        <div class="hint">Rappel : PEA 1 + PEA 2 + CTO doit faire 100%.</div>
+        <input type="number" id="w_pea2_part" value="10" min="0" max="100" onfocus="this.select()">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Année d'ouverture PEA 2</label>
+        <div class="hint">Même règle des 5 ans que pour le PEA 1.</div>
+        <input type="number" id="w_pea2_an" value="2026" min="2000" max="2030" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Mois d'ouverture (1-12)</label>
+        <input type="number" id="w_pea2_mois" value="1" min="1" max="12" onfocus="this.select()">
+      </div>
+    </div>
+    <div class="field">
+      <label>Rendement PEA 2 (%/an)</label>
+      <input type="number" id="w_pea2_rdt" value="7" min="0" max="20" step="0.5" onfocus="this.select()">
+    </div>
+
+    <hr class="section-sep">
+    <p class="section-label">CTO</p>
+    <div class="two-cols">
+      <div class="field">
+        <label>Capital actuel CTO (€)</label>
+        <input type="number" id="w_cto_cap" value="0" min="0" onfocus="this.select()">
+      </div>
+      <div class="field">
+        <label>Part du PER vers CTO (%)</label>
+        <div class="hint">Le CTO n'a pas de délai de blocage — disponible immédiatement, contrairement au PEA.</div>
+        <input type="number" id="w_cto_part" value="50" min="0" max="100" onfocus="this.select()">
+      </div>
+    </div>
+    <div class="two-cols">
+      <div class="field">
+        <label>Rendement CTO (%/an)</label>
+        <div class="hint">Simulé en CTO capitalisant (ETF accumulant) : pas de fiscalité annuelle, imposition (PFU 30%) uniquement lors d'un retrait.</div>
+        <input type="number" id="w_cto_rdt" value="7" min="0" max="20" step="0.5" onfocus="this.select()">
+      </div>
+
+    </div>
+
+    <div id="w_parts_warn" class="info-box red" style="display:none;">⚠️ La somme des parts doit faire 100%. Vérifiez vos pourcentages.</div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(7)">← Retour</button>
+      <button class="btn-next" onclick="validerParts()">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- ÉTAPE 8 — RÉSULTATS STRATÉGIE -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="step" id="step-9">
+    <p class="step-eyebrow">Résultats stratégie · Étape 9</p>
+    <h1 class="step-title">Projection de vos placements</h1>
+    <p class="step-desc">Voici une projection de votre patrimoine sur 15 ans selon trois stratégies de rapatriement de votre PER.</p>
+    <div class="info-box blue" style="font-size:.85rem;">📍 <strong>Cette étape</strong> compare automatiquement trois façons de sortir votre PER : étalée sur la durée nécessaire pour rester à 11%, en une seule fois, ou sur une durée optimisée qui maximise votre capital final même en payant un peu de fiscalité à 30%. À vous de choisir selon votre priorité — minimiser l'impôt ou maximiser le capital.</div>
+
+    <div id="w_res_strat_synth"></div>
+    <div id="w_res_strat_tables"></div>
+
+    <div class="wiz-nav">
+      <button class="btn-back" onclick="goStep(8)">← Retour</button>
+      <button class="btn-next green" onclick="goStep(10)">Comparateurs →</button>
     </div>
   </div>
 
@@ -1097,21 +1106,21 @@
       <div class="two-cols">
         <div class="field">
           <label>Versement annuel (€)</label>
-          <input type="number" id="w_pp_ver" value="1200" min="0">
+          <input type="number" id="w_pp_ver" value="1200" min="0" onfocus="this.select()">
         </div>
         <div class="field">
           <label>Durée (ans)</label>
-          <input type="number" id="w_pp_duree" value="27" min="1" max="50">
+          <input type="number" id="w_pp_duree" value="27" min="1" max="50" onfocus="this.select()">
         </div>
       </div>
       <div class="two-cols">
         <div class="field">
           <label>TMI à l'entrée (%)</label>
-          <input type="number" id="w_pp_tmi_e" value="11" min="0" max="45" step="0.5">
+          <input type="number" id="w_pp_tmi_e" value="11" min="0" max="45" step="0.5" onfocus="this.select()">
         </div>
         <div class="field">
           <label>TMI à la sortie (%)</label>
-          <input type="number" id="w_pp_tmi_s" value="11" min="0" max="45" step="0.5">
+          <input type="number" id="w_pp_tmi_s" value="11" min="0" max="45" step="0.5" onfocus="this.select()">
         </div>
       </div>
       <div class="two-cols">
@@ -1125,7 +1134,7 @@
         </div>
         <div class="field">
           <label>Rendement utilisé</label>
-          <div class="hint">Repris automatiquement de l'étape 9</div>
+          <div class="hint">Repris automatiquement de l'étape 6</div>
           <div id="w_pp_rdt_display" style="padding:11px 14px;background:#F3F4F6;border-radius:6px;font-weight:600;color:var(--navy);">—</div>
         </div>
       </div>
@@ -1195,8 +1204,8 @@ const TOTAL = 12;
 const PHASES = {
   1:'Votre situation', 2:'Vos revenus', 3:'Votre PER',
   4:'Dons & crédits', 5:'Résultats fiscaux',
-  6:'Capital PER', 7:'Vos enveloppes', 8:'Résultats stratégie',
-  9:'Rente viagère', 10:'PER vs PEA', 11:'Résultats comparateurs', 12:'Synthèse'
+  6:'Rente viagère', 7:'Capital PER', 8:'Vos enveloppes', 9:'Résultats stratégie',
+  10:'PER vs PEA', 11:'Résultats comparateurs', 12:'Synthèse'
 };
 
 const toggles = {}; // stocke les valeurs des toggle buttons
@@ -1210,9 +1219,10 @@ function goStep(n) {
   // Calculs à la volée avant affichage
   if (n === 5) { try { calcFiscal(); } catch(e) { console.error('calcFiscal error:', e); } }
   if (n >= 2) calcFiscalSilent(); // updateMargeBanner appelé depuis calcFiscalSilent
-  if (n === 8) calcStrategie();
+  if (n === 6) { try { calcRenteSeule('w_res_rente_step6'); } catch(e) { console.error('n6 error:', e); } }
+  if (n === 9) calcStrategie();
   if (n === 10) {
-    // Reprendre le rendement de l'étape 9
+    // Reprendre le rendement de l'étape 6 (rente viagère)
     const rdt = +document.getElementById('w_rente_rdt').value || 7;
     document.getElementById('w_pp_rdt_display').textContent = rdt.toFixed(1) + '%/an';
     window._rdtEtape9 = rdt;
@@ -1849,7 +1859,7 @@ function calcStrategie() {
   const ctoCap  = +document.getElementById('w_cto_cap').value||0;
   const ctoPart = (+document.getElementById('w_cto_part').value||0)/100;
   const ctoRdt  = (+document.getElementById('w_cto_rdt').value||7)/100;
-  const ctoFisc = +document.getElementById('w_cto_fisc').value||0.30;
+  const ctoFisc = 0.30; // PFU 30% — CTO capitalisant, fiscalité uniquement à la vente
 
   // Vérif parts
   const totalParts = pea1Part + pea2Part + ctoPart;
@@ -1871,93 +1881,251 @@ function calcStrategie() {
   document.getElementById('w_res_strat_synth').innerHTML = `
     <div class="result-grid">
       <div class="result-card"><div class="result-label">Capital PER total</div><div class="result-value">${totalPER.toLocaleString('fr-FR')} €</div></div>
-      <div class="result-card highlight"><div class="result-label">Capital net (mode ${modeSortie==='etale'?'étalé':'one-shot'})</div><div class="result-value green">${capitalNetRef.toLocaleString('fr-FR')} €</div></div>
-      <div class="result-card warn"><div class="result-label">Impôt total</div><div class="result-value gold">${(totalPER-capitalNetRef).toLocaleString('fr-FR')} €</div></div>
-      <div class="result-card"><div class="result-label">Durée (étalé à 11%)</div><div class="result-value">~${nbAns11} ans</div></div>
     </div>
   `;
 
-  // Simulation par horizon
-  const horizons = [5, 10, 15];
-  let tablesHTML = '';
+  // Fonction de simulation pour un mode donné
+  // Calcul de l'impôt total pour une sortie programmée sur N années
+  function impotPourDuree(dureeAns) {
+    const versNetParAn = totalPER/dureeAns;
+    let restant=totalPER, impotTot=0;
+    for (let i=0;i<dureeAns;i++) {
+      const vb=Math.min(versNetParAn,restant);
+      const partBasse=Math.min(vb,margeFoyer), partHaute=Math.max(0,vb-margeFoyer);
+      impotTot += partBasse*0.11+partHaute*0.30;
+      restant-=vb;
+    }
+    return arr(impotTot);
+  }
 
-  for (const h of horizons) {
+  // Recherche de la durée optimale (1 à 15 ans) qui maximise le capital final
+  let meilleureDuree = 1, meilleurCapital = -Infinity, resultatsParDuree = [];
+  for (let d=1; d<=15; d++) {
+    const impotD = impotPourDuree(d);
+    const capitalNetD = totalPER - impotD;
+    const rowsD = simulerMode('rapide', capitalNetD, d);
+    const capFinalD = rowsD[rowsD.length-1].capTot;
+    resultatsParDuree.push({duree:d, impot:impotD, capitalFinal:capFinalD});
+    if (capFinalD > meilleurCapital) { meilleurCapital = capFinalD; meilleureDuree = d; }
+  }
+  const impotOptimal = impotPourDuree(meilleureDuree);
+  const capitalNetOptimal = totalPER - impotOptimal;
+
+  function simulerMode(modeS, capitalNet, dureeSortieAns) {
     let capPea1=pea1Cap, capPea2=pea2Cap, capCto=ctoCap;
     let capitalPERRestant=totalPER, capitalNetInvesti=pea1Cap+pea2Cap+ctoCap;
-    let gainsCtoEncaisses=0;
     let rows=[];
+    const h=15;
+    // Versement net par an si sortie programmée sur N années (mode 'rapide')
+    const versNetParAn = dureeSortieAns ? totalPER/dureeSortieAns : 0;
 
     for (let i=0; i<h; i++) {
       const annee = anneeBase + i;
       const pea1Debloque = annee >= (pea1An+5);
       const pea2Debloque = annee >= (pea2An+5);
-      const ctoDebloque = true;
 
-      if (modeSortie==='oneshot' && annee===anneeDebutPER) {
-        capPea1+=perPea1; capPea2+=perPea2; capCto+=perCto;
-        capitalNetInvesti+=capitalNetRef;
+      if (modeS==='oneshot' && annee===anneeDebutPER) {
+        capPea1+=capitalNet*pea1Part; capPea2+=capitalNet*pea2Part; capCto+=capitalNet*ctoPart;
+        capitalNetInvesti+=capitalNet;
       }
-      if (modeSortie==='etale' && capitalPERRestant>0 && annee>=anneeDebutPER) {
+      if (modeS==='etale' && capitalPERRestant>0 && annee>=anneeDebutPER) {
         const vb=Math.min(versAnnuelBrut,capitalPERRestant);
         const vn=vb*(1-0.11);
+        capPea1+=vn*pea1Part; capPea2+=vn*pea2Part; capCto+=vn*ctoPart;
+        capitalNetInvesti+=vn; capitalPERRestant-=vb;
+      }
+      if (modeS==='rapide' && capitalPERRestant>0 && annee>=anneeDebutPER) {
+        const vb=Math.min(versNetParAn,capitalPERRestant);
+        // Fiscalité réelle : 11% jusqu'à margeFoyer, 30% au-delà, par an
+        const partBasse=Math.min(vb,margeFoyer), partHaute=Math.max(0,vb-margeFoyer);
+        const vn=partBasse*(1-0.11)+partHaute*(1-0.30);
         capPea1+=vn*pea1Part; capPea2+=vn*pea2Part; capCto+=vn*ctoPart;
         capitalNetInvesti+=vn; capitalPERRestant-=vb;
       }
 
       const gPea1=capPea1*pea1Rdt, gPea2=capPea2*pea2Rdt, gCto=capCto*ctoRdt;
       const nPea1=arr(gPea1*(1-0.172)/12), nPea2=arr(gPea2*(1-0.172)/12);
-      const nCto=arr(gCto*(1-ctoFisc)/12);
+      const nCtoBrut=arr(gCto/12);
       const nPeaMois=(pea1Debloque?nPea1:0)+(pea2Debloque?nPea2:0);
-      const totalDispo=nPeaMois+nCto;
+      const totalDispo=nPeaMois+nCtoBrut;
       const nPeaPot=nPea1+nPea2;
 
-      gainsCtoEncaisses+=arr(gCto*(1-ctoFisc));
-      capPea1+=gPea1; capPea2+=gPea2;
+      capPea1+=gPea1; capPea2+=gPea2; capCto+=gCto;
+
+      let retraitAnnuel = objectif * 12;
+      if (retraitAnnuel > 0) {
+        if (pea1Debloque && capPea1>0) { const r=Math.min(retraitAnnuel,capPea1); capPea1-=r; retraitAnnuel-=r; }
+        if (pea2Debloque && capPea2>0 && retraitAnnuel>0) { const r=Math.min(retraitAnnuel,capPea2); capPea2-=r; retraitAnnuel-=r; }
+        if (capCto>0 && retraitAnnuel>0) { const r=Math.min(retraitAnnuel,capCto); capCto-=r; retraitAnnuel-=r; }
+      }
 
       const capTot=arr(capPea1+capPea2+capCto);
-      const pv=capTot+gainsCtoEncaisses-arr(capitalNetInvesti);
+      const pv=capTot-arr(capitalNetInvesti);
       rows.push({annee, capPea1:arr(capPea1), capPea2:arr(capPea2), capCto:arr(capCto),
-                 nCto, nPeaMois, nPeaPot, pea1Debloque, pea2Debloque,
+                 nCto:nCtoBrut, nPeaMois, nPeaPot, pea1Debloque, pea2Debloque,
                  totalDispo, pv, capTot, ecart:totalDispo-objectif});
     }
+    return rows;
+  }
 
-    tablesHTML += `<h3 style="margin:24px 0 12px;font-size:1rem;color:var(--navy);">Sur ${h} ans (${anneeBase}–${anneeBase+h-1})</h3>
+  function buildTableau(rows, titre, anneeBase, capitalNet, impot, duree) {
+    const h = 15;
+    const dernR = rows[rows.length-1];
+    let t = `
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:8px;">
+      <div style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:10px;">${titre}</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:100px;">
+          <div style="font-size:.72rem;color:var(--slate);">Capital net placé</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#065f46;">${capitalNet.toLocaleString('fr-FR')} €</div>
+        </div>
+        <div style="flex:1;min-width:100px;">
+          <div style="font-size:.72rem;color:var(--slate);">Impôt</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#92400e;">${impot.toLocaleString('fr-FR')} €</div>
+        </div>
+        <div style="flex:1;min-width:100px;">
+          <div style="font-size:.72rem;color:var(--slate);">${duree}</div>
+          <div style="font-size:1.1rem;font-weight:700;color:var(--navy);">${dernR.capTot.toLocaleString('fr-FR')} €</div>
+        </div>
+      </div>
+    </div>
     <div style="overflow-x:auto;">
-    <table class="res-table" style="min-width:600px;">
+    <table class="res-table" style="min-width:280px;font-size:.78rem;width:100%;">
+    <div style="overflow-x:auto;">
+    <table class="res-table" style="min-width:280px;font-size:.78rem;width:100%;">
       <tr>
-        <th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">PEA 1</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">PEA 2</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">CTO</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains CTO/mois</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains PEA/mois</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Total dispo/mois</th>
-        <th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Plus-value cumulée</th>
+        <th style="text-align:left;padding:5px 6px;font-size:.72rem;color:var(--slate);">Année</th>
+        <th style="text-align:right;padding:5px 6px;font-size:.72rem;color:var(--slate);">Capital total</th>
+        <th style="text-align:right;padding:5px 6px;font-size:.72rem;color:var(--slate);">Gains/mois dispo</th>
+        ${objectif>0?`<th style="text-align:right;padding:5px 6px;font-size:.72rem;color:var(--slate);">Objectif ${objectif} €</th>`:''}
       </tr>`;
+
     for (const r of rows) {
       const bg = r.totalDispo>=objectif&&objectif>0 ? 'background:#E8F0E9;' : '';
       const couleur = r.totalDispo>=objectif&&objectif>0 ? 'var(--green)' : 'var(--navy)';
-      tablesHTML += `<tr style="${bg}">
-        <td style="padding:6px;">${r.annee}</td>
-        <td style="text-align:right;font-size:.82rem;">${r.capPea1.toLocaleString('fr-FR')} €${!r.pea1Debloque?' 🔒':''}</td>
-        <td style="text-align:right;font-size:.82rem;">${r.capPea2.toLocaleString('fr-FR')} €${!r.pea2Debloque?' 🔒':''}</td>
-        <td style="text-align:right;font-size:.82rem;">${r.capCto.toLocaleString('fr-FR')} €</td>
-        <td style="text-align:right;color:#854F0B;font-weight:500;">${r.nCto} €</td>
-        <td style="text-align:right;color:${r.nPeaMois>0?'#185FA5':'#999'};font-style:${r.nPeaMois===0?'italic':'normal'};">${r.nPeaMois>0?r.nPeaMois+' €':'🔒 ('+r.nPeaPot+' €)'}</td>
-        <td style="text-align:right;font-weight:700;color:${couleur};">${r.totalDispo} €</td>
-        <td style="text-align:right;color:#185FA5;">${r.pv.toLocaleString('fr-FR')} €</td>
+      t += `<tr style="${bg}">
+        <td style="padding:4px 6px;">${r.annee}</td>
+        <td style="text-align:right;">${r.capTot.toLocaleString('fr-FR')} €</td>
+        <td style="text-align:right;font-weight:600;color:${couleur};">${r.totalDispo} €</td>
+        ${objectif>0?`<td style="text-align:right;font-size:.75rem;color:${r.totalDispo>=objectif?'#065f46':'#c0392b'};">${r.totalDispo>=objectif?'✅':'❌ -'+(objectif-r.totalDispo)+'€'}</td>`:''}
       </tr>`;
     }
-    tablesHTML += `</table></div>`;
+    const d = rows[rows.length-1];
+    t += `<tr style="background:var(--navy);color:#fff;font-weight:700;">
+      <td style="padding:6px;">Total ${anneeBase+h-1}</td>
+      <td style="text-align:right;padding:6px;color:#a7f3d0;">= ${d.capTot.toLocaleString('fr-FR')} €</td>
+      <td colspan="${objectif>0?2:1}" style="padding:6px;font-size:.7rem;color:#fcd34d;font-weight:400;line-height:1.5;">
+        PEA1 : ${d.capPea1.toLocaleString('fr-FR')} €<br>
+        PEA2 : ${d.capPea2.toLocaleString('fr-FR')} €<br>
+        CTO : ${d.capCto.toLocaleString('fr-FR')} €<br>
+        <span style="font-weight:700;">dont ${d.pv.toLocaleString('fr-FR')} € de plus-value</span>
+      </td>
+    </tr>`;
+    t += `</table></div>`;
+    return {html: t, derniere: d};
   }
 
+  // Calculer les deux modes
+  const rowsEtale = simulerMode('etale', capitalNet11);
+  const rowsOneshot = simulerMode('oneshot', capitalNetMix);
+  const rowsOptimal = simulerMode('rapide', capitalNetOptimal, meilleureDuree);
+  const {html: tabEtale, derniere: derEtale} = buildTableau(rowsEtale, '📅 Mode étalé à 11%', anneeBase, capitalNet11, arr(totalPER-capitalNet11), 'Capital final 2042');
+  const {html: tabOneshot, derniere: derOneshot} = buildTableau(rowsOneshot, '⚡ Mode sortie totale en 1 an', anneeBase, capitalNetMix, arr(totalPER-capitalNetMix), 'Capital final 2042');
+  const {html: tabOptimal, derniere: derOptimal} = buildTableau(rowsOptimal, `🎯 Sortie optimisée sur ${meilleureDuree} an${meilleureDuree>1?'s':''}`, anneeBase, capitalNetOptimal, impotOptimal, 'Capital final 2042');
+
+  // Conclusion automatique
+  const diffCapital = derOneshot.capTot - derEtale.capTot;
+  const diffImpot = arr(totalPER-capitalNet11) - arr(totalPER-capitalNetMix);
+  const anneeObjectifEtale = rowsEtale.find(r=>r.totalDispo>=objectif&&objectif>0)?.annee||'—';
+  const anneeObjectifOneshot = rowsOneshot.find(r=>r.totalDispo>=objectif&&objectif>0)?.annee||'—';
+  const anneeObjectifOptimal = rowsOptimal.find(r=>r.totalDispo>=objectif&&objectif>0)?.annee||'—';
+
+  // Le meilleur des 3 modes pour le capital final
+  const candidats = [
+    {nom:'étalé à 11%', cap:derEtale.capTot, impot:arr(totalPER-capitalNet11)},
+    {nom:'one-shot', cap:derOneshot.capTot, impot:arr(totalPER-capitalNetMix)},
+    {nom:`sortie optimisée sur ${meilleureDuree} an${meilleureDuree>1?'s':''}`, cap:derOptimal.capTot, impot:impotOptimal}
+  ];
+  const meilleur = candidats.reduce((a,b)=>b.cap>a.cap?b:a);
+
+  let conclusion = `<div class="info-box green" style="margin-top:20px;">
+    <strong>🎯 Sortie optimisée automatiquement</strong><br>
+    En testant toutes les durées de sortie de 1 à 15 ans (en tenant compte du dépassement éventuel de la tranche 30%), la durée la plus avantageuse pour maximiser votre capital final est <strong>${meilleureDuree} an${meilleureDuree>1?'s':''}</strong> : impôt total <strong>${impotOptimal.toLocaleString('fr-FR')} €</strong>, capital final <strong>${derOptimal.capTot.toLocaleString('fr-FR')} €</strong> en 2042.<br>
+    <span style="font-size:.85rem;">💡 Sortir plus vite, même en payant un peu de fiscalité à 30% sur l'excédent, permet de réinvestir le capital plus tôt et de profiter davantage des intérêts composés.</span>
+  </div>
+  <div class="info-box blue" style="margin-top:12px;">
+    <strong>🔮 Vos revenus vont-ils évoluer ?</strong><br>
+    <span style="font-size:.85rem;">Ce calcul utilise les revenus saisis à l'étape 2, supposés stables sur toute la durée de la simulation. Si vous savez que votre salaire va baisser (passage à la retraite, fin de carrière), la marge de rapatriement annuelle augmentera réellement à ce moment-là — et la durée optimale peut être très différente de celle calculée ici. <strong>Le résultat n'est pas juste légèrement décalé : il peut changer significativement.</strong> Pour le vérifier, refaites cette simulation en remplaçant vos revenus actuels par vos revenus futurs estimés (disponibles sur <a href="https://www.info-retraite.fr" target="_blank" rel="noopener">info-retraite.fr</a>) à l'étape 2.</span>
+  </div>`;
+
+  if (objectif > 0) {
+    conclusion += `<div class="info-box ${diffCapital>0?'orange':'green'}" style="margin-top:12px;">
+      <strong>📊 Comparaison étalé vs one-shot</strong><br>
+      Le mode étalé économise <strong>${Math.abs(diffImpot).toLocaleString('fr-FR')} €</strong> d'impôt ${diffCapital>0?'mais produit un capital final inférieur au mode one-shot de':'et produit un capital final supérieur au mode one-shot de'} <strong>${Math.abs(diffCapital).toLocaleString('fr-FR')} €</strong> en 2042.<br>
+      Objectif ${objectif} €/mois atteint en <strong>${anneeObjectifEtale}</strong> (étalé) · <strong>${anneeObjectifOneshot}</strong> (one-shot) · <strong>${anneeObjectifOptimal}</strong> (optimisée).
+    </div>`;
+  }
+
+  // Affichage côte à côte sur 3 colonnes
+  const tablesHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:16px;">
+      <div>${tabEtale}</div>
+      <div>${tabOneshot}</div>
+      <div>${tabOptimal}</div>
+    </div>
+    ${conclusion}`;
+
   document.getElementById('w_res_strat_tables').innerHTML = tablesHTML;
-  window._strat = {totalPER, capitalNetRef, nbAns11, modeSortie, anneeDebutPER};
+  window._strat = {totalPER, capitalNetRef:capitalNet11, nbAns11, modeSortie:'etale', anneeDebutPER};
 }
 
 /* ═══════════════════════════════════════════════
    ÉTAPE 11 — CALCUL COMPARATEURS
 ═══════════════════════════════════════════════ */
+function calcRenteSeule(targetId) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  const renteOn = document.getElementById('w_rente_on');
+  if (!renteOn || !renteOn.checked) {
+    target.innerHTML = '';
+    return;
+  }
+  const cap   = +document.getElementById('w_rente_cap').value||0;
+  const mnt   = +document.getElementById('w_rente_mnt').value||0;
+  const age   = +document.getElementById('w_rente_age').value||61;
+  const esp   = +document.getElementById('w_rente_esp').value||27;
+  const rdt   = (+document.getElementById('w_rente_rdt').value||7)/100;
+  const rdtImpl = cap>0 ? (mnt/cap*100) : 0;
+
+  let renteCum=0, capEvo=cap, bascule=null;
+  let rows=[], pas=Math.max(1,Math.round(esp/8));
+  for (let an=1; an<=esp; an++) {
+    renteCum+=mnt; capEvo*=(1+rdt);
+    const gains=capEvo-cap;
+    if (!bascule && renteCum>gains) bascule=an;
+    if (an%pas===0||an===esp||an===1) rows.push({an,age:age+an,rc:arr(renteCum),gc:arr(gains)});
+  }
+  const capFinal=arr(capEvo);
+
+  let html = `<div class="result-grid">
+    <div class="result-card"><div class="result-label">Rendement implicite de la rente</div><div class="result-value ${rdtImpl<rdt*100?'red':'green'}">${rdtImpl.toFixed(1)}%/an</div></div>
+    <div class="result-card"><div class="result-label">Rendement de vos placements</div><div class="result-value">${(rdt*100).toFixed(1)}%/an</div></div>
+    <div class="result-card"><div class="result-label">Point mort rente vs capital</div><div class="result-value">${bascule?bascule+' ans':'Jamais'}</div></div>
+  </div>
+  <div style="overflow-x:auto;"><table class="res-table" style="min-width:400px;">
+    <tr><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Âge</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Rente cumulée</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains capital cumulés</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Avantage</th></tr>`;
+  for (const r of rows) {
+    const capG=r.rc>r.gc;
+    html+=`<tr style="${!capG?'background:#E8F0E9;':''}"><td>${r.an}</td><td>${r.age}</td><td style="text-align:right;">${r.rc.toLocaleString('fr-FR')} €</td><td style="text-align:right;">${r.gc.toLocaleString('fr-FR')} €</td><td style="text-align:right;color:${capG?'var(--red)':'var(--green)'};">${capG?'Rente +':'Capital +'+(r.gc-r.rc).toLocaleString('fr-FR')+' €'}</td></tr>`;
+  }
+  html+=`</table></div>
+  <div class="info-box ${arr(renteCum)>(capFinal-cap)?'gold':'green'}" style="margin-top:12px;">
+    <strong>Sur ${esp} ans :</strong> le capital de ${cap.toLocaleString('fr-FR')} € placé génère ${(capFinal-cap).toLocaleString('fr-FR')} € de gains contre ${arr(renteCum).toLocaleString('fr-FR')} € versés par la rente.
+    <br>Avec l'option capital, <strong>${capFinal.toLocaleString('fr-FR')} € restent transmissibles</strong> à vos héritiers (dont ${cap.toLocaleString('fr-FR')} € de capital initial + ${(capFinal-cap).toLocaleString('fr-FR')} € de gains). Avec la rente : 0 €.
+  </div>`;
+  target.innerHTML = html;
+}
+
 function calcComparateurs() {
   let html = '';
 
@@ -2284,6 +2452,20 @@ function updateTMIBanner(tmi, revenu, impNet) {
                   tmi === 30 ? 'Tranche 30% — des leviers peuvent faire baisser votre TMI' :
                   'Tranche ' + tmi + '% — optimisation fiscale fortement recommandée';
   detEl.textContent = emoji + ' ' + conseil;
+}
+
+function validerParts() {
+  const p1 = +document.getElementById('w_pea1_part').value||0;
+  const p2 = +document.getElementById('w_pea2_part').value||0;
+  const p3 = +document.getElementById('w_cto_part').value||0;
+  const total = p1 + p2 + p3;
+  const warn = document.getElementById('w_parts_warn');
+  if (Math.round(total) !== 100) {
+    if (warn) { warn.style.display='block'; warn.innerHTML=`⚠️ La somme des parts fait <strong>${total}%</strong> au lieu de 100%. Vérifiez vos pourcentages avant de continuer.`; }
+    return;
+  }
+  if (warn) warn.style.display='none';
+  goStep(9);
 }
 
 function toggleTMI() {
