@@ -505,23 +505,8 @@
     color: #7c4a00;
   }
 </style>
-  <style>
-    #maintenance-banner {
-      background: #f59e0b;
-      color: #1c1917;
-      text-align: center;
-      padding: 10px 20px;
-      font-size: .88rem;
-      font-weight: 600;
-      position: relative;
-      z-index: 200;
-    }
-  </style>
 </head>
 <body>
-<div id="maintenance-banner">
-  🔧 Outil en cours de mise à jour — certaines fonctionnalités peuvent être instables. Revenez dans quelques heures.
-</div>
 
 <!-- HEADER -->
 <header class="wiz-header">
@@ -1498,13 +1483,16 @@ function buildMargeHtml(margeFoyer, impNet, perRet1, perRet2, ver1, ver2, versNo
     if (impNet > 0) {
       if (versNonImp <= margeVersement) {
         html += `<div class="info-box blue">
-          <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
+          <strong>Versement PER supplémentaire pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
           <br><span style="font-size:.8rem;">⚠️ Vérifiez votre plafond disponible sur votre avis d'imposition avant de verser.</span>
         </div>`;
       } else {
+        const detailV = margeVersement===0
+          ? `Vous avez déjà utilisé tout votre plafond PER disponible.`
+          : `Il ne vous reste que ${margeVersement.toLocaleString('fr-FR')} € de plafond disponible.`;
         html += `<div class="info-box blue">
-          <strong>Versement PER pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
-          <br><span style="font-size:.8rem;">⚠️ Ce montant dépasse votre plafond disponible (${margeVersement.toLocaleString('fr-FR')} €). Vous ne pouvez pas atteindre la non-imposition par le seul levier PER cette année.</span>
+          <strong>Versement PER supplémentaire pour devenir non imposable :</strong> ${versNonImp.toLocaleString('fr-FR')} €
+          <br><span style="font-size:.8rem;">⚠️ ${detailV} Vous pouvez verser davantage si vous disposez de reports de plafond N-1/N-2/N-3 (avis d'imposition page 2).</span>
         </div>`;
       }
     } else {
@@ -2247,18 +2235,40 @@ function buildSynthese() {
       <div class="synth-row" style="padding-left:12px;"><span>Capacité annuelle avant 30%</span><span class="val" style="color:var(--green);">${(window._margeHorsPER||0).toLocaleString('fr-FR')} €/an</span></div>
       <div class="synth-row" style="padding-left:12px;"><span>• Utilisé cette année</span><span class="val" style="color:#c0392b;">${((f.perRet1||0)+(f.perRet2||0)).toLocaleString('fr-FR')} €</span></div>
       <div class="synth-row" style="padding-left:12px;"><span>• Reste cette année</span><span class="val" style="color:${Math.max(0,(window._margeHorsPER||0)-((f.perRet1||0)+(f.perRet2||0)))===0?'#92400e':'var(--green)'};">${Math.max(0,(window._margeHorsPER||0)-((f.perRet1||0)+(f.perRet2||0))).toLocaleString('fr-FR')} €</span></div>
-      ` : `
+      ` : (s.totalPER ? `
       <div class="synth-row"><span>Rapatriement PER annuel max avant 30%</span><span class="val" style="color:var(--green);">${(window._margeHorsPER||0).toLocaleString('fr-FR')} €/an</span></div>
-      `}
-      ${(f.versNonImp>0 && (f.perRet1||0)+(f.perRet2||0)===0)?`<div class="synth-row"><span>Versement pour non-imposition</span><span class="val" style="color:#185FA5;">${f.versNonImp.toLocaleString('fr-FR')} €</span></div>`:''}
+      ` : '')}
       ${((f.ver1||0)+(f.ver2||0))>0 ? `
       <div class="synth-row" style="margin-top:8px;font-weight:600;color:var(--navy);"><span>Versements PER</span><span></span></div>
       ${(f.ver1||0)>0?`<div class="synth-row" style="padding-left:12px;"><span>• Déclarant 1</span><span class="val" style="color:#065f46;">${(f.ver1||0).toLocaleString('fr-FR')} €</span></div>`:''}
       ${(f.ver2||0)>0?`<div class="synth-row" style="padding-left:12px;"><span>• Déclarant 2</span><span class="val" style="color:#065f46;">${(f.ver2||0).toLocaleString('fr-FR')} €</span></div>`:''}
       ` : ''}
+      ${(()=>{
+        const plaf1cur = +document.getElementById('w_plaf1').value||0;
+        const plaf2cur = +(document.getElementById('w_plaf2')?.value||0);
+        const ver1cur = f.ver1||0, ver2cur = f.ver2||0;
+        const mutOnCur = document.getElementById('w_mut_on')?.checked||false;
+        let excTotal;
+        if (mutOnCur && isCouple) {
+          excTotal = Math.max(0, (ver1cur+ver2cur)-(plaf1cur+plaf2cur));
+        } else {
+          excTotal = Math.max(0,ver1cur-plaf1cur) + Math.max(0,ver2cur-plaf2cur);
+        }
+        if (excTotal > 0) {
+          return `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:.85rem;">
+            <div style="font-weight:700;color:#92400e;margin-bottom:4px;">⚠️ Plafond de versement dépassé</div>
+            <strong>${excTotal.toLocaleString('fr-FR')} €</strong> de vos versements PER dépassent votre plafond et ne seront pas déductibles cette année.
+            <br><span style="opacity:.8;">Vérifiez vos reports de plafond N-1/N-2/N-3 sur votre avis d'imposition (page 2) — ils pourraient combler cet écart.</span>
+          </div>`;
+        } else {
+          return `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:.85rem;">
+            💡 Vous pouvez verser davantage sur votre PER si vous disposez de plafonds non utilisés des 3 années précédentes (reports N-1/N-2/N-3, avis d'imposition page 2).
+          </div>`;
+        }
+      })()}
     </div>`;
 
-  if (s.totalPER) {
+  if (hasVers || hasRapt) {
     html += `
     <div class="synth-block">
       ${hasVers ? `
@@ -2296,26 +2306,36 @@ function buildSynthese() {
         </div>
       </div>
       ` : ''}
+    </div>`;
+  }
 
-      <h3>📈 Stratégie PER</h3>
+  if (s.totalPER) {
+    html += `
+    <div class="synth-block">
+      <h3>📈 Stratégie de rapatriement PER</h3>
       <div class="synth-row"><span>Capital PER total</span><span class="val">${s.totalPER.toLocaleString('fr-FR')} €</span></div>
-      <div class="synth-row"><span>Mode de sortie</span><span class="val">${s.modeSortie==='etale'?'Étalée à 11%':'Totale one-shot'}</span></div>
-      <div class="synth-row"><span>Capital net placé</span><span class="val" style="color:var(--green);">${s.capitalNetRef.toLocaleString('fr-FR')} €</span></div>
+      <div class="synth-row"><span>Capital net placé (mode étalé)</span><span class="val" style="color:var(--green);">${s.capitalNetRef.toLocaleString('fr-FR')} €</span></div>
       <div class="synth-row"><span>Durée de sortie (mode étalé)</span><span class="val">~${s.nbAns11} ans</span></div>
+      <div class="synth-row"><span style="font-size:.82rem;color:var(--slate);">Détail des 3 stratégies (étalée, one-shot, optimisée)</span><span class="val" style="font-size:.82rem;">Voir étape 9</span></div>
+    </div>`;
+  }
+
+  const renteActive = document.getElementById('w_rente_on').checked;
+  const perpeaActive = document.getElementById('w_perpea_on').checked;
+  if (renteActive || perpeaActive) {
+    html += `
+    <div class="synth-block">
+      <h3>⚖️ Comparateurs</h3>
+      ${renteActive
+        ? `<div class="synth-row"><span>Rente vs capital</span><span class="val">Voir étape 6</span></div>`
+        : ''}
+      ${perpeaActive
+        ? `<div class="synth-row"><span>PER vs PEA direct</span><span class="val">Voir étape 11</span></div>`
+        : ''}
     </div>`;
   }
 
   html += `
-    <div class="synth-block">
-      <h3>⚖️ Comparateurs</h3>
-      ${document.getElementById('w_rente_on').checked
-        ? `<div class="synth-row"><span>Rente vs capital</span><span class="val">Voir étape 6</span></div>`
-        : `<div class="synth-row"><span>Rente vs capital</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
-      ${document.getElementById('w_perpea_on').checked
-        ? `<div class="synth-row"><span>PER vs PEA direct</span><span class="val">Voir étape 11</span></div>`
-        : `<div class="synth-row"><span>PER vs PEA direct</span><span class="val" style="color:var(--slate);">Non activé</span></div>`}
-    </div>
-
     <div class="info-box green" style="margin-top:16px;">
       🧘 <strong>La stratégie d'arbitrage à retenir</strong><br>
       Chaque année, selon vos fonds disponibles à épargner : tant que vous avez du plafond PER disponible et besoin de réduire votre impôt, <strong>le PER</strong> est pertinent. Une fois le plafond épuisé — ou si vous n'avez pas besoin de déduction cette année-là — <strong>le PEA</strong> prend le relais : fiscalité des gains plus douce (exonération d'impôt sur le revenu après 5 ans, seuls les prélèvements sociaux de 17,2% s'appliquent), et disponibilité sans attendre la retraite.<br>
