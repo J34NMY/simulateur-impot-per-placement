@@ -49,15 +49,17 @@
 
     .wiz-expert-link {
       font-size: .8rem;
-      color: rgba(255,255,255,.6);
+      color: rgba(255,255,255,.9);
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,.25);
+      border: 1px solid rgba(255,255,255,.5);
       padding: 6px 14px;
       border-radius: 4px;
       transition: .15s;
+      background: none;
+      cursor: pointer;
     }
 
-    .wiz-expert-link:hover { color: white; border-color: rgba(255,255,255,.6); }
+    .wiz-expert-link:hover { color: white; border-color: white; background: rgba(255,255,255,.1); }
 
     /* ── PROGRESS BAR ── */
     .progress-wrap {
@@ -504,6 +506,27 @@
     border-left: 4px solid #f59e0b;
     color: #7c4a00;
   }
+
+  /* ── Modale Paramètres ── */
+  #modal-params {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+    z-index:9999; align-items:center; justify-content:center;
+  }
+  .modal-box {
+    background:#fff; border-radius:14px; padding:28px 32px;
+    max-width:620px; width:95%; max-height:85vh; overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .modal-box h2 { font-size:1.2rem; color:var(--navy); margin-bottom:18px; }
+  .modal-box h3 { font-size:.9rem; color:var(--navy); margin:18px 0 8px; border-bottom:1px solid #e5e7eb; padding-bottom:4px; }
+  .modal-box label { display:block; font-size:.82rem; color:var(--slate); margin-bottom:8px; }
+  .modal-box input[type="number"] { width:100%; padding:7px 10px; border:1px solid #d1d5db; border-radius:6px; font-size:.9rem; margin-top:3px; }
+  .modal-close { float:right; background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--slate); margin-top:-6px; }
+  .modal-hint { font-size:.75rem; color:var(--slate); margin-top:4px; line-height:1.5; }
+  .modal-btn-row { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+  .modal-btn { padding:8px 20px; border-radius:8px; border:none; cursor:pointer; font-size:.88rem; font-weight:600; }
+  .modal-btn-primary { background:var(--navy); color:#fff; }
+  .modal-btn-secondary { background:#f3f4f6; color:var(--navy); }
 </style>
 </head>
 <body>
@@ -511,7 +534,7 @@
 <!-- HEADER -->
 <header class="wiz-header">
   <div class="wiz-logo">Mon <span>Impôt</span> Malin</div>
-  <a href="simulateur_impot_PER_et_placement_V1.6.html" class="wiz-expert-link">⚡ Mode expert</a>
+  <button class="wiz-expert-link" onclick="document.getElementById('modal-params').style.display='flex'">⚙️ Paramètres</button>
 </header>
 
 <!-- PROGRESS -->
@@ -1323,10 +1346,15 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
   }
   let impBrut = arr(impPart * parts);
 
-  // Décote
+  // Décote (paramètres dynamiques)
   let decote = 0;
-  if (!isCouple && impBrut < 1982) decote = 897 - 0.4525*impBrut;
-  if (isCouple && impBrut < 3277) decote = 1483 - 0.4525*impBrut;
+  const dec_sc = getParam('p_dec_seuil_c', 1982);
+  const dec_cc = getParam('p_dec_const_c', 897);
+  const dec_sk = getParam('p_dec_seuil_k', 3277);
+  const dec_ck = getParam('p_dec_const_k', 1483);
+  const dec_coef = getParam('p_dec_coef', 0.4525);
+  if (!isCouple && impBrut < dec_sc) decote = dec_cc - dec_coef*impBrut;
+  if (isCouple && impBrut < dec_sk) decote = dec_ck - dec_coef*impBrut;
   decote = Math.max(0, arr(decote));
 
   return { quotient, impBrut, decote, details };
@@ -1336,7 +1364,7 @@ function calcIR(revenu, parts, isCouple, impBrut0) {
    MISE À JOUR PLAFOND PER AVEC REPORTS
 ═══════════════════════════════════════════════ */
 function updatePlafondPER() {
-  const PASS = 46368; // PASS 2024 — versements 2025 déclarés en 2026
+  const PASS = getParam('p_pass', 46368); // PASS dynamique depuis les Paramètres
   const report1 = +document.getElementById('w_report1').value || 0;
   const report2 = +(document.getElementById('w_report2')?.value || 0);
   const ver1 = +document.getElementById('w_ver1').value || 0;
@@ -2472,5 +2500,46 @@ document.getElementById('w_per_d2').style.display = 'none';
 </script>
 
 <script data-goatcounter="https://j34nmy.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+
+<!-- ══ MODALE PARAMÈTRES ANNUELS ══ -->
+<div id="modal-params" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal-params').style.display='none'">✕</button>
+    <h2>⚙️ Paramètres annuels</h2>
+    <p class="modal-hint">Ces valeurs sont pré-remplies avec les données officielles en vigueur pour la déclaration 2026 (revenus 2025). Modifiez-les uniquement si vous constatez une mise à jour officielle publiée après la mise à jour de cet outil.</p>
+
+    <h3>Barème IR — déclaration 2026 (revenus 2025)</h3>
+    <p class="modal-hint">Sources : <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/comment-calculer-votre-impot-dapres-le-bareme-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr</a> · <a href="https://bofip.impots.gouv.fr/bofip/2412-PGP.html" target="_blank">BOFiP</a></p>
+    <label>Tranche 1 — taux 0% jusqu'à (€)<input type="number" id="p_t1" value="11600" oninput="appliquerParams()"></label>
+    <label>Tranche 2 — taux 11% jusqu'à (€)<input type="number" id="p_t2" value="29579" oninput="appliquerParams()"></label>
+    <label>Tranche 3 — taux 30% jusqu'à (€)<input type="number" id="p_t3" value="84577" oninput="appliquerParams()"></label>
+    <label>Tranche 4 — taux 41% jusqu'à (€)<input type="number" id="p_t4" value="181917" oninput="appliquerParams()"></label>
+
+    <h3>Décote</h3>
+    <p class="modal-hint">Source : <a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/pouvez-vous-beneficier-de-la-decote-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr – décote</a></p>
+    <label>Seuil décote célibataire (€)<input type="number" id="p_dec_seuil_c" value="1982" oninput="appliquerParams()"></label>
+    <label>Constante décote célibataire (€)<input type="number" id="p_dec_const_c" value="897" oninput="appliquerParams()"></label>
+    <label>Seuil décote couple (€)<input type="number" id="p_dec_seuil_k" value="3277" oninput="appliquerParams()"></label>
+    <label>Constante décote couple (€)<input type="number" id="p_dec_const_k" value="1483" oninput="appliquerParams()"></label>
+    <label>Coefficient décote<input type="number" id="p_dec_coef" value="0.4525" step="0.0001" oninput="appliquerParams()"></label>
+
+    <h3>PASS & Plafond PER</h3>
+    <p class="modal-hint">Source : <a href="https://www.service-public.fr/particuliers/vosdroits/F34982" target="_blank">service-public.fr – plafonds PER</a><br>
+    Le plafond PER = 10% du PASS de l'année N-1. Pour 2025 : PASS 2024 = 46 368 € → plafond = 4 637 €.</p>
+    <label>PASS année N-1 (€)<input type="number" id="p_pass" value="46368" oninput="appliquerParams()"></label>
+
+    <h3>Abattements</h3>
+    <label>Abattement pensions — plancher (€)<input type="number" id="p_ab_pen_min" value="454" oninput="appliquerParams()"></label>
+    <label>Abattement pensions — plafond (€)<input type="number" id="p_ab_pen_max" value="4438" oninput="appliquerParams()"></label>
+    <label>Abattement salaires — plancher (€)<input type="number" id="p_ab_sal_min" value="495" oninput="appliquerParams()"></label>
+    <label>Abattement salaires — plafond (€)<input type="number" id="p_ab_sal_max" value="14555" oninput="appliquerParams()"></label>
+
+    <div class="modal-btn-row">
+      <button class="modal-btn modal-btn-secondary" onclick="resetParams()">Réinitialiser</button>
+      <button class="modal-btn modal-btn-primary" onclick="document.getElementById('modal-params').style.display='none'">Fermer</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

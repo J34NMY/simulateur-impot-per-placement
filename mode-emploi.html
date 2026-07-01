@@ -362,7 +362,6 @@
   <a href="index.html" class="header-logo">Mon <span>Impôt</span> Malin</a>
   <div class="header-nav">
     <a href="assistant-fiscal.html" class="btn-header btn-gold">📊 Lancer le simulateur</a>
-    <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn-header btn-outline">⚡ Mode expert</a>
   </div>
 </header>
 
@@ -375,7 +374,7 @@
 <!-- NAVIGATION SECTIONS -->
 <nav class="nav-sections">
   <a href="#public" class="nav-pill">À qui s'adresse cet outil ?</a>
-  <a href="#onglets" class="nav-pill">Les 4 onglets</a>
+  <a href="#onglets" class="nav-pill">Les 12 étapes</a>
   <a href="#maj" class="nav-pill">Mise à jour annuelle</a>
   <a href="#limites" class="nav-pill">Limites</a>
   <a href="#legal" class="nav-pill">Avertissement légal</a>
@@ -405,99 +404,52 @@
     </div>
   </section>
 
-  <!-- LES 4 ONGLETS -->
+  <!-- LES 12 ÉTAPES -->
   <section class="section" id="onglets">
     <div class="section-header">
       <div class="section-icon">📋</div>
-      <h2>Les 4 onglets</h2>
+      <h2>Les 12 étapes du wizard</h2>
     </div>
 
-    <!-- Onglet 1 -->
     <div class="onglet">
-      <h3>Onglet 1 — Simulation fiscale</h3>
-      <p class="what">Calcule votre impôt sur le revenu et affiche les indicateurs clés pour prendre des décisions fiscales.</p>
-      <ol>
-        <li>Cochez <strong>"Couple"</strong> si vous déclarez à deux — le déclarant 2 apparaît</li>
-        <li>Renseignez le <strong>nombre de parts</strong> (2 pour un couple sans enfant, 2,5 avec un enfant...)</li>
-        <li>Pour chaque déclarant, saisissez :
-          <ul style="margin-top:6px;">
-            <li><strong>Salaires</strong> : montant annuel brut — abattement 10% calculé automatiquement (plancher 495 €, plafond 14 171 €). Option frais réels disponible</li>
-            <li><strong>Pensions</strong> : montant pré-rempli de votre déclaration (déjà net de CSG déductible) — abattement 10% pensions automatique (plancher 442 €, plafond 4 321 €)</li>
-            <li><strong>Retraits PER imposables</strong> : si vous avez sorti des sommes de votre PER cette année</li>
-            <li><strong>Plafond PER</strong> : pré-rempli depuis le PASS (onglet Paramètres). Ajustez avec vos reports</li>
-            <li><strong>Versement PER</strong> : ce que vous versez cette année sur votre PER</li>
-          </ul>
-        </li>
-        <li>Renseignez les <strong>dons</strong> (66% ou 75%), crédits d'impôt (emploi à domicile, garde d'enfants, cotisations syndicales) si applicable</li>
-        <li>Cliquez <strong>"Calculer"</strong></li>
-      </ol>
-      <div class="results-grid" style="margin-top:16px;">
-        <div class="result-item"><strong>TMI</strong><span>Taux Marginal d'Imposition — taux du dernier euro gagné</span></div>
-        <div class="result-item"><strong>Taux moyen effectif</strong><span>Ce que vous payez réellement en proportion de vos revenus</span></div>
-        <div class="result-item"><strong>Marge PER avant 30%</strong><span>Montant max sortable du PER sans franchir la tranche supérieure (en vert)</span></div>
-        <div class="result-item"><strong>Versement pour non-imposition</strong><span>Montant exact à verser pour ramener l'impôt à 0 € (en violet)</span></div>
-      </div>
-      <div class="warn">⚠️ Si vous avez des reports de plafonds, votre vrai plafond disponible figure sur votre avis d'imposition (page 2, case "Plafond épargne retraite disponible")</div>
-    </div>
-
-    <!-- Onglet 2 -->
-    <div class="onglet">
-      <h3>Onglet 2 — Stratégie PER</h3>
-      <p class="what">Simule le rapatriement de vos PER dans vos enveloppes de placement (PEA 1, PEA 2, CTO) et projette les revenus sur 5, 10 et 15 ans.</p>
-      <div class="info">Prérequis : avoir renseigné vos revenus dans l'onglet Simulation (la marge à 11% est reprise automatiquement).</div>
-      <ol style="margin-top:14px;">
-        <li><strong>Capitaux PER à rapatrier</strong> : capital brut, année de sortie, objectif mensuel, année de début de simulation, mode de sortie (étalé à 11% ou one-shot TMI 30%)</li>
-        <li><strong>Enveloppes de placement</strong> : activez PEA 1, PEA 2, CTO — saisissez capital actuel, année+mois d'ouverture, rendement (%), part du PER (%)
-          <div class="warn" style="margin-top:8px;">⚠️ La somme des parts PEA 1 + PEA 2 + CTO doit faire 100%</div>
-        </li>
-        <li>Cliquez <strong>"Calculer la stratégie"</strong></li>
-      </ol>
-      <div class="results-grid" style="margin-top:16px;">
-        <div class="result-item"><strong>Synthèse fiscale</strong><span>Comparaison impôt sortie totale vs sortie étalée</span></div>
-        <div class="result-item"><strong>Répartition cible</strong><span>Capital PER versé dans chaque enveloppe à terme</span></div>
-        <div class="result-item"><strong>Gains CTO/mois</strong><span>Disponibles immédiatement, retirés chaque année</span></div>
-        <div class="result-item"><strong>Gains PEA/mois</strong><span>Capitalisés jusqu'au déblocage (5 ans), puis disponibles</span></div>
-        <div class="result-item"><strong>Plus-value cumulée</strong><span>Richesse réelle créée = capital final + gains CTO encaissés - capital investi</span></div>
-        <div class="result-item"><strong>Total/mois disponible</strong><span>Ce que vous pouvez réellement retirer chaque mois</span></div>
-      </div>
-    </div>
-
-    <!-- Onglet 3 -->
-    <div class="onglet">
-      <h3>Onglet 3 — Comparateurs</h3>
-      <p class="what">Répond aux deux grandes questions stratégiques sur le PER.</p>
-
-      <p style="font-weight:600;font-size:.88rem;margin-bottom:8px;">Comparateur 1 — Rente viagère vs capital placé</p>
+      <h3>Étapes 1 à 5 — Votre situation fiscale</h3>
+      <p class="what">Ces étapes calculent votre impôt sur le revenu et affichent les indicateurs clés.</p>
       <ul>
-        <li>Capital concerné par la rente, rente annuelle proposée par l'assureur</li>
-        <li>Âge du titulaire, espérance de vie restante estimée</li>
-        <li>Rendement de référence de vos placements</li>
+        <li><strong>Étape 1</strong> : Situation du foyer (seul ou couple, nombre de parts)</li>
+        <li><strong>Étape 2</strong> : Revenus — salaires, pensions, option frais réels. Un bandeau TMI se met à jour en temps réel</li>
+        <li><strong>Étape 3</strong> : PER — versements déductibles, reports de plafond N-1/N-2/N-3, rapatriements imposables. La marge avant 30% s'affiche en bandeau</li>
+        <li><strong>Étape 4</strong> : Dons et crédits d'impôt (optionnel)</li>
+        <li><strong>Étape 5</strong> : Résultats fiscaux — tableau détaillé avec abattements, tranches, décote, impôt net, TMI, taux moyen effectif</li>
       </ul>
-      <div class="results-grid" style="margin-top:10px;margin-bottom:16px;">
-        <div class="result-item"><strong>Rendement implicite</strong><span>Taux que verse implicitement votre assureur (en rouge si inférieur à vos placements)</span></div>
-        <div class="result-item"><strong>Point mort</strong><span>Année où la rente cumulée dépasse les gains du capital placé</span></div>
-        <div class="result-item"><strong>Capital transmissible</strong><span>0 € avec la rente, capital + gains avec l'option capital</span></div>
-      </div>
-
-      <p style="font-weight:600;font-size:.88rem;margin-bottom:8px;">Comparateur 2 — PER vs placement direct (PEA/CTO)</p>
-      <ul>
-        <li>Versement annuel, durée de détention, TMI à l'entrée et à la sortie</li>
-        <li>Rendement annuel, fiscalité de sortie alternative (PEA PS 17,2%, CTO PFU 30%, barème 11%)</li>
-      </ul>
-      <div class="warn">⚠️ Calcul simplifié : un seul versement et une seule sortie. Ne tient pas compte des plafonds ni de l'évolution du barème.</div>
+      <div class="warn">⚠️ Abattements 2026 : pensions plancher 454 €/plafond 4 438 €, salaires plafond 14 555 €. Plafond PER = 10% du PASS 2024 (46 368 €) = 4 637 €.</div>
     </div>
 
-    <!-- Onglet 4 -->
     <div class="onglet">
-      <h3>Onglet 4 — Paramètres annuels</h3>
-      <p class="what">Permet de mettre à jour les valeurs fiscales chaque année sans toucher au code.</p>
+      <h3>Étapes 6 à 9 — Stratégie de rapatriement PER</h3>
+      <p class="what">Ces étapes concernent principalement les retraités ou futurs retraités souhaitant rapatrier leur PER.</p>
       <ul>
-        <li>Les <strong>5 tranches du barème IR</strong></li>
-        <li>Les <strong>paramètres de décote</strong> (seuils, constantes, coefficient)</li>
-        <li>Le <strong>PASS</strong> (Plafond Annuel de la Sécurité Sociale) de l'année N-1</li>
-        <li>Les <strong>reports de plafond PER</strong> non utilisés par déclarant (montant total sur votre avis d'imposition)</li>
+        <li><strong>Étape 6</strong> : Rente viagère vs capital placé — comparateur en temps réel avec point mort et capital transmissible</li>
+        <li><strong>Étape 7</strong> : Capital PER à rapatrier — montants bruts, année de sortie, objectif mensuel</li>
+        <li><strong>Étape 8</strong> : Enveloppes de placement — PEA 1, PEA 2, CTO, répartition et rendements</li>
+        <li><strong>Étape 9</strong> : Résultats stratégie — 3 modes automatiques comparés côte à côte : étalé à 11%, sortie totale, durée optimisée pour maximiser le capital final</li>
       </ul>
-      <div class="info">Sources officielles disponibles dans l'onglet "Sources &amp; historique" du simulateur.</div>
+      <div class="info">Si vous n'êtes pas en phase de rapatriement, un bouton "Passer aux comparateurs" vous permet de sauter ces étapes.</div>
+    </div>
+
+    <div class="onglet">
+      <h3>Étapes 10 à 11 — Comparateurs</h3>
+      <p class="what">Répond à la question stratégique sur l'intérêt du PER à l'entrée.</p>
+      <ul>
+        <li><strong>Étape 10</strong> : PER vs placement direct (PEA/CTO) — compare sur N années si verser dans un PER (déduction + impôt à la sortie) est plus avantageux que verser directement en PEA</li>
+        <li><strong>Étape 11</strong> : Résultats du comparateur avec verdict contextuel selon votre TMI</li>
+      </ul>
+      <div class="warn">⚠️ Un PER sans profiter de la déduction n'a d'intérêt que dans des cas spécifiques — dans le doute, le PEA gagne.</div>
+    </div>
+
+    <div class="onglet">
+      <h3>Étape 12 — Synthèse</h3>
+      <p class="what">Récapitulatif complet de votre situation : impôt, versements, rapatriement, stratégie et message d'arbitrage PER/PEA.</p>
+      <div class="info">Le bouton ⚙️ Paramètres en haut de page permet de modifier le barème IR, la décote, le PASS et les abattements sans toucher au code.</div>
     </div>
   </section>
 
@@ -508,7 +460,7 @@
       <h2>Mise à jour annuelle (5 minutes)</h2>
     </div>
     <div class="update-steps">
-      <div class="update-step"><div class="step-num">1</div>Aller dans l'onglet <strong>Paramètres annuels</strong></div>
+      <div class="update-step"><div class="step-num">1</div>Cliquer sur le bouton <strong>⚙️ Paramètres</strong> en haut du simulateur</div>
       <div class="update-step"><div class="step-num">2</div>Mettre à jour les seuils du <strong>barème IR</strong></div>
       <div class="update-step"><div class="step-num">3</div>Mettre à jour les <strong>paramètres de décote</strong></div>
       <div class="update-step"><div class="step-num">4</div>Mettre à jour le <strong>PASS</strong></div>
@@ -550,11 +502,52 @@
     <p>Aucune installation — ouvrez directement dans votre navigateur.</p>
     <div class="btn-group">
       <a href="assistant-fiscal.html" class="btn btn-primary">📊 Lancer le simulateur</a>
-      <a href="simulateur_impot_PER_et_placement_V1.6.html" class="btn btn-secondary">⚡ Mode expert</a>
     </div>
   </div>
 
 </main>
+
+<!-- SECTION SOURCES -->
+<section class="section" id="sources" style="max-width:800px;margin:40px auto;padding:0 20px;">
+  <div class="section-header">
+    <div class="section-icon">📚</div>
+    <h2>Sources &amp; références officielles</h2>
+  </div>
+  <div class="section-content">
+    <p style="margin-bottom:16px;font-size:.9rem;color:#4b5563;">Consultez ces pages chaque automne/hiver après publication de la loi de finances pour vérifier les valeurs utilisées dans le simulateur.</p>
+
+    <h3 style="font-size:.95rem;color:var(--navy,#1e3a5f);margin:16px 0 8px;">Barème de l'impôt sur le revenu</h3>
+    <ul style="font-size:.88rem;line-height:2;">
+      <li><a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/comment-calculer-votre-impot-dapres-le-bareme-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr — calcul de l'impôt et barème</a></li>
+      <li><a href="https://www.service-public.fr/particuliers/actualites/A18045" target="_blank">service-public.fr — tranches mises à jour chaque année</a></li>
+      <li><a href="https://bofip.impots.gouv.fr/bofip/2412-PGP.html" target="_blank">BOFiP — texte légal officiel DGFiP</a></li>
+    </ul>
+
+    <h3 style="font-size:.95rem;color:var(--navy,#1e3a5f);margin:16px 0 8px;">Décote</h3>
+    <ul style="font-size:.88rem;line-height:2;">
+      <li><a href="https://www.economie.gouv.fr/particuliers/impots-et-fiscalite/gerer-mon-impot-sur-le-revenu/pouvez-vous-beneficier-de-la-decote-de-limpot-sur-le-revenu" target="_blank">economie.gouv.fr — décote : seuils et calcul</a></li>
+    </ul>
+
+    <h3 style="font-size:.95rem;color:var(--navy,#1e3a5f);margin:16px 0 8px;">Plafonds de déduction PER</h3>
+    <ul style="font-size:.88rem;line-height:2;">
+      <li><a href="https://www.service-public.fr/particuliers/vosdroits/F34982" target="_blank">service-public.fr — plafonds PER</a></li>
+    </ul>
+
+    <h3 style="font-size:.95rem;color:var(--navy,#1e3a5f);margin:16px 0 8px;">Simulateur officiel DGFiP (vérification)</h3>
+    <ul style="font-size:.88rem;line-height:2;">
+      <li><a href="https://www.impots.gouv.fr/simulateurs-et-calculettes" target="_blank">impots.gouv.fr — simulateurs et calculettes</a></li>
+    </ul>
+
+    <h3 style="font-size:.95rem;color:var(--navy,#1e3a5f);margin:20px 0 8px;">Historique des barèmes</h3>
+    <table style="border-collapse:collapse;font-size:.85rem;width:100%;margin-bottom:12px;">
+      <tr style="background:#f0f4f8;"><th style="text-align:left;padding:6px 10px;">Année déclaration</th><th style="text-align:left;padding:6px 10px;">Revenus</th><th style="text-align:left;padding:6px 10px;">Revalorisation</th><th style="text-align:left;padding:6px 10px;">Seuil 11%</th><th style="text-align:left;padding:6px 10px;">Seuil 30%</th></tr>
+      <tr style="background:#fff3cd;font-weight:600;"><td style="padding:5px 10px;">2026 ✅ actuel</td><td>2025</td><td>+0,9%</td><td>11 600 €</td><td>29 579 €</td></tr>
+      <tr><td style="padding:5px 10px;">2025</td><td>2024</td><td>+1,8%</td><td>11 497 €</td><td>29 373 €</td></tr>
+      <tr><td style="padding:5px 10px;">2024</td><td>2023</td><td>+4,8%</td><td>11 294 €</td><td>28 797 €</td></tr>
+    </table>
+    <p style="font-size:.8rem;color:#6b7280;">⚠️ Rappel : le barème appliqué est celui de l'<strong>année de déclaration</strong> (N), pas de l'année des revenus (N-1). Vérifié sur impots.gouv.fr en juin 2026.</p>
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer>
