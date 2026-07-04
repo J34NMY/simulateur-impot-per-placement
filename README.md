@@ -150,7 +150,7 @@ simulateur-impot-per-placement/
 ├── simulateur_impot_PER_et_placement_V1.5.1.html   # Fichier principal
 ├── README.md                                         # Ce fichier
 ├── CHANGELOG.md                                      # Historique détaillé des versions
-├── LICENSE                                           # Licence MIT
+├── LICENSE.md                                        # Licence CC BY-NC-SA 4.0
 └── GUIDE_GITHUB.md                                   # Guide de publication et mise à jour
 ```
 
@@ -165,8 +165,8 @@ Les Pull Requests peuvent être soumises pour correction de bugs ou ajout de fon
 
 ## Licence
 
-Ce projet est distribué sous licence **MIT** — voir le fichier [LICENSE](LICENSE) pour le texte complet.  
-Utilisation libre, y compris commerciale, avec mention de l'auteur.
+Ce projet est distribué sous licence **CC BY-NC-SA 4.0** — voir le fichier [LICENSE.md](LICENSE.md) pour le texte complet.  
+Partage et adaptation libres, **hors usage commercial**, à condition de créditer l'auteur et de partager toute œuvre dérivée sous la même licence.
 
 ---
 
