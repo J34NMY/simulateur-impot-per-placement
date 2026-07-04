@@ -191,6 +191,86 @@
       gap: 20px;
     }
 
+    /* ── CARTE SIMULATEUR ── */
+    .simulateur-section {
+      max-width: 560px;
+      margin: 0 auto 60px;
+      padding: 0 24px;
+    }
+    .simulateur-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--navy);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .sim-card {
+      background: var(--white);
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 28px 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    .sim-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: var(--gold);
+    }
+    .sim-badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      background: #f0fdf4;
+      color: var(--green);
+    }
+    .sim-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .sim-card .sim-sub {
+      font-size: .85rem;
+      color: var(--slate);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .sim-features {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+    .sim-features li {
+      font-size: .85rem;
+      color: var(--slate);
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+    .sim-features li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .sim-card .cadre {
+      background: var(--cream);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: .78rem;
+      color: var(--slate);
+      margin-bottom: 18px;
+    }
+    .sim-card .cadre strong { color: var(--navy); }
+
     .feature-card {
       background: var(--white);
       border: 1px solid #E5E7EB;
@@ -306,9 +386,6 @@
     <br><span style="color:rgba(255,255,255,.85); font-weight:500;">Simple, gratuit et 100% privé</span> — aucune de vos données ne quitte votre appareil.
   </p>
   <div class="btn-group">
-    <a href="assistant-fiscal.html" class="btn btn-primary">
-      <span class="btn-icon">🧭</span> Assistant guidé — 12 étapes
-    </a>
     <a href="mode-emploi.html" class="btn btn-secondary">
       <span class="btn-icon">📖</span> Mode d'emploi
     </a>
@@ -334,6 +411,30 @@
     </div>
   </div>
 </div>
+
+<!-- SIMULATEUR -->
+<section class="simulateur-section">
+  <h2>Le simulateur</h2>
+  <div class="sim-card">
+    <span class="sim-badge">Gratuit</span>
+    <h3>Assistant Guidé</h3>
+    <p class="sim-sub">Simulateur fiscal en 12 étapes — calcul IR, stratégie PER, comparateur rente vs capital, PER vs PEA.</p>
+    <ul class="sim-features">
+      <li>Calcul impôt sur le revenu (barème progressif)</li>
+      <li>Simulation versements PER et déduction fiscale</li>
+      <li>Rente ou capital — que choisir ?</li>
+      <li>Stratégie de sortie PER optimisée (3 modes automatiques)</li>
+      <li>Vaut-il mieux verser en PER ou en PEA ?</li>
+      <li>Questions progressives, une à la fois</li>
+    </ul>
+    <div class="cadre">
+      <strong>Cadre réglementaire :</strong> Barème fiscal 2025 · Déclaration 2026 · Revenus 2025
+    </div>
+    <a href="assistant-fiscal.html" class="btn btn-primary" style="width:100%;justify-content:center;">
+      <span class="btn-icon">🧭</span> Assistant Guidé
+    </a>
+  </div>
+</section>
 
 <!-- FEATURES -->
 <section class="features">
@@ -376,20 +477,6 @@
       <p class="feature-desc">Fichier HTML autonome, aucune connexion serveur, aucune donnée envoyée. Fonctionne hors ligne une fois téléchargé. Compatible Chrome, Firefox, Edge, Safari.</p>
     </div>
 
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta">
-  <h2>Prêt à simuler ?</h2>
-  <p>Aucune installation. Ouvrez directement dans votre navigateur.</p>
-  <div class="btn-group">
-    <a href="assistant-fiscal.html" class="btn btn-primary">
-      <span class="btn-icon">🧭</span> Assistant guidé — 12 étapes
-    </a>
-    <a href="mode-emploi.html" class="btn btn-secondary">
-      <span class="btn-icon">📖</span> Mode d'emploi
-    </a>
   </div>
 </section>
 
