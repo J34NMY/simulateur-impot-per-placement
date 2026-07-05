@@ -1,11 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Fond bleu marine avec coins arrondis -->
+  <!-- Fond navy arrondi -->
   <rect width="32" height="32" rx="6" fill="#1B3A5C"/>
-  <!-- Symbole € en doré -->
-  <text x="16" y="23" 
-        font-family="Georgia, serif" 
-        font-size="22" 
-        font-weight="bold"
-        fill="#C9A84C" 
-        text-anchor="middle">€</text>
+  <!-- Cercle loupe -->
+  <circle cx="13" cy="13" r="7.5" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+  <!-- Manche loupe -->
+  <line x1="19" y1="19" x2="26" y2="26" stroke="#C9A84C" stroke-width="3" stroke-linecap="round"/>
+  <!-- Courbe graphique dans la loupe -->
+  <polyline points="7,16 10,13 13,14.5 16,11 19,12" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
