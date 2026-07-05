@@ -1334,6 +1334,13 @@ function getBareme() {
   ];
 }
 
+// Fonction de parametres — cet assistant n'a pas de systeme de parametres dynamiques
+// (contrairement au Mode Expert archive), donc on retourne toujours la valeur par defaut.
+// Les valeurs par defaut correspondent au bareme officiel 2025 (declaration 2026).
+function getParam(key, defaultValue) {
+  return defaultValue;
+}
+
 function calcIR(revenu, parts, isCouple, impBrut0) {
   const bareme = getBareme();
   const quotient = arr(revenu / parts);
