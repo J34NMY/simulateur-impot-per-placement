@@ -648,6 +648,33 @@
           <li><strong>Nombre de parts fiscales</strong> — divise le revenu avant application du barème</li>
         </ul>
         <p style="font-size:.8rem;color:var(--slate);">L'objectif : rester dans la tranche la plus basse possible, ou descendre d'une tranche grâce aux leviers disponibles.</p>
+        <p style="font-size:.8rem;color:var(--slate);">👉 Ces mêmes leviers (PER en tête) peuvent aussi vous ouvrir droit à la <strong>décote</strong> — voir le bloc juste en dessous.</p>
+      </div>
+    </div>
+
+    <!-- Bloc pédagogique Décote -->
+    <div class="tmi-explainer">
+      <button class="tmi-toggle" onclick="toggleDecote()" id="decote-toggle-btn">
+        📚 Comprendre la décote <span id="decote-chevron">▼</span>
+      </button>
+      <div id="decote-explainer-body" style="display:none;">
+        <p>La <strong>décote</strong> réduit — parfois jusqu'à l'annuler — l'impôt des foyers modestes qui basculent tout juste dans l'imposable. Elle s'applique <em>automatiquement</em>, sans démarche de votre part.</p>
+        <p><strong>Qui peut en bénéficier ?</strong> Il faut que votre <strong>impôt brut</strong> (calculé par le barème, avant réductions et crédits d'impôt) reste sous un plafond :</p>
+        <table class="tmi-table">
+          <thead><tr><th>Situation</th><th>Plafond d'impôt brut</th></tr></thead>
+          <tbody>
+            <tr><td>Personne seule (célibataire, divorcé, veuf)</td><td class="tmi-rate">1 982 €</td></tr>
+            <tr><td>Couple marié ou pacsé (imposition commune)</td><td class="tmi-rate">3 277 €</td></tr>
+          </tbody>
+        </table>
+        <p>Avoir des enfants à charge ne change pas ces plafonds — seul le montant de l'impôt brut compte. Les couples pacsés ou mariés imposés <em>séparément</em> sont considérés comme des personnes seules pour ce calcul.</p>
+        <p><strong>Comment elle est calculée :</strong></p>
+        <p style="text-align:center;background:#fff;border-radius:6px;padding:8px;font-weight:600;color:var(--navy);">Décote = 897 € (ou 1 483 € en couple) − 45,25 % × impôt brut</p>
+        <p><strong>Exemple :</strong> un célibataire dont l'impôt brut est de 1 100 € a droit à une décote de 897 − (45,25 % × 1 100) = <strong>399 €</strong>. Son impôt final tombe donc à 701 €.</p>
+        <p style="background:#fff7ed;border-left:3px solid #f59e0b;padding:8px 10px;border-radius:4px;">💡 <strong>Le lien avec le PER :</strong> un versement PER réduit votre revenu imposable, donc votre impôt brut calculé par le barème — <em>avant</em> que la décote ne soit appliquée. Résultat : verser sur un PER peut non seulement faire baisser votre TMI, mais aussi vous faire <strong>passer sous le seuil de décote</strong> (si vous êtes juste au-dessus), ou <strong>augmenter le montant de votre décote</strong> (si vous en bénéficiez déjà). Le gain fiscal réel peut donc être supérieur à ce que laisse penser votre seul TMI.</p>
+        <p>💡 <strong>Le versement PER peut vous faire gagner sur les deux tableaux :</strong> comme il <em>diminue votre revenu imposable</em> avant l'application du barème, il baisse aussi votre impôt brut — et peut donc vous faire passer sous le seuil de la décote, ou augmenter la décote dont vous bénéficiez déjà. C'est un effet cumulatif avec la déduction elle-même.</p>
+        <p style="font-size:.8rem;color:var(--slate);">À l'inverse, les dons (66% ou 75%) sont une <em>réduction d'impôt</em>, appliquée après le calcul de la décote — ils n'ont donc aucun effet sur son obtention.</p>
+        <p style="font-size:.8rem;color:var(--slate);">Si la décote calculée dépasse l'impôt brut, l'impôt est simplement ramené à 0 € — le surplus n'est pas remboursé. Source : BOFIP, article 197 du Code général des impôts.</p>
       </div>
     </div>
 
@@ -2495,6 +2522,14 @@ function validerParts() {
 function toggleTMI() {
   const body = document.getElementById('tmi-explainer-body');
   const chevron = document.getElementById('tmi-chevron');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  chevron.textContent = open ? '▲' : '▼';
+}
+
+function toggleDecote() {
+  const body = document.getElementById('decote-explainer-body');
+  const chevron = document.getElementById('decote-chevron');
   const open = body.style.display === 'none';
   body.style.display = open ? 'block' : 'none';
   chevron.textContent = open ? '▲' : '▼';
