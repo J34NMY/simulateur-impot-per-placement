@@ -528,8 +528,24 @@
   .modal-btn-primary { background:var(--navy); color:#fff; }
   .modal-btn-secondary { background:#f3f4f6; color:var(--navy); }
 </style>
+  <style>
+    #maintenance-banner {
+      background: #f59e0b;
+      color: #1c1917;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: .88rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 200;
+    }
+    #maintenance-banner a { color: #1c1917; }
+  </style>
 </head>
 <body>
+<div id="maintenance-banner">
+  🔧 Outil en cours de mise à jour — certaines fonctionnalités peuvent être instables. Revenez dans quelques heures.
+</div>
 
 <!-- HEADER -->
 <header class="wiz-header">
@@ -904,6 +920,11 @@
           <input type="number" id="w_rente_mnt" value="2345" min="0" oninput="updateRendementImplicite(); calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
         </div>
       </div>
+      <div class="field">
+        <label>Montant total versé sur ce PER (cumul historique)</label>
+        <div class="hint">Le total de vos versements depuis l'ouverture — pas la valeur actuelle. Sert à calculer la plus-value (capital − versements), taxée différemment des versements à la sortie. Si vous ne le savez pas précisément, une estimation reste utile.</div>
+        <input type="number" id="w_rente_verse" value="35000" min="0" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
+      </div>
 
       <!-- Rendement implicite affiché dynamiquement -->
       <div id="w_rente_impl_bloc" style="display:none;" class="info-box blue" style="margin-bottom:20px;">
@@ -931,6 +952,25 @@
         <label>Rendement de référence de vos placements (%/an)</label>
         <div class="hint">Votre choix : rendement implicite de la rente (Option A) ou rendement réel de vos enveloppes (Option B, recommandé)</div>
         <input type="number" id="w_rente_rdt" value="7" min="0" max="15" step="0.5" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
+      </div>
+      <div class="two-cols">
+        <div class="field">
+          <label>Année d'ouverture du PEA récepteur</label>
+          <div class="hint">Important : si vous ouvrez un nouveau PEA pour ce capital, les retraits ne sont possibles sans perdre l'avantage fiscal qu'après 5 ans d'ancienneté. Si vous versez sur un PEA déjà ancien, mettez sa date d'ouverture réelle (l'ancienneté compte depuis l'ouverture, pas depuis chaque versement).</div>
+          <input type="number" id="w_rente_pea_an" value="2026" min="2000" max="2030" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
+        </div>
+        <div class="field">
+          <label>Mois d'ouverture (1-12)</label>
+          <input type="number" id="w_rente_pea_mois" value="1" min="1" max="12" oninput="calcRenteSeule('w_res_rente_step6');" onfocus="this.select()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Montant retiré chaque année de votre capital placé</label>
+        <div class="hint">Pour comparer à la rente, on simule un retrait régulier de votre capital investi (versé mensuellement, comme la rente).</div>
+        <select id="w_rente_mode_retrait" onchange="calcRenteSeule('w_res_rente_step6');">
+          <option value="rente">Même montant que la rente proposée</option>
+          <option value="4pct">Règle des 4% du capital initial</option>
+        </select>
       </div>
 
       <div id="w_res_rente_step6" style="margin-top:20px;"></div>
@@ -967,14 +1007,19 @@
     <div class="two-cols">
       <div class="field">
         <label>Capital PER 1 brut (€)</label>
-        <div class="hint">Montant total avant fiscalité — la déduction sera calculée selon votre mode de sortie.</div>
+        <div class="hint">Montant total avant fiscalité — la déduction sera calculée selon votre mode de sortie. 💡 Pré-rempli automatiquement si vous avez saisi le "Capital de la rente" à l'étape 6.</div>
         <input type="number" id="w_per1_cap" value="0" min="0" onfocus="this.select()">
       </div>
       <div class="field">
         <label>Année de sortie PER 1</label>
-        <div class="hint">L'année où vous commencez à rapatrier ce PER (peut différer de l'année de début de simulation ci-dessous).</div>
+        <div class="hint">L'année où vous commencez à rapatrier ce PER (peut différer de l'année de début de simulation ci-dessous). 💡 Pré-rempli automatiquement sur l'année en cours si vous avez utilisé l'étape 6 (qui suppose une sortie immédiate).</div>
         <input type="number" id="w_per1_an" value="2028" min="2024" max="2050" onfocus="this.select()">
       </div>
+    </div>
+    <div class="field">
+      <label>Montant total versé sur ce PER 1 (cumul historique)</label>
+      <div class="hint">Sert à calculer la plus-value (capital − versements), taxée au PFU 31,4% plutôt qu'au barème comme les versements. 💡 Pré-rempli automatiquement depuis l'étape 6 si renseigné là-bas.</div>
+      <input type="number" id="w_per1_verse" value="0" min="0" onfocus="this.select()">
     </div>
 
     <div class="two-cols">
@@ -988,10 +1033,14 @@
         <input type="number" id="w_per2_an" value="2028" min="2024" max="2050" onfocus="this.select()">
       </div>
     </div>
+    <div class="field">
+      <label>Montant total versé sur ce PER 2 (cumul historique) <span class="badge-optional">si applicable</span></label>
+      <input type="number" id="w_per2_verse" value="0" min="0" onfocus="this.select()">
+    </div>
 
     <div class="field">
       <label>Objectif de complément mensuel (€)</label>
-      <div class="hint">Ex : perte de salaire à la retraite. Laissez 0 si vous ne savez pas encore.</div>
+      <div class="hint">Ex : perte de salaire à la retraite. Laissez 0 si vous ne savez pas encore. 💡 Si vous avez rempli une rente à l'étape 6, ce champ est pré-rempli automatiquement avec l'équivalent mensuel — modifiable à tout moment.</div>
       <input type="number" id="w_objectif" value="0" min="0" onfocus="this.select()">
     </div>
 
@@ -999,6 +1048,12 @@
       <label>Année de début de simulation</label>
       <div class="hint">Ex : 2026 pour voir l'évolution depuis maintenant</div>
       <input type="number" id="w_annee_debut" value="2026" min="2024" max="2050" onfocus="this.select()">
+    </div>
+
+    <div class="field">
+      <label>Durée de la projection (ans)</label>
+      <div class="hint">📊 Repère INSEE (espérance de vie restante à 65 ans, données 2024) : ~20 ans pour un homme, ~23 ans pour une femme, ~22 ans en moyenne homme/femme confondus. Ajustez selon votre situation.</div>
+      <input type="number" id="w_strat_duree" value="22" min="1" max="40" onfocus="this.select()">
     </div>
 
 
@@ -1033,7 +1088,7 @@
     <div class="two-cols">
       <div class="field">
         <label>Année d'ouverture PEA 1</label>
-        <div class="hint">Important : les gains ne sont exonérés d'impôt sur le revenu (hors prélèvements sociaux 17,2%) qu'après 5 ans d'ancienneté du PEA.</div>
+        <div class="hint">Important : les gains ne sont exonérés d'impôt sur le revenu (hors prélèvements sociaux 18,6%) qu'après 5 ans d'ancienneté du PEA.</div>
         <input type="number" id="w_pea1_an" value="2026" min="2000" max="2030" onfocus="this.select()">
       </div>
       <div class="field">
@@ -1162,8 +1217,8 @@
         <div class="field">
           <label>Fiscalité alternative</label>
           <select id="w_pp_fisc">
-            <option value="0.172">PEA — PS 17,2%</option>
-            <option value="0.30">CTO — PFU 30%</option>
+            <option value="0.186">PEA — PS 18,6%</option>
+            <option value="0.314">CTO — PFU 31,4%</option>
             <option value="0.11">CTO — Barème 11%</option>
           </select>
         </div>
@@ -1851,40 +1906,37 @@ function calcFiscal() {
 /* ═══════════════════════════════════════════════
    ÉTAPE 8 — CALCUL STRATÉGIE
 ═══════════════════════════════════════════════ */
+// Cout marginal reel d'ajouter un montant (versements PER) au revenu de base declare,
+// via le bareme progressif complet (pas un taux fixe) -- reutilisable partout.
+function impotMarginalPER(montant, revenuBase, parts, isCouple) {
+  if (montant<=0) return 0;
+  const resAvant = calcIR(revenuBase, parts, isCouple);
+  const impotAvant = Math.max(0, resAvant.impBrut - resAvant.decote);
+  const resApres = calcIR(revenuBase+montant, parts, isCouple);
+  const impotApres = Math.max(0, resApres.impBrut - resApres.decote);
+  return Math.max(0, impotApres-impotAvant);
+}
+
 function calcStrategie() {
   const f = window._fiscal || {};
 
-  // Recalcul de la marge 11% sur revenus déclarés UNIQUEMENT
-  // (pensions + salaires, sans versements PER ni retraits PER)
-  // C'est ce montant annuel qu'on peut récupérer du PER sans dépasser 11%
-  (function() {
-    try {
-      const isCouple = (toggles['foyer']||'seul')==='couple';
-      const parts = +document.getElementById('w_parts').value||(isCouple?2:1);
-      const sal1 = +document.getElementById('w_sal1').value||0;
-      const fr1on = document.getElementById('w_frais1_on').checked;
-      const fr1 = +document.getElementById('w_frais1').value||0;
-      const pen1 = +document.getElementById('w_pen1').value||0;
-      const sal2 = isCouple?(+document.getElementById('w_sal2').value||0):0;
-      const fr2on = isCouple && document.getElementById('w_frais2_on').checked;
-      const fr2 = isCouple?(+document.getElementById('w_frais2').value||0):0;
-      const pen2 = isCouple?(+document.getElementById('w_pen2').value||0):0;
-      const ab_sal1 = abattSalaires(sal1,fr1on,fr1);
-      const ab_pen1 = abattPensions(pen1);
-      const ab_sal2 = abattSalaires(sal2,fr2on,fr2);
-      const ab_pen2 = abattPensions(pen2);
-      // Revenu hors PER (pas de versements, pas de retraits)
-      const revenuBrut = arr((sal1-ab_sal1)+(pen1-ab_pen1)+(sal2-ab_sal2)+(pen2-ab_pen2));
-      const bareme = getBareme();
-      const quotientBrut = revenuBrut / parts;
-      const margeQ = Math.max(0, bareme[1].plafond - quotientBrut);
-      window._margeHorsPER = Math.floor(margeQ * parts);
-    } catch(e) { window._margeHorsPER = f.margeFoyer || 0; }
-  })();
-  const margeFoyer = window._margeHorsPER || f.margeFoyer || 0;
+  // Revenu de reference hors tout retrait PER : on reutilise EXACTEMENT la meme source
+  // que l'etape 6 (window._fiscal.revenu, moins les retraits PER deja effectues cette
+  // annee) plutot que de recalculer independamment -- garantit un resultat identique
+  // entre les deux etapes pour un meme scenario "sortie en 1 an".
+  const isCouple = f.isCouple || false;
+  const parts = f.parts || (isCouple?2:1);
+  const isCoupleRef = isCouple;
+  const revenuHorsPER = Math.max(0, (f.revenu||0) - (f.perRet1||0) - (f.perRet2||0));
+  // Conserve pour compatibilite (encore utilise ailleurs comme reperage de marge)
+  const bareme0 = getBareme();
+  const margeFoyer = Math.max(0, Math.floor((bareme0[1].plafond - revenuHorsPER/parts) * parts));
+
 
   const per1Cap = +document.getElementById('w_per1_cap').value||0;
   const per2Cap = +document.getElementById('w_per2_cap').value||0;
+  const per1Verse = +document.getElementById('w_per1_verse').value||0;
+  const per2Verse = +(document.getElementById('w_per2_verse')?.value||0);
   const per1An  = +document.getElementById('w_per1_an').value||2028;
   const per2An  = +document.getElementById('w_per2_an').value||2028;
   // Déduire les retraits PER déjà effectués cette année
@@ -1892,10 +1944,24 @@ function calcStrategie() {
   const perRet2 = +document.getElementById('w_per_retrait2').value||0;
   const totalRetrait = perRet1 + perRet2;
   const totalPER = Math.max(0, per1Cap + per2Cap - totalRetrait);
+  // Ratio versements/capital total, constant : chaque retrait futur est reparti au
+  // prorata entre versements (bareme) et plus-value (PFU 31.4%), comme l'exige la loi
+  // (CGI, sortie en capital PER : prorata sur chaque retrait partiel)
+  const totalVerseBrut = per1Verse + per2Verse;
+  const totalCapBrut = per1Cap + per2Cap;
+  const ratioVersements = totalCapBrut>0 ? Math.min(1, totalVerseBrut/totalCapBrut) : 1;
+  function impotSurRetraitPER(montantRetrait) {
+    const versementsPart = montantRetrait * ratioVersements;
+    const plusValuePart = montantRetrait * (1-ratioVersements);
+    return impotMarginalPER(versementsPart, revenuHorsPER, parts, isCoupleRef) + plusValuePart*0.314;
+  }
   const objectif = +document.getElementById('w_objectif').value||0;
   const anneeBase = +document.getElementById('w_annee_debut').value||2026;
   const modeSortie = toggles['mode_sortie'] || 'etale';
-  const anneeDebutPER = Math.max(per1An, per2An);
+  // Si le PER 2 n'est pas utilise (capital nul), ignorer son annee par defaut dans le
+  // calcul -- sinon une valeur factice de 2028 retarde a tort le declenchement de la
+  // sortie du PER 1 seul
+  const anneeDebutPER = per2Cap>0 ? Math.max(per1An, per2An) : per1An;
 
   const pea1Cap  = +document.getElementById('w_pea1_cap').value||0;
   const pea1Part = (+document.getElementById('w_pea1_part').value||0)/100;
@@ -1918,11 +1984,24 @@ function calcStrategie() {
   const totalParts = pea1Part + pea2Part + ctoPart;
   document.getElementById('w_parts_warn').style.display = Math.abs(totalParts-1)>0.01 ? 'block' : 'none';
 
-  // Capital net selon mode
+  // Capital net selon mode -- calcul progressif reel, pas un taux fixe.
+  // "capitalNet11" = etale sur assez d'annees pour rester dans la marge basse chaque annee.
+  // "capitalNetMix" = tout retire en une seule annee (oneshot).
   const versAnnuelBrut = Math.min(margeFoyer, totalPER);
   const nbAns11 = margeFoyer > 0 ? Math.ceil(totalPER/margeFoyer) : 1;
-  const capitalNet11 = totalPER - arr(totalPER*0.11);
-  const impMix = arr(Math.min(totalPER,margeFoyer)*0.11) + arr(Math.max(0,totalPER-margeFoyer)*0.30);
+  function impotPourDureeProgressif(dureeAns) {
+    const versNetParAn = totalPER/dureeAns;
+    let restant=totalPER, impotTot=0;
+    for (let i=0;i<dureeAns;i++) {
+      const vb=Math.min(versNetParAn,restant);
+      impotTot += impotSurRetraitPER(vb);
+      restant-=vb;
+    }
+    return arr(impotTot);
+  }
+  const impotEtaleRef = impotPourDureeProgressif(nbAns11);
+  const capitalNet11 = totalPER - impotEtaleRef;
+  const impMix = impotPourDureeProgressif(1);
   const capitalNetMix = totalPER - impMix;
   const capitalNetRef = modeSortie==='etale' ? capitalNet11 : capitalNetMix;
 
@@ -1938,22 +2017,14 @@ function calcStrategie() {
   `;
 
   // Fonction de simulation pour un mode donné
-  // Calcul de l'impôt total pour une sortie programmée sur N années
-  function impotPourDuree(dureeAns) {
-    const versNetParAn = totalPER/dureeAns;
-    let restant=totalPER, impotTot=0;
-    for (let i=0;i<dureeAns;i++) {
-      const vb=Math.min(versNetParAn,restant);
-      const partBasse=Math.min(vb,margeFoyer), partHaute=Math.max(0,vb-margeFoyer);
-      impotTot += partBasse*0.11+partHaute*0.30;
-      restant-=vb;
-    }
-    return arr(impotTot);
-  }
+  // Calcul de l'impôt total pour une sortie programmée sur N années (bareme progressif reel)
+  const impotPourDuree = impotPourDureeProgressif;
 
-  // Recherche de la durée optimale (1 à 15 ans) qui maximise le capital final
+  // Recherche de la durée optimale de sortie (1 an à la durée de projection choisie)
+  // qui maximise le capital final
+  const dureeProjection = Math.max(1, +document.getElementById('w_strat_duree')?.value || 22);
   let meilleureDuree = 1, meilleurCapital = -Infinity, resultatsParDuree = [];
-  for (let d=1; d<=15; d++) {
+  for (let d=1; d<=dureeProjection; d++) {
     const impotD = impotPourDuree(d);
     const capitalNetD = totalPER - impotD;
     const rowsD = simulerMode('rapide', capitalNetD, d);
@@ -1968,48 +2039,66 @@ function calcStrategie() {
     let capPea1=pea1Cap, capPea2=pea2Cap, capCto=ctoCap;
     let capitalPERRestant=totalPER, capitalNetInvesti=pea1Cap+pea2Cap+ctoCap;
     let rows=[];
-    const h=15;
+    const h = Math.max(1, +document.getElementById('w_strat_duree')?.value || 22);
     // Versement net par an si sortie programmée sur N années (mode 'rapide')
     const versNetParAn = dureeSortieAns ? totalPER/dureeSortieAns : 0;
+    const rdtPea1M = Math.pow(1+pea1Rdt,1/12)-1;
+    const rdtPea2M = Math.pow(1+pea2Rdt,1/12)-1;
+    const rdtCtoM  = Math.pow(1+ctoRdt,1/12)-1;
 
     for (let i=0; i<h; i++) {
       const annee = anneeBase + i;
-      const pea1Debloque = annee >= (pea1An+5);
-      const pea2Debloque = annee >= (pea2An+5);
+      // Deblocage precis au mois pres (pas juste a l'annee), pour rester coherent avec
+      // le calcul mensuel de l'etape 6
+      const moisDeblocage1Abs = (pea1An+5)*12 + (pea1Mois-1);
+      const moisDeblocage2Abs = (pea2An+5)*12 + (pea2Mois-1);
+      const pea1Debloque = (annee*12) >= moisDeblocage1Abs;
+      const pea2Debloque = (annee*12) >= moisDeblocage2Abs;
 
+      // Evenement de sortie PER : une transaction par an (realiste -- on ne fractionne
+      // pas un retrait PER en 12 micro-retraits mensuels)
       if (modeS==='oneshot' && annee===anneeDebutPER) {
         capPea1+=capitalNet*pea1Part; capPea2+=capitalNet*pea2Part; capCto+=capitalNet*ctoPart;
         capitalNetInvesti+=capitalNet;
       }
       if (modeS==='etale' && capitalPERRestant>0 && annee>=anneeDebutPER) {
         const vb=Math.min(versAnnuelBrut,capitalPERRestant);
-        const vn=vb*(1-0.11);
+        const impotVb = impotSurRetraitPER(vb);
+        const vn=vb-impotVb;
         capPea1+=vn*pea1Part; capPea2+=vn*pea2Part; capCto+=vn*ctoPart;
         capitalNetInvesti+=vn; capitalPERRestant-=vb;
       }
       if (modeS==='rapide' && capitalPERRestant>0 && annee>=anneeDebutPER) {
         const vb=Math.min(versNetParAn,capitalPERRestant);
-        // Fiscalité réelle : 11% jusqu'à margeFoyer, 30% au-delà, par an
-        const partBasse=Math.min(vb,margeFoyer), partHaute=Math.max(0,vb-margeFoyer);
-        const vn=partBasse*(1-0.11)+partHaute*(1-0.30);
+        // Fiscalite reelle : bareme progressif complet (cout marginal), pas un taux fixe
+        const impotVb = impotSurRetraitPER(vb);
+        const vn=vb-impotVb;
         capPea1+=vn*pea1Part; capPea2+=vn*pea2Part; capCto+=vn*ctoPart;
         capitalNetInvesti+=vn; capitalPERRestant-=vb;
       }
 
-      const gPea1=capPea1*pea1Rdt, gPea2=capPea2*pea2Rdt, gCto=capCto*ctoRdt;
-      const nPea1=arr(gPea1*(1-0.172)/12), nPea2=arr(gPea2*(1-0.172)/12);
-      const nCtoBrut=arr(gCto/12);
+      // Indicateur "gains/mois disponibles" calcule sur le capital en debut d'annee
+      // (avant croissance de l'annee), pour rester une estimation stable independante
+      // du retrait "objectif" simule ci-dessous
+      const nPea1=arr(capPea1*pea1Rdt*(1-0.186)/12), nPea2=arr(capPea2*pea2Rdt*(1-0.186)/12);
+      const nCtoBrut=arr(capCto*ctoRdt/12);
       const nPeaMois=(pea1Debloque?nPea1:0)+(pea2Debloque?nPea2:0);
       const totalDispo=nPeaMois+nCtoBrut;
       const nPeaPot=nPea1+nPea2;
 
-      capPea1+=gPea1; capPea2+=gPea2; capCto+=gCto;
-
-      let retraitAnnuel = objectif * 12;
-      if (retraitAnnuel > 0) {
-        if (pea1Debloque && capPea1>0) { const r=Math.min(retraitAnnuel,capPea1); capPea1-=r; retraitAnnuel-=r; }
-        if (pea2Debloque && capPea2>0 && retraitAnnuel>0) { const r=Math.min(retraitAnnuel,capPea2); capPea2-=r; retraitAnnuel-=r; }
-        if (capCto>0 && retraitAnnuel>0) { const r=Math.min(retraitAnnuel,capCto); capCto-=r; retraitAnnuel-=r; }
+      // Simulation MENSUELLE reelle : croissance composee mois par mois, puis retrait
+      // mensuel de l'objectif -- pas un bloc annuel unique (biais optimiste sinon)
+      for (let m=0; m<12; m++) {
+        const moisAbsCourant = annee*12+m;
+        const pea1DebloqueM = moisAbsCourant >= moisDeblocage1Abs;
+        const pea2DebloqueM = moisAbsCourant >= moisDeblocage2Abs;
+        capPea1*=(1+rdtPea1M); capPea2*=(1+rdtPea2M); capCto*=(1+rdtCtoM);
+        if (objectif > 0) {
+          let retrait = objectif;
+          if (pea1DebloqueM && capPea1>0) { const r=Math.min(retrait,capPea1); capPea1-=r; retrait-=r; }
+          if (pea2DebloqueM && capPea2>0 && retrait>0) { const r=Math.min(retrait,capPea2); capPea2-=r; retrait-=r; }
+          if (capCto>0 && retrait>0) { const r=Math.min(retrait,capCto); capCto-=r; retrait-=r; }
+        }
       }
 
       const capTot=arr(capPea1+capPea2+capCto);
@@ -2022,7 +2111,7 @@ function calcStrategie() {
   }
 
   function buildTableau(rows, titre, anneeBase, capitalNet, impot, duree) {
-    const h = 15;
+    const h = rows.length;
     const dernR = rows[rows.length-1];
     let t = `
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-bottom:8px;">
@@ -2080,9 +2169,9 @@ function calcStrategie() {
   const rowsEtale = simulerMode('etale', capitalNet11);
   const rowsOneshot = simulerMode('oneshot', capitalNetMix);
   const rowsOptimal = simulerMode('rapide', capitalNetOptimal, meilleureDuree);
-  const {html: tabEtale, derniere: derEtale} = buildTableau(rowsEtale, '📅 Mode étalé à 11%', anneeBase, capitalNet11, arr(totalPER-capitalNet11), 'Capital final 2042');
-  const {html: tabOneshot, derniere: derOneshot} = buildTableau(rowsOneshot, '⚡ Mode sortie totale en 1 an', anneeBase, capitalNetMix, arr(totalPER-capitalNetMix), 'Capital final 2042');
-  const {html: tabOptimal, derniere: derOptimal} = buildTableau(rowsOptimal, `🎯 Sortie optimisée sur ${meilleureDuree} an${meilleureDuree>1?'s':''}`, anneeBase, capitalNetOptimal, impotOptimal, 'Capital final 2042');
+  const {html: tabEtale, derniere: derEtale} = buildTableau(rowsEtale, `📅 Mode étalé sur ${nbAns11} an${nbAns11>1?'s':''} (reste dans la tranche basse)`, anneeBase, capitalNet11, arr(totalPER-capitalNet11), `Capital final ${anneeBase+dureeProjection-1}`);
+  const {html: tabOneshot, derniere: derOneshot} = buildTableau(rowsOneshot, '⚡ Mode sortie totale en 1 an', anneeBase, capitalNetMix, arr(totalPER-capitalNetMix), `Capital final ${anneeBase+dureeProjection-1}`);
+  const {html: tabOptimal, derniere: derOptimal} = buildTableau(rowsOptimal, `🎯 Sortie optimisée sur ${meilleureDuree} an${meilleureDuree>1?'s':''}`, anneeBase, capitalNetOptimal, impotOptimal, `Capital final ${anneeBase+dureeProjection-1}`);
 
   // Conclusion automatique
   const diffCapital = derOneshot.capTot - derEtale.capTot;
@@ -2093,16 +2182,20 @@ function calcStrategie() {
 
   // Le meilleur des 3 modes pour le capital final
   const candidats = [
-    {nom:'étalé à 11%', cap:derEtale.capTot, impot:arr(totalPER-capitalNet11)},
+    {nom:`étalé sur ${nbAns11} an${nbAns11>1?'s':''}`, cap:derEtale.capTot, impot:arr(totalPER-capitalNet11)},
     {nom:'one-shot', cap:derOneshot.capTot, impot:arr(totalPER-capitalNetMix)},
     {nom:`sortie optimisée sur ${meilleureDuree} an${meilleureDuree>1?'s':''}`, cap:derOptimal.capTot, impot:impotOptimal}
   ];
   const meilleur = candidats.reduce((a,b)=>b.cap>a.cap?b:a);
 
-  let conclusion = `<div class="info-box green" style="margin-top:20px;">
+  let conclusion = `<div class="info-box green" style="margin-top:20px;border:2px solid #15803d;">
+    <strong>🏆 Meilleur résultat parmi les 3 modes : ${meilleur.nom}</strong><br>
+    Capital final en ${anneeBase+dureeProjection-1} : <strong style="font-size:1.1rem;">${meilleur.cap.toLocaleString('fr-FR')} €</strong> (impôt payé à la sortie : ${meilleur.impot.toLocaleString('fr-FR')} €) — le plus élevé des ${candidats.length} scénarios simulés.
+  </div>
+  <div class="info-box green" style="margin-top:12px;">
     <strong>🎯 Sortie optimisée automatiquement</strong><br>
-    En testant toutes les durées de sortie de 1 à 15 ans (en tenant compte du dépassement éventuel de la tranche 30%), la durée la plus avantageuse pour maximiser votre capital final est <strong>${meilleureDuree} an${meilleureDuree>1?'s':''}</strong> : impôt total <strong>${impotOptimal.toLocaleString('fr-FR')} €</strong>, capital final <strong>${derOptimal.capTot.toLocaleString('fr-FR')} €</strong> en 2042.<br>
-    <span style="font-size:.85rem;">💡 Sortir plus vite, même en payant un peu de fiscalité à 30% sur l'excédent, permet de réinvestir le capital plus tôt et de profiter davantage des intérêts composés.</span>
+    En testant toutes les durées de sortie de 1 à ${dureeProjection} ans (en tenant compte du dépassement éventuel de la tranche 30%), la durée la plus avantageuse pour maximiser votre capital final est <strong>${meilleureDuree} an${meilleureDuree>1?'s':''}</strong> : impôt total <strong>${impotOptimal.toLocaleString('fr-FR')} €</strong>, capital final <strong>${derOptimal.capTot.toLocaleString('fr-FR')} €</strong> en ${anneeBase+dureeProjection-1}.<br>
+    <span style="font-size:.85rem;">💡 Sortir plus vite, même en payant un peu de fiscalité à 30% sur l'excédent, permet de réinvestir le capital plus tôt et de profiter davantage des intérêts composés. Comme cette recherche teste déjà toutes les durées (y compris 1 an et la durée "étalé"), elle égale ou dépasse toujours les deux autres modes ci-dessous — c'est pourquoi son tableau est détaillé, les deux autres en comparaison rapide.</span>
   </div>
   <div class="info-box blue" style="margin-top:12px;">
     <strong>🔮 Vos revenus vont-ils évoluer ?</strong><br>
@@ -2112,18 +2205,26 @@ function calcStrategie() {
   if (objectif > 0) {
     conclusion += `<div class="info-box ${diffCapital>0?'orange':'green'}" style="margin-top:12px;">
       <strong>📊 Comparaison étalé vs one-shot</strong><br>
-      Le mode étalé économise <strong>${Math.abs(diffImpot).toLocaleString('fr-FR')} €</strong> d'impôt ${diffCapital>0?'mais produit un capital final inférieur au mode one-shot de':'et produit un capital final supérieur au mode one-shot de'} <strong>${Math.abs(diffCapital).toLocaleString('fr-FR')} €</strong> en 2042.<br>
+      Le mode étalé économise <strong>${Math.abs(diffImpot).toLocaleString('fr-FR')} €</strong> d'impôt ${diffCapital>0?'mais produit un capital final inférieur au mode one-shot de':'et produit un capital final supérieur au mode one-shot de'} <strong>${Math.abs(diffCapital).toLocaleString('fr-FR')} €</strong> en ${anneeBase+dureeProjection-1}.<br>
       Objectif ${objectif} €/mois atteint en <strong>${anneeObjectifEtale}</strong> (étalé) · <strong>${anneeObjectifOneshot}</strong> (one-shot) · <strong>${anneeObjectifOptimal}</strong> (optimisée).
     </div>`;
   }
 
-  // Affichage côte à côte sur 3 colonnes
+  // Comparaison compacte étalé / one-shot (l'optimisée les egale ou les depasse toujours,
+  // donc pas besoin de reproduire 2 tableaux complets en plus du sien)
+  const compareCompact = `
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px;margin-top:16px;">
+      <div style="font-weight:700;font-size:.9rem;color:var(--navy);margin-bottom:10px;">📋 Pour comparaison rapide (détail complet dans le tableau ci-dessous pour l'optimisée)</div>
+      <table class="res-table" style="width:100%;">
+        <tr><th style="text-align:left;padding:6px;font-size:.75rem;color:var(--slate);">Mode</th><th style="text-align:right;padding:6px;font-size:.75rem;color:var(--slate);">Capital final ${anneeBase+dureeProjection-1}</th><th style="text-align:right;padding:6px;font-size:.75rem;color:var(--slate);">Impôt payé</th></tr>
+        <tr><td style="padding:6px;">📅 Étalé sur ${nbAns11} an${nbAns11>1?'s':''} (reste dans la tranche basse)</td><td style="text-align:right;padding:6px;">${derEtale.capTot.toLocaleString('fr-FR')} €</td><td style="text-align:right;padding:6px;">${arr(totalPER-capitalNet11).toLocaleString('fr-FR')} €</td></tr>
+        <tr><td style="padding:6px;">⚡ Sortie totale en 1 an</td><td style="text-align:right;padding:6px;">${derOneshot.capTot.toLocaleString('fr-FR')} €</td><td style="text-align:right;padding:6px;">${arr(totalPER-capitalNetMix).toLocaleString('fr-FR')} €</td></tr>
+      </table>
+    </div>`;
+
   const tablesHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:16px;">
-      <div>${tabEtale}</div>
-      <div>${tabOneshot}</div>
-      <div>${tabOptimal}</div>
-    </div>
+    <div style="margin-top:16px;">${tabOptimal}</div>
+    ${compareCompact}
     ${conclusion}`;
 
   document.getElementById('w_res_strat_tables').innerHTML = tablesHTML;
@@ -2141,40 +2242,140 @@ function calcRenteSeule(targetId) {
     target.innerHTML = '';
     return;
   }
-  const cap   = +document.getElementById('w_rente_cap').value||0;
-  const mnt   = +document.getElementById('w_rente_mnt').value||0;
-  const age   = +document.getElementById('w_rente_age').value||61;
-  const esp   = +document.getElementById('w_rente_esp').value||27;
-  const rdt   = (+document.getElementById('w_rente_rdt').value||7)/100;
+  const cap    = +document.getElementById('w_rente_cap').value||0;
+  const verse  = +document.getElementById('w_rente_verse').value||0;
+  const mnt    = +document.getElementById('w_rente_mnt').value||0;
+  const age    = +document.getElementById('w_rente_age').value||61;
+  const esp    = +document.getElementById('w_rente_esp').value||27;
+  const rdtAn  = (+document.getElementById('w_rente_rdt').value||7)/100;
+  const mode   = document.getElementById('w_rente_mode_retrait')?.value || 'rente';
   const rdtImpl = cap>0 ? (mnt/cap*100) : 0;
 
-  let renteCum=0, capEvo=cap, bascule=null;
-  let rows=[], pas=Math.max(1,Math.round(esp/8));
-  for (let an=1; an<=esp; an++) {
-    renteCum+=mnt; capEvo*=(1+rdt);
-    const gains=capEvo-cap;
-    if (!bascule && renteCum>gains) bascule=an;
-    if (an%pas===0||an===esp||an===1) rows.push({an,age:age+an,rc:arr(renteCum),gc:arr(gains)});
-  }
-  const capFinal=arr(capEvo);
+  // 1) Fiscalite de sortie du PER : versements au bareme progressif (cout marginal reel,
+  //    pas un TMI fixe -- un gros retrait en une fois peut faire changer de tranche),
+  //    plus-value au PFU 31.4% (toujours fixe, lui)
+  const fiscalBase = window._fiscal || {};
+  // Revenu hors tout retrait PER (celui de window._fiscal inclut les retraits PER deja
+  // effectues cette annee -- on les retire pour obtenir une base propre avant d'y ajouter
+  // le retrait simule ici)
+  const revenuBase = Math.max(0, (fiscalBase.revenu||0) - (fiscalBase.perRet1||0) - (fiscalBase.perRet2||0));
+  const parts = fiscalBase.parts || 1;
+  const isCouple = fiscalBase.isCouple || false;
+  const plusValue = Math.max(0, cap - verse);
+  const partVersements = Math.min(cap, verse);
 
-  let html = `<div class="result-grid">
-    <div class="result-card"><div class="result-label">Rendement implicite de la rente</div><div class="result-value ${rdtImpl<rdt*100?'red':'green'}">${rdtImpl.toFixed(1)}%/an</div></div>
-    <div class="result-card"><div class="result-label">Rendement de vos placements</div><div class="result-value">${(rdt*100).toFixed(1)}%/an</div></div>
-    <div class="result-card"><div class="result-label">Point mort rente vs capital</div><div class="result-value">${bascule?bascule+' ans':'Jamais'}</div></div>
-  </div>
-  <div style="overflow-x:auto;"><table class="res-table" style="min-width:400px;">
-    <tr><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Âge</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Rente cumulée</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Gains capital cumulés</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Avantage</th></tr>`;
-  for (const r of rows) {
-    const capG=r.rc>r.gc;
-    html+=`<tr style="${!capG?'background:#E8F0E9;':''}"><td>${r.an}</td><td>${r.age}</td><td style="text-align:right;">${r.rc.toLocaleString('fr-FR')} €</td><td style="text-align:right;">${r.gc.toLocaleString('fr-FR')} €</td><td style="text-align:right;color:${capG?'var(--red)':'var(--green)'};">${capG?'Rente +':'Capital +'+(r.gc-r.rc).toLocaleString('fr-FR')+' €'}</td></tr>`;
+  const resAvant = calcIR(revenuBase, parts, isCouple);
+  const impotAvant = Math.max(0, resAvant.impBrut - resAvant.decote);
+  const resApres = calcIR(revenuBase + partVersements, parts, isCouple);
+  const impotApres = Math.max(0, resApres.impBrut - resApres.decote);
+  const impotVersements = Math.max(0, impotApres - impotAvant);
+  const tmiMarginal = partVersements>0 ? (impotVersements/partVersements*100) : 0;
+
+  const impotPlusValue = plusValue * 0.314;
+  const impotSortie = impotVersements + impotPlusValue;
+  const capNet = Math.max(0, cap - impotSortie);
+
+  // 2) Simulation mensuelle du retrait sur le capital net, place en PEA
+  const retraitAnnuel = mode==='4pct' ? capNet*0.04 : mnt;
+  const retraitMensuel = retraitAnnuel/12;
+  const rdtMensuel = Math.pow(1+rdtAn, 1/12)-1;
+
+  let capEvo = capNet, totalRetireBrut = 0, moisEpuise = null;
+  // Blocage PEA : pas de retrait possible sans perdre l'avantage fiscal avant 5 ans
+  // d'anciennete, calcule par rapport a aujourd'hui (date de reference de la simulation)
+  const peaAn = +document.getElementById('w_rente_pea_an')?.value || 2026;
+  const peaMois = +document.getElementById('w_rente_pea_mois')?.value || 1;
+  const dateAujourdhui = new Date();
+  const moisDeblocageAbsolu = (peaAn+5)*12 + (peaMois-1);
+  const moisActuelAbsolu = dateAujourdhui.getFullYear()*12 + dateAujourdhui.getMonth();
+  const moisAvantDeblocage = Math.max(0, moisDeblocageAbsolu - moisActuelAbsolu);
+
+  let rows = [], pasAns = Math.max(1, Math.round(esp/8));
+  for (let mois=1; mois<=esp*12; mois++) {
+    capEvo *= (1+rdtMensuel);
+    if (mois > moisAvantDeblocage) {
+      const retrait = Math.min(retraitMensuel, capEvo);
+      capEvo -= retrait;
+      totalRetireBrut += retrait;
+    }
+    if (capEvo<=0 && moisEpuise===null) moisEpuise = mois;
+    if (mois%(pasAns*12)===0 || mois===esp*12) {
+      rows.push({an: mois/12, age: age+mois/12, capital: arr(capEvo), retireCum: arr(totalRetireBrut)});
+    }
   }
-  html+=`</table></div>
-  <div class="info-box ${arr(renteCum)>(capFinal-cap)?'gold':'green'}" style="margin-top:12px;">
-    <strong>Sur ${esp} ans :</strong> le capital de ${cap.toLocaleString('fr-FR')} € placé génère ${(capFinal-cap).toLocaleString('fr-FR')} € de gains contre ${arr(renteCum).toLocaleString('fr-FR')} € versés par la rente.
-    <br>Avec l'option capital, <strong>${capFinal.toLocaleString('fr-FR')} € restent transmissibles</strong> à vos héritiers (dont ${cap.toLocaleString('fr-FR')} € de capital initial + ${(capFinal-cap).toLocaleString('fr-FR')} € de gains). Avec la rente : 0 €.
+  const capitalFinal = arr(Math.max(0,capEvo));
+  const renteCumComparaison = arr(mnt*esp);
+
+  let html = `<div class="info-box blue" style="margin-bottom:16px;font-size:.85rem;">
+    <strong>Fiscalité de sortie du PER :</strong> versements (${partVersements.toLocaleString('fr-FR')} €) ajoutés à vos revenus de l'année et taxés au barème <strong>progressif</strong> (coût marginal réel : ${tmiMarginal.toFixed(1)}% en moyenne sur ce montant — souvent supérieur à votre TMI habituel de ${(fiscalBase.tmi||0)}%, car une sortie en une fois fait grimper dans les tranches) = ${arr(impotVersements).toLocaleString('fr-FR')} € · plus-value (${arr(plusValue).toLocaleString('fr-FR')} €) taxée au PFU 31,4% = ${arr(impotPlusValue).toLocaleString('fr-FR')} €.
+    <br><strong>Capital net après sortie, placé en PEA : ${arr(capNet).toLocaleString('fr-FR')} €</strong> (au lieu de ${cap.toLocaleString('fr-FR')} € brut).
+    <br><small>💡 Une sortie étalée sur plusieurs années réduit cet effet de tranche — voir l'étape suivante (Stratégie PER) pour comparer.</small>
+    ${moisAvantDeblocage>0 ? `<br><small>🔒 PEA bloqué pour les retraits pendant encore <strong>${Math.ceil(moisAvantDeblocage/12)} an(s)</strong> (5 ans d'ancienneté requis, ouverture ${String(peaMois).padStart(2,'0')}/${peaAn}) — le capital continue de fructifier sans retrait possible pendant ce temps.</small>` : ''}
+  </div>
+  <div class="result-grid">
+    <div class="result-card"><div class="result-label">Rendement implicite de la rente</div><div class="result-value ${rdtImpl<rdtAn*100?'red':'green'}">${rdtImpl.toFixed(1)}%/an</div></div>
+    <div class="result-card"><div class="result-label">Retrait annuel simulé</div><div class="result-value">${arr(retraitAnnuel).toLocaleString('fr-FR')} €</div></div>
+    <div class="result-card"><div class="result-label">${moisEpuise?'Capital épuisé après':'Capital résiduel après '+esp+' ans'}</div><div class="result-value ${moisEpuise?'red':'green'}">${moisEpuise?(moisEpuise/12).toFixed(1)+' ans':capitalFinal.toLocaleString('fr-FR')+' €'}</div></div>
+  </div>
+  <div style="overflow-x:auto;"><table class="res-table" style="min-width:400px;margin-top:12px;">
+    <tr><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Année</th><th style="text-align:left;padding:7px 6px;font-size:.75rem;color:var(--slate);">Âge</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Retraits cumulés</th><th style="text-align:right;padding:7px 6px;font-size:.75rem;color:var(--slate);">Capital restant</th></tr>`;
+  for (const r of rows) {
+    html += `<tr><td>${r.an.toFixed(0)}</td><td>${r.age.toFixed(0)}</td><td style="text-align:right;">${r.retireCum.toLocaleString('fr-FR')} €</td><td style="text-align:right;">${r.capital.toLocaleString('fr-FR')} €</td></tr>`;
+  }
+  html += `</table></div>
+  <div class="info-box ${capitalFinal>0?'green':'gold'}" style="margin-top:12px;">
+    <strong>Sur ${esp} ans :</strong> en retirant ${arr(retraitAnnuel).toLocaleString('fr-FR')} €/an de votre capital placé en PEA (contre ${mnt.toLocaleString('fr-FR')} €/an avec la rente, soit ${renteCumComparaison.toLocaleString('fr-FR')} € cumulés), il vous reste <strong>${capitalFinal.toLocaleString('fr-FR')} € transmissible</strong> à vos héritiers. Avec la rente : 0 €.
+    <br><small>Simplification : les gains réalisés à l'intérieur du PEA pendant les retraits ne sont pas re-fiscalisés séparément ici (seule la sortie du PER l'est) — l'écart réel serait légèrement inférieur au montant affiché.</small>
   </div>`;
   target.innerHTML = html;
+
+  // Auto-remplissage a l'etape 9, uniquement pour les champs restes a leur valeur par
+  // defaut (l'utilisateur n'y a pas encore touche) -- capital, montant verse, rendement,
+  // et objectif mensuel -- pour eviter tout ecart du a un champ simplement oublie.
+  const objField = document.getElementById('w_objectif');
+  if (objField && (+objField.value||0) === 0 && mnt>0) {
+    objField.value = Math.round(mnt/12);
+    objField.dataset.autoRempli = '1';
+  }
+  const per1CapField = document.getElementById('w_per1_cap');
+  if (per1CapField && (+per1CapField.value||0) === 0 && cap>0) {
+    per1CapField.value = cap;
+    per1CapField.dataset.autoRempli = '1';
+  }
+  const per1VerseField = document.getElementById('w_per1_verse');
+  if (per1VerseField && (+per1VerseField.value||0) === 0 && verse>0) {
+    per1VerseField.value = verse;
+    per1VerseField.dataset.autoRempli = '1';
+  }
+  const pea1RdtField = document.getElementById('w_pea1_rdt');
+  if (pea1RdtField && (+pea1RdtField.value||0) === 7 && rdtAn>0) {
+    pea1RdtField.value = (rdtAn*100).toFixed(1);
+    pea1RdtField.dataset.autoRempli = '1';
+  }
+  const pea1AnField = document.getElementById('w_pea1_an');
+  if (pea1AnField && (+pea1AnField.value||0) === 2026 && peaAn !== 2026) {
+    pea1AnField.value = peaAn;
+    pea1AnField.dataset.autoRempli = '1';
+  }
+  const pea1MoisField = document.getElementById('w_pea1_mois');
+  if (pea1MoisField && (+pea1MoisField.value||0) === 1 && peaMois !== 1) {
+    pea1MoisField.value = peaMois;
+    pea1MoisField.dataset.autoRempli = '1';
+  }
+  // Etape 6 suppose implicitement que la sortie du PER a lieu MAINTENANT -- on synchronise
+  // donc l'annee de sortie et l'annee de debut de simulation de l'etape 9 sur l'annee
+  // actuelle, sinon un decalage (ex: 2028 par defaut) fausse la comparaison
+  const anneeActuelle = dateAujourdhui.getFullYear();
+  const per1AnField = document.getElementById('w_per1_an');
+  if (per1AnField && (+per1AnField.value||0) === 2028) {
+    per1AnField.value = anneeActuelle;
+    per1AnField.dataset.autoRempli = '1';
+  }
+  const anneeDebutField = document.getElementById('w_annee_debut');
+  if (anneeDebutField && (+anneeDebutField.value||0) === 2026) {
+    anneeDebutField.value = anneeActuelle;
+    anneeDebutField.dataset.autoRempli = '1';
+  }
 }
 
 function calcComparateurs() {
@@ -2187,12 +2388,16 @@ function calcComparateurs() {
     const tmiE = (+document.getElementById('w_pp_tmi_e').value||11)/100;
     const tmiS = (+document.getElementById('w_pp_tmi_s').value||11)/100;
     const rdt  = (window._rdtEtape9 || 7) / 100;  // repris de l'étape 9
-    const fisc = +document.getElementById('w_pp_fisc').value||0.172;
+    const fisc = +document.getElementById('w_pp_fisc').value||0.186;
     const fiscLbl = document.getElementById('w_pp_fisc').options[document.getElementById('w_pp_fisc').selectedIndex].text;
 
     let capPER=0;
     for (let an=0;an<duree;an++) capPER=(capPER+ver)*(1+rdt);
-    const impSortiePER=capPER*tmiS;
+    const totalVerseP = ver*duree;
+    const plusValueP = Math.max(0, capPER - totalVerseP);
+    const impotVersementsP = totalVerseP * tmiS;
+    const impotPlusValueP = plusValueP * 0.314; // PFU sur la plus-value, jamais au bareme
+    const impSortiePER = impotVersementsP + impotPlusValueP;
     const netPER=capPER-impSortiePER;
 
     const verNet=ver*(1-tmiE);
@@ -2210,9 +2415,8 @@ function calcComparateurs() {
     </div>
     <div class="info-box ${ecart>0?'green':'gold'}">
       <strong>${ecart>0?'Le PER est gagnant':'Le placement direct est gagnant'} de ${Math.abs(arr(ecart)).toLocaleString('fr-FR')} €</strong> sur ${duree} ans de versements.
-      ${tmiE===tmiS?' Même TMI entrée/sortie : le PER reste avantageux car l\'économie d\'impôt travaille aussi pendant toute la durée.':''}
-      ${tmiS>tmiE?' Attention : TMI de sortie supérieur à l\'entrée — scénario défavorable au PER.':''}
-      ${tmiS<tmiE?' TMI de sortie inférieur à l\'entrée — scénario très favorable au PER.':''}
+      <br><small>Fiscalité de sortie du PER : versements taxés au barème (TMI ${(tmiS*100).toFixed(0)}%), plus-value taxée au PFU (31,4%) — jamais l'inverse.</small>
+      ${ecart>0?' Votre économie d\'impôt à l\'entrée dépasse le coût du PFU de 31,4% sur la plus-value à la sortie.':' Le PFU de 31,4% sur la plus-value pèse plus lourd que l\'économie d\'impôt à l\'entrée à ce TMI — le placement direct est préférable.'}
     </div>`;
   }
 
