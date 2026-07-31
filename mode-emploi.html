@@ -425,25 +425,41 @@
     </div>
 
     <div class="onglet">
-      <h3>Étapes 6 à 9 — Stratégie de rapatriement PER</h3>
-      <p class="what">Ces étapes concernent principalement les retraités ou futurs retraités souhaitant rapatrier leur PER.</p>
+      <h3>Étapes 6 à 7 — Comparateur PER vs placement direct</h3>
+      <p class="what">Répond à la question stratégique sur l'intérêt d'un <strong>nouveau</strong> versement PER cette année, par rapport à un placement direct en PEA ou CTO — à ne pas confondre avec l'étape 8 (rente vs capital) et les étapes 9-11, qui concernent la sortie d'un PER <strong>déjà existant</strong>. Positionné juste après l'étape 5 pour rester proche du contexte de l'impôt qui vient d'être calculé.</p>
+
+      <h4>Les réglages disponibles à l'étape 6</h4>
       <ul>
-        <li><strong>Étape 6</strong> : Rente viagère vs capital placé — comparateur en temps réel avec point mort et capital transmissible</li>
-        <li><strong>Étape 7</strong> : Capital PER à rapatrier — montants bruts, année de sortie, objectif mensuel</li>
-        <li><strong>Étape 8</strong> : Enveloppes de placement — PEA 1, PEA 2, CTO, répartition et rendements</li>
-        <li><strong>Étape 9</strong> : Résultats stratégie — 3 modes automatiques comparés côte à côte : étalé à 11%, sortie totale, durée optimisée pour maximiser le capital final</li>
+        <li><strong>Versement annuel</strong> : le montant que vous simulez verser chaque année. Un bouton <em>"Calculer ce montant automatiquement"</em> propose le montant exact nécessaire pour redescendre à la tranche d'imposition inférieure — pas nécessairement le plafond maximum, souvent bien plus modeste.</li>
+        <li><strong>Durée</strong> : le nombre d'années sur lesquelles ce versement est répété. Utile pour simuler un versement ponctuel (durée = 1) ou un effort régulier sur plusieurs années.</li>
+        <li><strong>TMI à l'entrée</strong> : <span class="warn" style="display:inline;padding:2px 6px;">verrouillé</span>, non modifiable. Il reprend automatiquement votre TMI réel calculé à l'étape 5 — c'est un fait établi par vos revenus déclarés, pas une hypothèse qu'on peut choisir librement.</li>
+        <li><strong>TMI à la sortie</strong> : celui-ci reste librement modifiable, car c'est une vraie hypothèse sur votre situation future, pas un fait acquis. <strong>Repère pour bien le régler</strong> : si la durée choisie correspond à peu près à vos années restantes avant la retraite, il y a de fortes chances que vous soyez alors à la retraite — avec des revenus (pension) souvent plus faibles qu'en activité. Un TMI de sortie proche de 11% est donc un réglage réaliste dans ce cas, pas un choix arbitraire. À l'inverse, si vous simulez une durée courte (par exemple 1 an, un versement ponctuel cette année), vous êtes probablement encore en activité au moment de la sortie — gardez alors un TMI de sortie cohérent avec votre TMI d'entrée, sauf changement de situation connu.</li>
+        <li><strong>Fiscalité alternative</strong> : PEA (18,6% sur les gains), CTO en PFU (31,4%), ou CTO au barème (11%) — selon l'enveloppe à laquelle vous comparez le PER.</li>
+        <li><strong>Rendement utilisé</strong> : repris automatiquement de l'hypothèse de rendement saisie à l'étape 11 (ETF choisi), pour rester cohérent entre les étapes.</li>
       </ul>
-      <div class="info">Si vous n'êtes pas en phase de rapatriement, un bouton "Passer aux comparateurs" vous permet de sauter ces étapes.</div>
+
+      <h4>Le détail étape par étape à l'étape 7</h4>
+      <p>Les résultats affichent le <strong>parcours complet de l'argent</strong> dans chaque enveloppe, pas seulement deux chiffres finaux : versement brut, économie ou coût d'impôt à l'entrée, capital réellement investi, croissance sur la durée, puis fiscalité de sortie détaillée (versements au barème + plus-value au PFU pour le PER ; gains seulement pour le PEA/CTO). L'objectif est de comprendre <em>pourquoi</em> un placement gagne, pas seulement lequel gagne.</p>
+
+      <div class="warn">⚠️ <strong>Un versement PER n'a de sens que si vous disposez réellement de cette somme</strong>, au-delà de votre épargne de précaution (3 à 6 mois de dépenses courantes, sur Livret A/LDDS). Peu de foyers ont plusieurs milliers d'euros disponibles d'un coup sans y toucher par ailleurs — le montant théoriquement optimal n'est utile que s'il reste réellement mobilisable sans fragiliser votre situation.</div>
+
+      <div class="info">💡 <strong>Ligne de conduite résumée</strong> : à TMI 11%, un versement PER n'a généralement pas d'intérêt fiscal — le placement direct (PEA) l'emporte. À TMI 30% et plus, un versement <em>ciblé</em> (juste ce qu'il faut pour redescendre de tranche, pas le plafond maximum) peut devenir avantageux, à condition d'avoir réellement cette somme disponible et d'anticiper un TMI de sortie plausible (souvent plus bas, à la retraite).</div>
     </div>
 
     <div class="onglet">
-      <h3>Étapes 10 à 11 — Comparateurs</h3>
-      <p class="what">Répond à la question stratégique sur l'intérêt du PER à l'entrée.</p>
+      <h3>Étape 8 — Rente viagère ou capital placé</h3>
+      <p class="what">Comparateur en temps réel avec point mort et capital transmissible, pour qui a déjà un PER et hésite entre rente viagère et capital placé.</p>
+    </div>
+
+    <div class="onglet">
+      <h3>Étapes 9 à 11 — Stratégie de rapatriement PER</h3>
+      <p class="what">Ces étapes concernent principalement les retraités ou futurs retraités souhaitant rapatrier un PER <strong>déjà existant</strong>.</p>
       <ul>
-        <li><strong>Étape 10</strong> : PER vs placement direct (PEA/CTO) — compare sur N années si verser dans un PER (déduction + impôt à la sortie) est plus avantageux que verser directement en PEA</li>
-        <li><strong>Étape 11</strong> : Résultats du comparateur avec verdict contextuel selon votre TMI</li>
+        <li><strong>Étape 9</strong> : Capital PER à rapatrier — montants bruts, année de sortie, objectif mensuel</li>
+        <li><strong>Étape 10</strong> : Enveloppes de placement — PEA 1, PEA 2, CTO, répartition et rendements</li>
+        <li><strong>Étape 11</strong> : Résultats stratégie — 3 modes automatiques comparés côte à côte : étalé à 11%, sortie totale, durée optimisée pour maximiser le capital final</li>
       </ul>
-      <div class="warn">⚠️ Un PER sans profiter de la déduction n'a d'intérêt que dans des cas spécifiques — dans le doute, le PEA gagne.</div>
+      <div class="info">Si vous n'êtes pas en phase de rapatriement, un bouton "Passer à la synthèse" (à l'étape 9) vous permet de sauter ces étapes.</div>
     </div>
 
     <div class="onglet">
